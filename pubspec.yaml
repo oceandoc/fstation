@@ -1,0 +1,62 @@
+name: fstation
+description: "A project help people enjoy their own service and data"
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.5.3
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  go_router: ^14.3.0
+  flutter_localizations:
+    sdk: flutter
+  flutter_localization: ^0.2.2
+  flutter_bloc: ^8.1.6
+  shared_preferences: ^2.3.2
+  logging: ^1.3.0
+  sentry_flutter: ^8.9.0
+  intl: ^0.19.0
+  dio: ^5.7.0
+  sizer: ^3.0.4
+  provider: ^6.1.2
+  path_provider: ^2.1.5
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  build_runner: ^2.4.13
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/
+    - assets/i18n/
+  fonts:
+    - family: Comfortaa
+      fonts:
+        - asset: assets/fonts/Comfortaa-Light.ttf
+          weight: 300
+        - asset: assets/fonts/Comfortaa-Regular.ttf
+        - asset: assets/fonts/Comfortaa-Bold.ttf
+          weight: 700
+
+    - family: OpenSans
+      fonts:
+        - asset: assets/fonts/OpenSans-Light.ttf
+          weight: 300
+        - asset: assets/fonts/OpenSans-Regular.ttf
+        - asset: assets/fonts/OpenSans-Bold.ttf
+          weight: 700
+
+    - family: NotoSans
+      # used as a fallback font
+      # covers a lot of scripts and obscure unicode characters
+      # https://fonts.google.com/specimen/Noto+Sans
+      fonts:
+        - asset: assets/fonts/NotoSans-Regular.ttf
+        - asset: assets/fonts/NotoSans-Bold.ttf
+          weight: 700
