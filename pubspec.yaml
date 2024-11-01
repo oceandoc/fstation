@@ -60,3 +60,13 @@ flutter:
         - asset: assets/fonts/NotoSans-Regular.ttf
         - asset: assets/fonts/NotoSans-Bold.ttf
           weight: 700
+
+
+flutter_intl:
+  enabled: true
+  class_name: Localization
+  use_deferred_loading: false
+
+analyzer:
+  plugins:
+    - moor

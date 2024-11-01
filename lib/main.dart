@@ -14,11 +14,9 @@ import 'package:sizer/sizer.dart';
 import 'bloc/theme_cubit.dart';
 
 void main() async {
-  await SharedPreferences.getInstance();
   WidgetsFlutterBinding.ensureInitialized();
-  ErrorHandler(builder: () async {
-    return App();
-  });
+  await SharedPreferences.getInstance();
+  ErrorHandler(builder: () async => App());
 }
 
 class App extends StatefulWidget {
