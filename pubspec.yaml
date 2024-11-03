@@ -9,9 +9,11 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.8
-  go_router: ^14.3.0
   flutter_localizations:
     sdk: flutter
+  catcher_2: ^2.0.1
+  go_router: ^14.3.0
+
   flutter_localization: ^0.2.2
   flutter_bloc: ^8.1.6
   shared_preferences: ^2.3.2
@@ -22,6 +24,14 @@ dependencies:
   sizer: ^3.0.4
   provider: ^6.1.2
   path_provider: ^2.1.5
+  isar:
+    version: 3.1.8
+    hosted: https://pub.isar-community.dev/
+  isar_flutter_libs: # contains Isar Core
+    version: 3.1.8
+    hosted: https://pub.isar-community.dev/
+  collection: ^1.18.0
+  settings_ui: ^2.0.2
 
 
 dev_dependencies:
@@ -29,12 +39,19 @@ dev_dependencies:
     sdk: flutter
   build_runner: ^2.4.13
   flutter_lints: ^4.0.0
+  very_good_analysis: ^6.0.0
+  isar_generator:
+    version: 3.1.8
+    hosted: https://pub.isar-community.dev/
+  analyzer: 6.4.0
+  meta: ^1.11.0
+  #analyzer_plugin: ^0.11.3
 
 flutter:
   uses-material-design: true
   assets:
     - assets/
-    - assets/i18n/
+  generate: true
   fonts:
     - family: Comfortaa
       fonts:
@@ -62,10 +79,10 @@ flutter:
           weight: 700
 
 
-flutter_intl:
-  enabled: true
-  class_name: Localization
-  use_deferred_loading: false
+#flutter_intl:
+#  enabled: true
+#  class_name: Localization
+#  use_deferred_loading: false
 
 analyzer:
   plugins:
