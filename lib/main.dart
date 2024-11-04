@@ -2,23 +2,22 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_localization/flutter_localization.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:fstation/bloc/app_setting_bloc.dart';
 import 'package:fstation/routing/router.dart';
+import 'package:fstation/util/color.dart';
+import 'package:fstation/util/language.dart';
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'impl/db.dart';
 import 'impl/setting.dart';
-import 'util/constants.dart';
+import 'package:fstation/generated/l10n.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await SharedPreferences.getInstance();
 
   FlutterError.onError = (FlutterErrorDetails details) {
     FlutterError.dumpErrorToConsole(details);
@@ -30,24 +29,26 @@ void main() async {
     return true;
   };
 
-  final db = await loadDb();
+  await loadDb();
   final settingImpl = SettingImpl();
-  runApp(Provider<SettingImpl>.value(value: settingImpl, child: App()));
+  await settingImpl.init();
+  runApp(Provider<SettingImpl>.value(value: settingImpl, child: const App()));
 }
 
 Future<Isar> loadDb() async {
   final dir = await getApplicationDocumentsDirectory();
-  Isar db = await Isar.open(
+  final db = await Isar.open(
     [
-       DbValueSchema,
+      DbValueSchema,
     ],
     directory: dir.path,
-    maxSizeMiB: 1024,
   );
   return db;
 }
 
 class App extends StatefulWidget {
+  const App({super.key});
+
   @override
   State<App> createState() => _AppState();
 }
@@ -56,17 +57,18 @@ class _AppState extends State<App> {
   @override
   void initState() {
     super.initState();
+    Future.microtask(
+        () => context.read<AppSettingBloc>().add(LoadSettingsEvent()));
   }
 
-  Color _getThemeColor(String themeColor) {
+  Color _getThemeColor(ThemeColor themeColor) {
     switch (themeColor) {
-      case 'red':
+      case ThemeColor.SYSTEM:
         return Colors.red;
-      case 'green':
-        return Colors.green;
-      case 'blue':
-      default:
-        return Colors.blue;
+      case ThemeColor.WHITE:
+        return Colors.white;
+      case ThemeColor.BLACK:
+        return Colors.black;
     }
   }
 
@@ -76,32 +78,34 @@ class _AppState extends State<App> {
     return BlocProvider(
       create: (context) => AppSettingBloc(settingImpl),
       child: BlocBuilder<AppSettingBloc, AppSettingState>(
-        builder: (context, state) =>
-            MaterialApp.router(
-              title: 'fStation',
-              theme: ThemeData(
-                brightness:
-                state.themeStyle == 'dark' ? Brightness.dark : Brightness.light,
-                primaryColor: _getThemeColor(state.themeColor),
-              ),
-              routerConfig: router,
-              localizationsDelegates: const [
-                GlobalMaterialLocalizations.delegate,
-                GlobalWidgetsLocalizations.delegate,
-                GlobalCupertinoLocalizations.delegate,
-              ],
-              locale: locales.first,
-              supportedLocales: locales,
-              localeResolutionCallback: (locale, supportedLocales) {
-                for (final supportedLocale in supportedLocales) {
-                  if (supportedLocale.languageCode == locale?.languageCode &&
-                      supportedLocale.countryCode == locale?.countryCode) {
-                    return supportedLocale;
-                  }
-                }
-                return supportedLocales.first;
-              },
-            ),
+        builder: (context, state) => MaterialApp.router(
+          title: 'fStation',
+          theme: ThemeData(
+            brightness:
+                state.themeMode == 'dark' ? Brightness.dark : Brightness.light,
+            primaryColor: _getThemeColor(state.themeColor),
+          ),
+          routerConfig: router,
+          localizationsDelegates: const [
+            Localization.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          locale: Language.getLanguage(settingImpl.language).locale,
+          supportedLocales: Language.supportLanguages
+              .map((language) => language.locale)
+              .toList(),
+          localeResolutionCallback: (locale, supportedLocales) {
+            for (final supportedLocale in supportedLocales) {
+              if (supportedLocale.languageCode == locale?.languageCode &&
+                  supportedLocale.countryCode == locale?.countryCode) {
+                return supportedLocale;
+              }
+            }
+            return supportedLocales.first;
+          },
+        ),
       ),
     );
   }

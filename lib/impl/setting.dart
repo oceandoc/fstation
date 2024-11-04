@@ -1,69 +1,77 @@
-import 'package:isar/isar.dart';
-
 import '../bloc/app_setting_bloc.dart';
-import '../util/theme_style.dart';
+import '../util/color.dart';
 import 'db.dart';
 
-@Collection()
-class AppSetting {
-  String? i18n;
-  String? i18nCC;
-  late int imgCompress;
-  late ThemeStyle themeStyle;
-  int? themeColor;
-  String? fontFamily;
-  double? fontSize;
-  int version;
-  String language;
-
-  AppSetting({
-    this.i18n,
-    this.i18nCC,
-    this.imgCompress = 50,
-    this.themeStyle = ThemeStyle.AUTO,
-    this.themeColor,
-    this.fontFamily,
-    this.fontSize,
-    this.version = 0,
-    this.language = 'en',
-  });
-}
-
 class SettingImpl {
-  AppSetting? _appSetting;
-  SettingImpl();
-  /// theme style
+  SettingImpl({
+    this.themeMode = 'System',
+    this.themeColor = ThemeColor.SYSTEM,
+    this.language = 'zh',
+    this.firstLanuch = true,
+  });
+
+  String themeMode;
+  ThemeColor themeColor;
+  String language;
+  bool firstLanuch;
+
+  Future<void> init() async {
+    await getSettings();
+  }
 
   Future<AppSettingState> getSettings() async {
-    String language = Db.get(DbKey.language);
-    ThemeStyle  themeStyle = Db.get(DbKey.themeStyle) as ThemeStyle;
-    String themeColor = Db.get(DbKey.themeColor);
+    language = Db.get(DbKey.language, 'zh');
+    themeMode = Db.get(DbKey.themeMode, 'System');
+    themeColor = Db.get(DbKey.themeColor, ThemeColor.SYSTEM) as ThemeColor;
+    firstLanuch = Db.get(DbKey.firstLanuch, true);
 
-    AppSettingState settingState = AppSettingState(language: language, themeStyle: themeStyle, themeColor: themeColor);
-    Db.get(DbKey.language);
+    final settingState = AppSettingState(
+      themeMode: themeMode,
+      themeColor: themeColor,
+      language: language,
+    );
     return settingState;
   }
 
-  int get themeStyle => _appSetting!.themeStyle as int;
+  void saveThemeMode(String themeMode) {
+    this.themeMode = themeMode;
+    setSetting(DbKey.themeMode, themeMode);
+  }
+
+  void saveThemeColor(ThemeColor themeColor) {
+    this.themeColor = themeColor;
+    setSetting(DbKey.themeColor, themeColor);
+  }
+
+  void saveLanguage(String language) {
+    this.language = language;
+    setSetting(DbKey.language, language);
+  }
+
+  void saveFirstLanuch({required  bool firstLanuch}) {
+    this.firstLanuch = firstLanuch;
+    setSetting(DbKey.firstLanuch, firstLanuch);
+  }
 
   void setSetting<T>(DbKey<T> key, T value) {
-    switch(key) {
-      case DbKey.version:
-        _appSetting?.version = value as int;
-      case DbKey.themeStyle:
-        _appSetting?.themeStyle = value as ThemeStyle;
+    switch (key) {
+      case DbKey.themeMode:
+        themeMode = value as String;
       case DbKey.themeColor:
-        _appSetting?.themeColor = value as int;
+        themeColor = value as ThemeColor;
       case DbKey.language:
-        _appSetting?.language = value as String;
+        language = value as String;
       case DbKey.assetETag:
-        // TODO: Handle this case.
+      // TODO(xieyz): Handle this case.
       case DbKey.deviceIdHash:
-        // TODO: Handle this case.
+      // TODO(xieyz): Handle this case.
       case DbKey.deviceId:
-        // TODO: Handle this case.
+      // TODO(xieyz): Handle this case.
+      case DbKey.version:
+      // TODO(xieyz): Handle this case.
+      case DbKey.firstLanuch:
+      // TODO(xieyz): Handle this case.
     }
     Db.put(key, value);
   }
-
 }

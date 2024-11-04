@@ -6,7 +6,7 @@ final GoRouter router = GoRouter(
   routes: [
     GoRoute(
       path: '/',
-      builder: (context, state) => SettingPage(),
+      builder: (context, state) => const SettingPage(),
     ),
   ],
 );

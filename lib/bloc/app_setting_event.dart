@@ -3,21 +3,19 @@ part of 'app_setting_bloc.dart';
 @immutable
 sealed class AppSettingEvent {}
 
-
 class ChangeLanguageEvent extends AppSettingEvent {
-  final String language;
-
   ChangeLanguageEvent(this.language);
+  final String language;
 }
 
-class ChangeThemeStyleEvent extends AppSettingEvent {
-  final ThemeStyle themeStyle;
-
-  ChangeThemeStyleEvent(this.themeStyle);
+class ChangeThemeModeEvent extends AppSettingEvent {
+  ChangeThemeModeEvent(this.themeMode);
+  final String themeMode;
 }
 
 class ChangeThemeColorEvent extends AppSettingEvent {
-  final String themeColor;
-
   ChangeThemeColorEvent(this.themeColor);
+  final ThemeColor themeColor;
 }
+
+class LoadSettingsEvent extends AppSettingEvent {}  // New event

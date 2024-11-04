@@ -9,9 +9,10 @@ enum DbKey<T> {
   assetETag<String>(1, type: String),
   deviceIdHash<int>(3, type: int),
   deviceId<String>(4, type: String),
-  themeStyle<int>(5, type: int),
-  themeColor<String>(6, type: String),
+  themeMode<String>(5, type: String),
+  themeColor<int>(6, type: int),
   language<String>(7, type: String),
+  firstLanuch<bool>(8, type: bool),
   ;
 
   const DbKey(
@@ -62,16 +63,12 @@ class DbValue {
     switch (key.type) {
       case const (int):
         i = value as int?;
-        break;
       case const (bool):
         i = value == null ? null : (value == true ? 1 : 0);
-        break;
       case const (DateTime):
         i = value == null ? null : (value as DateTime).microsecondsSinceEpoch;
-        break;
       case const (String):
         s = value as String?;
-        break;
       default:
         if (key.toDb != null) {
           i = await key.toDb!.call(Db._db, value);
@@ -84,14 +81,14 @@ class DbValue {
 }
 
 class DbKeyNotFoundException implements Exception {
-  final DbKey key;
   DbKeyNotFoundException(this.key);
+  final DbKey key;
   @override
   String toString() => "Key '${key.name}' not found in Store";
 }
 
 class Db {
-  static final Logger _log = Logger("Db");
+  static final Logger _log = Logger('Db');
   static late final Isar _db;
   static final List<dynamic> _cache =
       List.filled(DbKey.values.map((e) => e.id).max + 1, null);
@@ -109,22 +106,26 @@ class Db {
     return _db.writeTxn(() => _db.dbValues.clear());
   }
 
-  /// Returns the stored value for the given key or if null the [defaultValue]
-  /// Throws a [DbKeyNotFoundException] if both are null
+  static bool firstLanuch() {
+    return get(DbKey.firstLanuch, true);
+  }
+
   static T get<T>(DbKey<T> key, [T? defaultValue]) {
     final value = _cache[key.id] ?? defaultValue;
     if (value == null) {
       throw DbKeyNotFoundException(key);
     }
-    return value;
+    return value as T;
   }
 
   /// Watches a specific key for changes
   static Stream<T?> watch<T>(DbKey<T> key) =>
       _db.dbValues.watchObject(key.id).map((e) => e?._extract(key));
 
-  /// Returns the stored value for the given key (possibly null)
-  static T? tryGet<T>(DbKey<T> key) => _cache[key.id];
+  static T? tryGet<T>(DbKey<T> key) {
+    final value = _cache[key.id];
+    return value as T?;
+  }
 
   /// Stores the value synchronously in the cache and asynchronously in the DB
   static Future<void> put<T>(DbKey<T> key, T value) {
@@ -143,9 +144,9 @@ class Db {
   }
 
   /// Fills the cache with the values from the DB
-  static _populateCache() {
-    for (DbKey key in DbKey.values) {
-      final DbValue? value = _db.dbValues.getSync(key.id);
+  static void _populateCache() {
+    for (final key in DbKey.values) {
+      final value = _db.dbValues.getSync(key.id);
       if (value != null) {
         _cache[key.id] = value._extract(key);
       }
@@ -155,12 +156,12 @@ class Db {
   /// updates the state if a value is updated in any isolate
   static void _onChangeListener(List<DbValue>? data) {
     if (data != null) {
-      for (DbValue value in data) {
+      for (final value in data) {
         final key = DbKey.values.firstWhereOrNull((e) => e.id == value.id);
         if (key != null) {
           _cache[value.id] = value._extract(key);
         } else {
-          _log.warning("No key available for value id - ${value.id}");
+          _log.warning('No key available for value id - ${value.id}');
         }
       }
     }

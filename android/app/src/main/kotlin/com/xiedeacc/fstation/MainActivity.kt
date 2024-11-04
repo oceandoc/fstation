@@ -1,4 +1,4 @@
-package com.example.fstation
+package com.xiedeacc.fstation
 
 import io.flutter.embedding.android.FlutterActivity
 

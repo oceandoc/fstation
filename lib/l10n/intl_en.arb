@@ -1,0 +1,14 @@
+{
+  "@@locale": "en",
+  "language": "English",
+  "language_en": "English",
+  "about_app": "About",
+  "language_setting_title": "Language",
+  "theme_setting_theme_title": "主题",
+  "theme_setting_dark_mode": "Dark mode",
+  "theme_setting_dark_mode_dark": "Dark",
+  "theme_setting_dark_mode_light": "Light",
+  "theme_setting_dark_mode_system": "System",
+  "theme_setting_primary_color_title": "Primary color",
+  "theme_setting_system_primary_color_title": "Use system color"
+}

@@ -1,0 +1,14 @@
+{
+  "@@locale": "zh",
+  "language": "简体中文",
+  "language_en": "Simplified Chinese",
+  "about_app": "关于",
+  "language_setting_title": "语言",
+  "theme_setting_theme_title": "主题",
+  "theme_setting_dark_mode": "深色模式",
+  "theme_setting_dark_mode_dark": "深色",
+  "theme_setting_dark_mode_light": "浅色",
+  "theme_setting_dark_mode_system": "系统",
+  "theme_setting_primary_color_title": "主色调",
+  "theme_setting_system_primary_color_title": "使用系统颜色"
+}
