@@ -76,7 +76,10 @@ class SettingPageState extends State<SettingPage> {
       ),
     ];
 
-    List<SettingsSection> sections = [SettingsSection(title: const Text('Interface'), tiles: interfaceTiles), SettingsSection(title: Text('network'), tiles: network)];
+    List<SettingsSection> sections = [
+      SettingsSection(title: const Text('Interface'), tiles: interfaceTiles),
+      SettingsSection(title: Text('network'), tiles: network)
+    ];
 
     final settingsList = SettingsList(
         applicationType: ApplicationType.cupertino,
@@ -89,16 +92,22 @@ class SettingPageState extends State<SettingPage> {
     );
   }
 
-
   Future pickI18N(BuildContext context) async {
-    final settingImpl = Provider.of<SettingImpl>(context);
-   return CustomBlurryDialog(
+    final settingImpl = Provider.of<SettingImpl>(context, listen: false);
+    return showCupertinoDialog(
+      context: context,
+      builder: (context) => CustomBlurryDialog(
         title: Localization.current.language,
         normalTitleStyle: true,
-        actions: [],
+        actions: [
+          CupertinoDialogAction(
+            child: Text('Close'),
+            onPressed: () => Navigator.pop(context),
+          ),
+        ],
         child: SizedBox(
-          height: nampack.height * 0.5,
-          width: nampack.width,
+          height: MediaQuery.of(context).size.height * 0.5,
+          width: MediaQuery.of(context).size.width,
           child: SingleChildScrollView(
             child: Column(
               children: [
@@ -107,44 +116,52 @@ class SettingPageState extends State<SettingPage> {
                     key: Key(e.code),
                     padding: const EdgeInsets.symmetric(vertical: 4.0),
                     child: ListTileWithCheckMark(
-                        leading: Container(
-                          padding: const EdgeInsets.all(4.0),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              width: 1.5,
-                              color: context.theme.colorScheme.onSurface
-                                  .withAlpha(100),
-                            ),
-                          ),
-                          child: Text(
-                            e.name[0],
-                            style: const TextStyle(fontSize: 13.0),
+                      leading: Container(
+                        padding: const EdgeInsets.all(4.0),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            width: 1.5,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurface
+                                .withAlpha(100),
                           ),
                         ),
-                        titleWidget: Text.rich(
-                          TextSpan(
-                            text: e.name,
-                            style: context.textTheme.displayMedium,
-                            children: [
-                              TextSpan(
-                                text: ' (${e.country})',
-                                style: context.textTheme.displaySmall,
-                              ),
-                            ],
-                          ),
+                        child: Text(
+                          e.name[0],
+                          style: const TextStyle(fontSize: 13.0),
                         ),
-                        active: e == Language.getLanguage(settingImpl.language),
-                        onTap: () => settingImpl.language = e.code,
                       ),
-
+                      titleWidget: Text.rich(
+                        TextSpan(
+                          text: e.name,
+                          style: Theme.of(context).textTheme.bodyLarge,
+                          children: [
+                            TextSpan(
+                              text: ' (${e.country})',
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+                          ],
+                        ),
+                      ),
+                      active: e == Language.getLanguage(settingImpl.language),
+                      onTap: () {
+                        settingImpl.language = e.code;
+                        context
+                            .read<AppSettingBloc>()
+                            .add(ChangeLanguageEvent(e.code));
+                        Navigator.pop(context);
+                      },
+                    ),
                   ),
                 ),
               ],
             ),
           ),
         ),
-      );
+      ),
+    );
   }
 
   late final Enum? initialItem;

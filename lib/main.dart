@@ -14,6 +14,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 
 import 'impl/db.dart';
 import 'impl/setting.dart';
+import 'ui/theme/themes.dart';
 import 'package:fstation/generated/l10n.dart';
 
 void main() async {
@@ -30,9 +31,9 @@ void main() async {
   };
 
   await loadDb();
-  final settingImpl = SettingImpl();
-  await settingImpl.init();
-  runApp(Provider<SettingImpl>.value(value: settingImpl, child: const App()));
+  await SettingImpl.instance.init();
+  runApp(Provider<SettingImpl>.value(
+      value: SettingImpl.instance, child: const App()));
 }
 
 Future<Isar> loadDb() async {
@@ -61,30 +62,18 @@ class _AppState extends State<App> {
         () => context.read<AppSettingBloc>().add(LoadSettingsEvent()));
   }
 
-  Color _getThemeColor(ThemeColor themeColor) {
-    switch (themeColor) {
-      case ThemeColor.SYSTEM:
-        return Colors.red;
-      case ThemeColor.WHITE:
-        return Colors.white;
-      case ThemeColor.BLACK:
-        return Colors.black;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final settingImpl = Provider.of<SettingImpl>(context);
+
+    final theme = AppThemes.inst.getAppTheme();
+
     return BlocProvider(
       create: (context) => AppSettingBloc(settingImpl),
       child: BlocBuilder<AppSettingBloc, AppSettingState>(
         builder: (context, state) => MaterialApp.router(
           title: 'fStation',
-          theme: ThemeData(
-            brightness:
-                state.themeMode == 'dark' ? Brightness.dark : Brightness.light,
-            primaryColor: _getThemeColor(state.themeColor),
-          ),
+          theme: theme,
           routerConfig: router,
           localizationsDelegates: const [
             Localization.delegate,

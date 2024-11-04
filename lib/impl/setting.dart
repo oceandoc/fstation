@@ -3,12 +3,16 @@ import '../util/color.dart';
 import 'db.dart';
 
 class SettingImpl {
-  SettingImpl({
+  static final SettingImpl _instance = SettingImpl._internal();
+
+  SettingImpl._internal({
     this.themeMode = 'System',
     this.themeColor = ThemeColor.SYSTEM,
     this.language = 'zh',
     this.firstLanuch = true,
   });
+
+  static SettingImpl get instance => _instance;
 
   String themeMode;
   ThemeColor themeColor;
@@ -48,7 +52,7 @@ class SettingImpl {
     setSetting(DbKey.language, language);
   }
 
-  void saveFirstLanuch({required  bool firstLanuch}) {
+  void saveFirstLanuch({required bool firstLanuch}) {
     this.firstLanuch = firstLanuch;
     setSetting(DbKey.firstLanuch, firstLanuch);
   }
@@ -57,20 +61,28 @@ class SettingImpl {
     switch (key) {
       case DbKey.themeMode:
         themeMode = value as String;
+        break;
       case DbKey.themeColor:
         themeColor = value as ThemeColor;
+        break;
       case DbKey.language:
         language = value as String;
+        break;
       case DbKey.assetETag:
-      // TODO(xieyz): Handle this case.
+        // TODO: Handle this case.
+        break;
       case DbKey.deviceIdHash:
-      // TODO(xieyz): Handle this case.
+        // TODO: Handle this case.
+        break;
       case DbKey.deviceId:
-      // TODO(xieyz): Handle this case.
+        // TODO: Handle this case.
+        break;
       case DbKey.version:
-      // TODO(xieyz): Handle this case.
+        // TODO: Handle this case.
+        break;
       case DbKey.firstLanuch:
-      // TODO(xieyz): Handle this case.
+        // TODO: Handle this case.
+        break;
     }
     Db.put(key, value);
   }
