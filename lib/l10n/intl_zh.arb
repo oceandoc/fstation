@@ -10,5 +10,8 @@
   "theme_setting_dark_mode_light": "浅色",
   "theme_setting_dark_mode_system": "系统",
   "theme_setting_primary_color_title": "主色调",
-  "theme_setting_system_primary_color_title": "使用系统颜色"
+  "theme_setting_system_primary_color_title": "使用系统颜色",
+  "page_home_title": "Home",
+  "page_setting_title": "设置",
+  "select_lang": "选择语言"
 }

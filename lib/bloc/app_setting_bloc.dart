@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:fstation/impl/db.dart';
 import 'package:fstation/util/color.dart';
 
@@ -14,7 +15,7 @@ class AppSettingBloc extends Bloc<AppSettingEvent, AppSettingState> {
   AppSettingBloc(this.settingImpl)
       : super(AppSettingState(
           language: 'en',
-          themeMode: 'System',
+          themeMode: ThemeMode.system,
           themeColor: ThemeColor.SYSTEM,
         )) {
     // Handle each event using the `on` method

@@ -173,7 +173,8 @@ class CustomBlurryDialog extends StatelessWidget {
 
 class TapDetector extends StatelessWidget {
   const TapDetector({
-    required this.onTap, super.key,
+    required this.onTap,
+    super.key,
     this.initializer,
     this.child,
     this.behavior,
@@ -186,8 +187,7 @@ class TapDetector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final gestures =
-        <Type, GestureRecognizerFactory>{};
+    final gestures = <Type, GestureRecognizerFactory>{};
     gestures[TapGestureRecognizer] =
         GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
       () => TapGestureRecognizer(debugOwner: this),
@@ -252,12 +252,16 @@ class ListTileWithCheckMark extends StatelessWidget {
         ],
       ),
     );
+
+    final cardColor =
+        context.theme.cardTheme.color ?? context.theme.colorScheme.surface;
+
     return Material(
         borderRadius: br,
         color: tileColor ??
             Color.alphaBlend(
                 context.theme.colorScheme.onSurface.withAlpha(tileAlpha),
-                context.theme.cardTheme.color!),
+                cardColor),
         child: InkWell(
           borderRadius: br,
           onTap: onTap,
@@ -274,7 +278,14 @@ class ListTileWithCheckMark extends StatelessWidget {
                   Expanded(child: titleWidgetFinal)
                 else
                   Flexible(child: titleWidgetFinal),
-                NamidaCheckMark(size: 18, active: active)
+                NamidaCheckMark(
+                  size: 18,
+                  active: active,
+                  activeColor: context.theme.listTileTheme.iconColor ??
+                      context.theme.colorScheme.primary,
+                  inactiveColor: context.theme.listTileTheme.iconColor ??
+                      context.theme.colorScheme.onSurface,
+                )
               ],
             ),
           ),
@@ -298,13 +309,16 @@ class NamidaCheckMark extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final defaultColor = context.theme.listTileTheme.iconColor ??
+        context.theme.colorScheme.onSurface;
+
     return SizedBox(
       width: size,
       height: size,
       child: CheckMark(
         strokeWidth: 2,
-        activeColor: activeColor ?? context.theme.listTileTheme.iconColor!,
-        inactiveColor: inactiveColor ?? context.theme.listTileTheme.iconColor!,
+        activeColor: activeColor ?? defaultColor,
+        inactiveColor: inactiveColor ?? defaultColor,
         duration: const Duration(milliseconds: 400),
         active: active,
       ),

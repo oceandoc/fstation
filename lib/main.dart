@@ -17,6 +17,7 @@ import 'impl/setting.dart';
 import 'ui/theme/themes.dart';
 import 'package:fstation/generated/l10n.dart';
 
+// TODO(xieyz): fix Localization initialize exception
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -29,6 +30,9 @@ void main() async {
     Sentry.captureException(error, stackTrace: stack);
     return true;
   };
+
+  final systemLocale = PlatformDispatcher.instance.locale;
+  await Localization.load(systemLocale);
 
   await loadDb();
   await SettingImpl.instance.init();
@@ -58,8 +62,20 @@ class _AppState extends State<App> {
   @override
   void initState() {
     super.initState();
+
+    // Load localization using the system locale
+
+
     Future.microtask(
         () => context.read<AppSettingBloc>().add(LoadSettingsEvent()));
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Ensure localization is loaded
+    final systemLocale = PlatformDispatcher.instance.locale;
+    Localization.load(systemLocale);
   }
 
   @override

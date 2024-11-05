@@ -9,7 +9,7 @@ enum DbKey<T> {
   assetETag<String>(1, type: String),
   deviceIdHash<int>(3, type: int),
   deviceId<String>(4, type: String),
-  themeMode<String>(5, type: String),
+  themeMode<int>(5, type: int),
   themeColor<int>(6, type: int),
   language<String>(7, type: String),
   firstLanuch<bool>(8, type: bool),

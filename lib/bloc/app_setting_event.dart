@@ -10,7 +10,7 @@ class ChangeLanguageEvent extends AppSettingEvent {
 
 class ChangeThemeModeEvent extends AppSettingEvent {
   ChangeThemeModeEvent(this.themeMode);
-  final String themeMode;
+  final ThemeMode themeMode;
 }
 
 class ChangeThemeColorEvent extends AppSettingEvent {

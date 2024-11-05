@@ -33,6 +33,15 @@ dependencies:
   flutter_animate: ^4.5.0
   checkmark: ^0.0.2+1
   intl_utils: ^2.8.7
+  smooth_page_indicator: ^1.2.0+3
+  flutter_easyloading: ^3.0.5
+  font_awesome_flutter: ^10.8.0
+  responsive_framework: ^1.5.1
+  url_launcher: ^6.3.1
+  cached_network_image: ^3.3.1
+  google_nav_bar: ^5.0.7
+  icons_plus: ^5.0.0
+  image: ^4.3.0
 
 
 dev_dependencies:
@@ -84,6 +93,13 @@ flutter:
     - family: BrokenFilled
       fonts:
         - asset: assets/fonts/broken_filled.ttf
+    - family: Gilroy
+      fonts:
+        - asset: assets/fonts/Gilroy/Gilroy-Regular.ttf
+        - asset: assets/fonts/Gilroy/Gilroy-Medium.ttf
+          weight: 700
+        - asset: assets/fonts/Gilroy/Gilroy-Bold.ttf
+          weight: 900
 
 
 flutter_intl:

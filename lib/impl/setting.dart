@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 import '../bloc/app_setting_bloc.dart';
 import '../util/color.dart';
 import 'db.dart';
@@ -6,7 +8,7 @@ class SettingImpl {
   static final SettingImpl _instance = SettingImpl._internal();
 
   SettingImpl._internal({
-    this.themeMode = 'System',
+    this.themeMode = ThemeMode.system,
     this.themeColor = ThemeColor.SYSTEM,
     this.language = 'zh',
     this.firstLanuch = true,
@@ -14,7 +16,7 @@ class SettingImpl {
 
   static SettingImpl get instance => _instance;
 
-  String themeMode;
+  ThemeMode themeMode;
   ThemeColor themeColor;
   String language;
   bool firstLanuch;
@@ -25,7 +27,7 @@ class SettingImpl {
 
   Future<AppSettingState> getSettings() async {
     language = Db.get(DbKey.language, 'zh');
-    themeMode = Db.get(DbKey.themeMode, 'System');
+    themeMode = Db.get(DbKey.themeMode, ThemeMode.system) as ThemeMode;
     themeColor = Db.get(DbKey.themeColor, ThemeColor.SYSTEM) as ThemeColor;
     firstLanuch = Db.get(DbKey.firstLanuch, true);
 
@@ -37,7 +39,7 @@ class SettingImpl {
     return settingState;
   }
 
-  void saveThemeMode(String themeMode) {
+  void saveThemeMode(ThemeMode themeMode) {
     this.themeMode = themeMode;
     setSetting(DbKey.themeMode, themeMode);
   }
@@ -60,7 +62,7 @@ class SettingImpl {
   void setSetting<T>(DbKey<T> key, T value) {
     switch (key) {
       case DbKey.themeMode:
-        themeMode = value as String;
+        themeMode = value as ThemeMode;
         break;
       case DbKey.themeColor:
         themeColor = value as ThemeColor;

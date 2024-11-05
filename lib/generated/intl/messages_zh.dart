@@ -27,6 +27,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "language_en":
             MessageLookupByLibrary.simpleMessage("Simplified Chinese"),
         "language_setting_title": MessageLookupByLibrary.simpleMessage("语言"),
+        "page_home_title": MessageLookupByLibrary.simpleMessage("Home"),
+        "page_setting_title": MessageLookupByLibrary.simpleMessage("设置"),
+        "select_lang": MessageLookupByLibrary.simpleMessage("选择语言"),
         "theme_setting_dark_mode": MessageLookupByLibrary.simpleMessage("深色模式"),
         "theme_setting_dark_mode_dark":
             MessageLookupByLibrary.simpleMessage("深色"),

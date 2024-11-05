@@ -27,6 +27,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "language_en": MessageLookupByLibrary.simpleMessage("English"),
         "language_setting_title":
             MessageLookupByLibrary.simpleMessage("Language"),
+        "page_home_title": MessageLookupByLibrary.simpleMessage("Home"),
+        "page_setting_title": MessageLookupByLibrary.simpleMessage("Setting"),
+        "select_lang": MessageLookupByLibrary.simpleMessage("Select Language"),
         "theme_setting_dark_mode":
             MessageLookupByLibrary.simpleMessage("Dark mode"),
         "theme_setting_dark_mode_dark":

@@ -159,6 +159,36 @@ class Localization {
       args: [],
     );
   }
+
+  /// `Home`
+  String get page_home_title {
+    return Intl.message(
+      'Home',
+      name: 'page_home_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Setting`
+  String get page_setting_title {
+    return Intl.message(
+      'Setting',
+      name: 'page_setting_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select Language`
+  String get select_lang {
+    return Intl.message(
+      'Select Language',
+      name: 'select_lang',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<Localization> {

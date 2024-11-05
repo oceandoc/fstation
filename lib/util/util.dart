@@ -32,4 +32,6 @@ class _NamPackUtils {
 
   /// Android Q+
   bool get isPlatformDarkMode => (platform.platformBrightness == Brightness.dark);
+
+
 }

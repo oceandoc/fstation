@@ -10,5 +10,8 @@
   "theme_setting_dark_mode_light": "Light",
   "theme_setting_dark_mode_system": "System",
   "theme_setting_primary_color_title": "Primary color",
-  "theme_setting_system_primary_color_title": "Use system color"
+  "theme_setting_system_primary_color_title": "Use system color",
+  "page_home_title": "Home",
+  "page_setting_title": "Setting",
+  "select_lang": "Select Language"
 }
