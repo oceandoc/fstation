@@ -3,6 +3,8 @@ import 'dart:ui' as ui;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+import '../ui/themes.dart';
+
 extension IterableX<E> on Iterable<E> {
   E? firstWhereOrNull(bool Function(E element) test) {
     try {
@@ -59,9 +61,12 @@ extension ContextUtils on BuildContext {
   ThemeData get theme => Theme.of(this);
   TextTheme get textTheme => theme.textTheme;
   bool get isDarkMode => theme.brightness == Brightness.dark;
-
+  bool get isLightMode => theme.brightness == Brightness.light;
   bool get isLandscape => orientation == Orientation.landscape;
   bool get isPortrait => orientation == Orientation.portrait;
+  Color getPrimaryColor() => isLightMode ? lightPrimaryColor: darkPrimaryColor;
+  Color getAccentColor() => isLightMode ? lightAccentColor: darkAccentColor;
+  Color getChosenColor() => isLightMode ? lightChosenColor: darkChosenColor;
 }
 
 extension DEWidgetsSeparator on Iterable<Widget> {

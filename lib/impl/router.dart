@@ -11,7 +11,7 @@ final GoRouter router = GoRouter(
   routes: [
     GoRoute(
         path: '/splash',
-        builder: (context, state) => SplashPage(),
+        builder: (context, state) => const SplashPage(),
         routes: [
           GoRoute(path: 'home', builder: (context, state) => const HomePage()),
         ]),
@@ -23,24 +23,14 @@ final GoRouter router = GoRouter(
             GoRoute(
                 name: Localization.current.page_home_title,
                 path: '/home',
-                builder: (context, state) => const HomePage(),
-                routes: const [])
+                builder: (context, state) => const HomePage())
           ]),
           StatefulShellBranch(routes: [
             GoRoute(
                 name: Localization.current.page_setting_title,
                 path: '/Library',
-                builder: (context, state) => const SettingPage(),
-                routes: const []),
+                builder: (context, state) => const SettingPage()),
           ]),
         ]),
-    GoRoute(
-      path: '/home',
-      builder: (context, state) => const HomePage(),
-    ),
-    GoRoute(
-      path: '/settings',
-      builder: (context, state) => const SettingPage(),
-    ),
   ],
 );

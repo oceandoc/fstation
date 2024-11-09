@@ -49,6 +49,7 @@ dev_dependencies:
   build_runner: ^2.4.13
   flutter_lints: ^4.0.0
   very_good_analysis: ^6.0.0
+  flutter_launcher_icons: ^0.14.1
   isar_generator:
     version: 3.1.8
     hosted: https://pub.isar-community.dev/
@@ -60,6 +61,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/
+    - assets/logo.png
   generate: true
   fonts:
     - family: Comfortaa
@@ -109,3 +111,23 @@ flutter_intl:
 analyzer:
   plugins:
     - moor
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/bloomee_new_logo_gradient_bg.png"
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  adaptive_icon_background: "assets/bloomee_new_logo_gradient_bg.png"
+  adaptive_icon_foreground: "assets/new_bloomee_logo_zoomedout.png"
+  image_path: "assets/bloomee_new_logo_transparent_c.png"
+  min_sdk_android: 28 # android min sdk min:16, default 21
+
+  macos:
+    generate: true
+    image_path: "assets/bloomee_new_logo_c.png"
+  windows:
+    generate: true
+    image_path: "assets/bloomee_new_logo_transparent_c.png"

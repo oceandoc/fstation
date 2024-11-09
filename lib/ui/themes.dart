@@ -1,6 +1,3 @@
-import 'dart:io';
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:fstation/util/extensions.dart';
 
@@ -8,9 +5,11 @@ import '../impl/setting.dart';
 
 const lightPrimaryColor = Color(0xFFFFFFFF);
 const lightAccentColor = Color(0xFF3D75E3);
+const lightChosenColor = Color(0xFF3D75E3);
 
-const darkPrimaryColor = Color(0xFF000000);
+const darkPrimaryColor = Color(0xFF0A040C);
 const darkAccentColor = Color(0xFF3D75E3);
+const darkChosenColor = Color(0xFF3D75E3);
 
 
 int getColorAlpha(int a) => (a * 0.8).round();
@@ -21,15 +20,14 @@ Color getPrimaryColorWithAlpha(bool light, int a) {
   return darkPrimaryColor.withAlpha(getColorAlpha(a));
 }
 
-Color getPrimaryColor(bool light) => light ? lightPrimaryColor: darkPrimaryColor;
 
-var secondoryTextStyleMedium =
-TextStyle(fontFamily: "Gilroy", fontWeight: FontWeight.w700);
+TextStyle secondaryTextStyleMedium =
+const TextStyle(fontFamily: 'Gilroy', fontWeight: FontWeight.w700);
 
 class AppThemes {
+  AppThemes._internal();
   static AppThemes get instance => _instance;
   static final AppThemes _instance = AppThemes._internal();
-  AppThemes._internal();
 
   ThemeData getAppTheme(
       [ bool? light, bool lighterDialog = true]) {

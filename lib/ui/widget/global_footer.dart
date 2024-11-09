@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:fstation/util/extensions.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 
-import '../themes.dart';
-
-
 class GlobalFooter extends StatelessWidget {
-  const GlobalFooter({super.key, required this.navigationShell});
+  const GlobalFooter({required this.navigationShell, super.key});
+
   final StatefulNavigationShell navigationShell;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,14 +24,11 @@ class GlobalFooter extends StatelessWidget {
                 Expanded(child: navigationShell),
               ],
             ),
-      backgroundColor: const Color(0xFF0A040C),
-      drawerScrimColor: const Color(0xFF0A040C),
       bottomNavigationBar: SafeArea(
           child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
-          // const MiniPlayerWidget(),
           Container(
             color: Colors.transparent,
             margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
@@ -43,19 +40,20 @@ class GlobalFooter extends StatelessWidget {
       )),
     );
   }
-}
+} // GlobalFooter
 
 class VerticalNavBar extends StatelessWidget {
   const VerticalNavBar({
-    super.key,
     required this.navigationShell,
+    super.key,
   });
+
   final StatefulNavigationShell navigationShell;
 
   @override
   Widget build(BuildContext context) {
     return NavigationRail(
-     //  backgroundColor: Default_Theme.themeColor.withOpacity(0.3),
+      //  backgroundColor: Default_Theme.themeColor.withOpacity(0.3),
       destinations: const [
         NavigationRailDestination(
             icon: Icon(MingCute.home_4_fill), label: Text('Home')),
@@ -69,10 +67,8 @@ class VerticalNavBar extends StatelessWidget {
       selectedIndex: navigationShell.currentIndex,
       minWidth: 65,
 
-      onDestinationSelected: (value) {
-        navigationShell.goBranch(value);
-      },
-      groupAlignment: 0.0,
+      onDestinationSelected: navigationShell.goBranch,
+      groupAlignment: 0,
       // selectedIconTheme: IconThemeData(color: Default_Theme.accentColor),
       // unselectedIconTheme:
       //     const IconThemeData(color: primaryColor),
@@ -86,8 +82,8 @@ class VerticalNavBar extends StatelessWidget {
 
 class HorizontalNavBar extends StatelessWidget {
   const HorizontalNavBar({
-    super.key,
     required this.navigationShell,
+    super.key,
   });
 
   final StatefulNavigationShell navigationShell;
@@ -95,42 +91,24 @@ class HorizontalNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GNav(
-      gap: 7.0,
-      // tabBackgroundColor: accentColor.withOpacity(0.22),
-      // color: primaryColor,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-     // activeColor: accentColor,
-     //  textStyle:
-     //      const TextStyle(color: accentColor, fontSize: 18),
+      gap: 7,
+      color: const Color(0xFF0A040C),
+      activeColor: context.getChosenColor(),
+      textStyle: TextStyle(color: context.getAccentColor(), fontSize: 18),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-     // backgroundColor: themeColor.withOpacity(0.3),
+      backgroundColor: context.getPrimaryColor().withOpacity(0.3),
       tabs: const [
-        // GButton(
-        //   icon: MingCute.home_4_fill,
-        //   iconSize: 27,
-        //   text: "Test",
-        // ),
         GButton(
           icon: MingCute.home_4_fill,
-          text: "Home",
+          text: 'Home',
         ),
         GButton(
           icon: MingCute.book_5_fill,
-          text: "Library",
-        ),
-        GButton(
-          icon: MingCute.search_2_fill,
-          text: "Search",
-        ),
-        GButton(
-          icon: MingCute.folder_download_fill,
-          text: "Offline",
+          text: 'Library',
         ),
       ],
       selectedIndex: navigationShell.currentIndex,
-      onTabChange: (value) {
-        navigationShell.goBranch(value);
-      },
+      onTabChange: navigationShell.goBranch,
     );
   }
 }

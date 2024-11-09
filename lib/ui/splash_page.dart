@@ -97,7 +97,7 @@ class SplashPageState extends State<SplashPage>
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 20),
-          child: Image.asset('assets/log.png', width: 180),
+          child: Image.asset('assets/logo.png', width: 180),
         ),
         const SizedBox(height: 24),
         const _AnimatedHello(),

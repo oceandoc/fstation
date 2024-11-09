@@ -9,8 +9,8 @@ import 'package:fstation/impl/router.dart';
 import 'package:fstation/util/language.dart';
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:responsive_framework/responsive_framework.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 import 'impl/db.dart';
 import 'impl/setting.dart';
