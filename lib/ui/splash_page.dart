@@ -1,35 +1,29 @@
-import 'dart:io';
 import 'dart:math';
 
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:fstation/ui/widget/start_fail_page.dart';
 import 'package:go_router/go_router.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
+import '../bloc/app_setting_bloc.dart';
 import '../generated/l10n.dart';
 import '../impl/setting.dart';
-import '../util/constants.dart';
 import '../util/language.dart';
 
 class SplashPage extends StatefulWidget {
-  SplashPage({super.key});
+  const SplashPage({super.key});
 
   @override
-  _SplashPageState createState() => _SplashPageState();
+  SplashPageState createState() => SplashPageState();
 }
 
-class _SplashPageState extends State<SplashPage>
+class SplashPageState extends State<SplashPage>
     with SingleTickerProviderStateMixin {
   late PageController _pageController;
   int page = 0;
   List<Widget> pages = [];
-  bool _startupLoadingFailed = false;
-  bool invalidStartup = false;
 
   @override
   void initState() {
@@ -54,15 +48,26 @@ class _SplashPageState extends State<SplashPage>
       darkModePage,
     ];
 
-    Widget child = PageView(
-      controller: _pageController,
-      children: pages,
-      onPageChanged: (i) {
-        FocusScope.of(context).requestFocus(FocusNode());
-        setState(() {
-          page = i;
-        });
+    Widget child = NotificationListener<ScrollNotification>(
+      onNotification: (ScrollNotification notification) {
+        if (notification is ScrollEndNotification) {
+          if (_pageController.page == pages.length - 1) {
+            // User swiped past the last page
+            context.go('/home');
+          }
+        }
+        return false;
       },
+      child: PageView(
+        controller: _pageController,
+        children: pages,
+        onPageChanged: (i) {
+          FocusScope.of(context).requestFocus(FocusNode());
+          setState(() {
+            page = i;
+          });
+        },
+      ),
     );
 
     child = Stack(children: [child, _bottom()]);
@@ -89,28 +94,24 @@ class _SplashPageState extends State<SplashPage>
 
   Widget get welcomePage {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 20),
-          child: Image.asset(
-            // 'res/img/chaldea.png',
-            'res/img/launcher_icon/app_icon_logo.png',
-            width: 180,
-          ),
-        ),
-        Text(
-          'Chaldea',
-          style: Theme.of(context).textTheme.headlineMedium,
-          textAlign: TextAlign.center,
+          child: Image.asset('assets/log.png', width: 180),
         ),
         const SizedBox(height: 24),
-        _AnimatedHello(),
+        const _AnimatedHello(),
         const SizedBox(height: 100)
       ],
     );
   }
+
+  Divider Function(dynamic context, dynamic _) separatorBuilder =
+      (context, _) => const Divider(
+            height: 1,
+            indent: 48,
+            endIndent: 48,
+          );
 
   Widget get languagePage {
     return _IntroPage(
@@ -127,14 +128,13 @@ class _SplashPageState extends State<SplashPage>
             minLeadingWidth: 24,
             onTap: () {
               SettingImpl.instance.language = lang.code;
+              context
+                  .read<AppSettingBloc>()
+                  .add(ChangeLanguageEvent(lang.code));
             },
           );
         },
-        separatorBuilder: (context, _) => const Divider(
-          height: 1,
-          indent: 48,
-          endIndent: 48,
-        ),
+        separatorBuilder: separatorBuilder,
         itemCount: Language.supportLanguages.length,
       ),
     );
@@ -146,95 +146,91 @@ class _SplashPageState extends State<SplashPage>
         return Localization.current.theme_setting_dark_mode_dark;
       case ThemeMode.light:
         return Localization.current.theme_setting_dark_mode_light;
-      default:
+      case ThemeMode.system:
         return Localization.current.theme_setting_dark_mode_system;
     }
   }
 
   Widget get darkModePage {
-    return _IntroPage(
-      icon: FontAwesomeIcons.circleHalfStroke,
-      title: Localization.current.theme_setting_dark_mode,
-      content: ListView.separated(
-        itemBuilder: (context, index) {
-          final mode = ThemeMode.values[index];
-          return ListTile(
-            leading: SettingImpl.instance.themeMode == mode
-                ? const Icon(Icons.done_rounded)
-                : const SizedBox(),
-            title: Text(_themeModeName(mode)),
-            minLeadingWidth: 24,
-            onTap: () {
-              SettingImpl.instance.themeMode = mode;
+    return BlocBuilder<AppSettingBloc, AppSettingState>(
+      builder: (context, state) {
+        return _IntroPage(
+          icon: FontAwesomeIcons.circleHalfStroke,
+          title: Localization.current.theme_setting_dark_mode,
+          content: ListView.separated(
+            itemBuilder: (context, index) {
+              final mode = ThemeMode.values[index];
+              return ListTile(
+                leading: state.themeMode == mode
+                    ? const Icon(Icons.done_rounded)
+                    : const SizedBox(),
+                title: Text(_themeModeName(mode)),
+                minLeadingWidth: 24,
+                onTap: () {
+                  context
+                      .read<AppSettingBloc>()
+                      .add(ChangeThemeModeEvent(mode));
+                  SettingImpl.instance.saveThemeMode(mode);
+                },
+              );
             },
-          );
-        },
-        separatorBuilder: (context, _) => const Divider(
-          height: 1,
-          indent: 48,
-          endIndent: 48,
-        ),
-        itemCount: ThemeMode.values.length,
-      ),
+            separatorBuilder: separatorBuilder,
+            itemCount: ThemeMode.values.length,
+          ),
+        );
+      },
     );
   }
 
-
   Widget _bottom() {
-    List<Widget> children = [Expanded(
-      flex: 2,
-      child: Center(
-        child: SmoothPageIndicator(
-          controller: _pageController,
-          count: pages.length,
-          effect: const WormEffect(
-              dotHeight: 10, dotWidth: 10, activeDotColor: Colors.blue),
-          onDotClicked: (i) {
-            setState(() {
-              page = i;
-              _pageController.animateToPage(
-                i,
-                duration: kTabScrollDuration,
-                curve: Curves.easeInOut,
-              );
-            });
-          },
+    final children = <Widget>[
+      Expanded(
+        flex: 2,
+        child: Center(
+          child: SmoothPageIndicator(
+            controller: _pageController,
+            count: pages.length,
+            effect: const WormEffect(
+                dotHeight: 10, dotWidth: 10, activeDotColor: Colors.blue),
+            onDotClicked: (i) {
+              setState(() {
+                page = i;
+                _pageController.animateToPage(
+                  i,
+                  duration: kTabScrollDuration,
+                  curve: Curves.easeInOut,
+                );
+              });
+            },
+          ),
         ),
-      ),
-    )];
+      )
+    ];
     if (page >= pages.length - 1) {
       // TODO(xieyz): jump logic
     }
     return PositionedDirectional(
-      bottom: 10.0,
-      start: 10.0,
-      end: 10.0,
+      bottom: 10,
+      start: 10,
+      end: 10,
       child: Row(children: children),
     );
   }
 }
 
 class _IntroPage extends StatelessWidget {
+  const _IntroPage({this.icon, this.title, this.content});
+
   final IconData? icon;
   final String? title;
   final Widget? content;
 
-  const _IntroPage({this.icon, this.title, this.content});
-
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         const SizedBox(height: 36),
-        if (icon != null)
-          FaIcon(
-            icon!,
-            size: 80,
-            color: Theme.of(context).brightness == Brightness.dark
-                ? null
-                : Theme.of(context).colorScheme.tertiary,
-          ),
+        if (icon != null) FaIcon(icon, size: 80),
         if (title != null)
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 16),
@@ -248,7 +244,7 @@ class _IntroPage extends StatelessWidget {
 }
 
 class _AnimatedHello extends StatefulWidget {
-  _AnimatedHello();
+  const _AnimatedHello();
 
   @override
   _AnimatedHelloState createState() => _AnimatedHelloState();
@@ -256,10 +252,10 @@ class _AnimatedHello extends StatefulWidget {
 
 class _AnimatedHelloState extends State<_AnimatedHello> {
   List<String> get _hellos => const [
-        // 'φ(≧ω≦*)♪'
-        'ヽ(^o^)丿',
-        '你好',
         'Hello',
+        '你好',
+        'φ(≧ω≦*)♪',
+        'ヽ(^o^)丿',
         'こんにちは',
         '哈嘍',
         '안녕하세요',

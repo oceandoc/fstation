@@ -13,9 +13,4 @@ class ChangeThemeModeEvent extends AppSettingEvent {
   final ThemeMode themeMode;
 }
 
-class ChangeThemeColorEvent extends AppSettingEvent {
-  ChangeThemeColorEvent(this.themeColor);
-  final ThemeColor themeColor;
-}
-
 class LoadSettingsEvent extends AppSettingEvent {}  // New event

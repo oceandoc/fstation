@@ -4,21 +4,17 @@ class AppSettingState {
   AppSettingState({
     required this.language,
     required this.themeMode,
-    required this.themeColor,
   });
   final String language;
   final ThemeMode themeMode;
-  final ThemeColor themeColor;
 
   AppSettingState copyWith({
     String? language,
     ThemeMode? themeMode,
-    ThemeColor? themeColor,
   }) {
     return AppSettingState(
       language: language ?? this.language,
       themeMode: themeMode ?? this.themeMode,
-      themeColor: themeColor ?? this.themeColor,
     );
   }
 }

@@ -1,7 +1,8 @@
 
 import 'package:flutter/material.dart';
 
-import '../../util/color.dart';
+import '../themes.dart';
+
 
 class GradientDialog extends StatefulWidget {
   final String message;
@@ -84,9 +85,9 @@ class _GradientDialogState extends State<GradientDialog> {
                           Navigator.of(context).pop();
                         },
                         style: OutlinedButton.styleFrom(
-                          backgroundColor: accentColor1,
+                          backgroundColor: lightAccentColor,
                           side: const BorderSide(
-                              color: accentColor1),
+                              color: lightAccentColor),
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20.0)),
                         ),

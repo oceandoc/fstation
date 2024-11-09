@@ -4,7 +4,7 @@ import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 
-import '../../util/color.dart';
+import '../themes.dart';
 
 
 class GlobalFooter extends StatelessWidget {
@@ -73,10 +73,10 @@ class VerticalNavBar extends StatelessWidget {
         navigationShell.goBranch(value);
       },
       groupAlignment: 0.0,
-      // selectedIconTheme: IconThemeData(color: Default_Theme.accentColor2),
-      unselectedIconTheme:
-          const IconThemeData(color: primaryColor2),
-      indicatorColor: accentColor2,
+      // selectedIconTheme: IconThemeData(color: Default_Theme.accentColor),
+      // unselectedIconTheme:
+      //     const IconThemeData(color: primaryColor),
+      // indicatorColor: accentColor,
       indicatorShape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(15)),
       ),
@@ -96,14 +96,14 @@ class HorizontalNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return GNav(
       gap: 7.0,
-      tabBackgroundColor: accentColor2.withOpacity(0.22),
-      color: primaryColor2,
+      // tabBackgroundColor: accentColor.withOpacity(0.22),
+      // color: primaryColor,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      activeColor: accentColor2,
-      textStyle:
-          const TextStyle(color: accentColor2, fontSize: 18),
+     // activeColor: accentColor,
+     //  textStyle:
+     //      const TextStyle(color: accentColor, fontSize: 18),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      backgroundColor: themeColor.withOpacity(0.3),
+     // backgroundColor: themeColor.withOpacity(0.3),
       tabs: const [
         // GButton(
         //   icon: MingCute.home_4_fill,

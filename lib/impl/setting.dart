@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'dart:ui'; // Import to access system locale
 
 import '../bloc/app_setting_bloc.dart';
-import '../util/color.dart';
 import 'db.dart';
 
 class SettingImpl {
@@ -9,15 +9,15 @@ class SettingImpl {
 
   SettingImpl._internal({
     this.themeMode = ThemeMode.system,
-    this.themeColor = ThemeColor.SYSTEM,
-    this.language = 'zh',
+    String? language, // Make language nullable
     this.firstLanuch = true,
-  });
+  }) : language = language ??
+            WidgetsBinding.instance.platformDispatcher.locale
+                .languageCode; // Initialize in constructor body
 
   static SettingImpl get instance => _instance;
 
   ThemeMode themeMode;
-  ThemeColor themeColor;
   String language;
   bool firstLanuch;
 
@@ -26,14 +26,15 @@ class SettingImpl {
   }
 
   Future<AppSettingState> getSettings() async {
-    language = Db.get(DbKey.language, 'zh');
+    language = Db.get(
+        DbKey.language,
+        PlatformDispatcher
+            .instance.locale.languageCode); // Default to system locale
     themeMode = Db.get(DbKey.themeMode, ThemeMode.system) as ThemeMode;
-    themeColor = Db.get(DbKey.themeColor, ThemeColor.SYSTEM) as ThemeColor;
     firstLanuch = Db.get(DbKey.firstLanuch, true);
 
     final settingState = AppSettingState(
       themeMode: themeMode,
-      themeColor: themeColor,
       language: language,
     );
     return settingState;
@@ -42,11 +43,6 @@ class SettingImpl {
   void saveThemeMode(ThemeMode themeMode) {
     this.themeMode = themeMode;
     setSetting(DbKey.themeMode, themeMode);
-  }
-
-  void saveThemeColor(ThemeColor themeColor) {
-    this.themeColor = themeColor;
-    setSetting(DbKey.themeColor, themeColor);
   }
 
   void saveLanguage(String language) {
@@ -63,28 +59,20 @@ class SettingImpl {
     switch (key) {
       case DbKey.themeMode:
         themeMode = value as ThemeMode;
-        break;
       case DbKey.themeColor:
-        themeColor = value as ThemeColor;
-        break;
+      // TODO: support color
       case DbKey.language:
         language = value as String;
-        break;
       case DbKey.assetETag:
-        // TODO: Handle this case.
-        break;
+      // TODO: Handle this case.
       case DbKey.deviceIdHash:
-        // TODO: Handle this case.
-        break;
+      // TODO: Handle this case.
       case DbKey.deviceId:
-        // TODO: Handle this case.
-        break;
+      // TODO: Handle this case.
       case DbKey.version:
-        // TODO: Handle this case.
-        break;
+      // TODO: Handle this case.
       case DbKey.firstLanuch:
-        // TODO: Handle this case.
-        break;
+      // TODO: Handle this case.
     }
     Db.put(key, value);
   }

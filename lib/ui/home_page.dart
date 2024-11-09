@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fstation/ui/themes.dart';
 
 import '../util/app_update.dart';
-import '../util/color.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -48,7 +48,7 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
           ),
-          backgroundColor: accentColor1,
+          backgroundColor: lightAccentColor,
         ),
       ),
     );

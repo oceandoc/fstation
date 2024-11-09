@@ -3,7 +3,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-import 'color.dart';
+import '../ui/themes.dart';
+
 
 Image loadImage(String coverImageUrl,
     {String placeholderPath = "assets/icons/bloomee_new_logo_c.png"}) {
@@ -23,14 +24,14 @@ Image loadImage(String coverImageUrl,
                   height: constraints.maxWidth,
                   width: constraints.maxWidth,
                   child: const CircularProgressIndicator(
-                      color: accentColor1),
+                      color: lightAccentColor),
                 );
               } else {
                 return SizedBox(
                   height: constraints.maxHeight,
                   width: constraints.maxHeight,
                   child: const CircularProgressIndicator(
-                      color: accentColor1),
+                      color: lightAccentColor),
                 );
               }
             },

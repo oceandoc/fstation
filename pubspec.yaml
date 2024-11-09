@@ -20,7 +20,6 @@ dependencies:
   sentry_flutter: ^8.9.0
   dio: ^5.7.0
   sizer: ^3.0.4
-  provider: ^6.1.2
   path_provider: ^2.1.5
   isar:
     version: 3.1.8

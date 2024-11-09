@@ -63,7 +63,7 @@ Future<Map<String, dynamic>> getLatestVersion() async {
 Future<void> updateDialog(BuildContext context) async {
   if (Platform.isAndroid) {
     Map<String, dynamic> _updateData = await getLatestVersion();
-    if (_updateData["results"]) {
+    if (_updateData["results"] != null) {
       await showDialog(
         context: context,
         builder: (BuildContext context) {
