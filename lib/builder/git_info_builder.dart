@@ -6,18 +6,24 @@ import 'package:build/build.dart';
 class GitInfoBuilder implements Builder {
   @override
   final buildExtensions = const {
-    r'$package$': ['lib/generated/git_info.dart']
+    r'$lib$': ['generated/git_info.dart']
   };
 
   @override
   Future<void> build(BuildStep buildStep) async {
-    final result = await Process.run('git', ['log', '-1', '--pretty=%B']);
-    final commitMessage = result.stdout.toString().trim();
+    // Get the latest commit hash
+    final hashResult = await Process.run('git', ['rev-parse', 'HEAD']);
+    final commitHash = hashResult.stdout.toString().trim();
+
+    // Get the latest commit timestamp
+    final timeResult = await Process.run('git', ['log', '-1', '--format=%ct']);
+    final commitTimestamp = timeResult.stdout.toString().trim();
 
     final outputId = AssetId(buildStep.inputId.package, 'lib/generated/git_info.dart');
     final content = '''
     // GENERATED CODE - DO NOT MODIFY BY HAND
-    final String gitCommitMessage = ${json.encode(commitMessage)};
+    const String kCommitHash = ${json.encode(commitHash)};
+    const int kCommitTimestamp = ${json.encode(commitTimestamp)};
     ''';
 
     await buildStep.writeAsString(outputId, content);

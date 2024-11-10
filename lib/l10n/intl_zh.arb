@@ -13,5 +13,11 @@
   "theme_setting_system_primary_color_title": "使用系统颜色",
   "page_home_title": "Home",
   "page_setting_title": "设置",
-  "select_lang": "选择语言"
+  "select_lang": "选择语言",
+  "error_no_internet": "无网络连接",
+  "confirm": "确定",
+  "cancel": "取消",
+  "success": "成功",
+  "error": "错误"
+
 }

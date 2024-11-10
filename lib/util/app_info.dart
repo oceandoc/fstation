@@ -4,15 +4,19 @@ import 'package:flutter/foundation.dart';
 
 import 'package:android_id/android_id.dart';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:fstation/util/extensions.dart';
+import 'package:fstation/util/platform/platform.dart';
+import 'package:fstation/util/util.dart';
+import 'package:fstation/util/version.dart';
 import 'package:intl/intl.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path/path.dart' as pathlib;
 import 'package:uuid/uuid.dart';
 
-import 'package:chaldea/packages/packages.dart';
-import 'package:chaldea/utils/utils.dart';
+
 import '../generated/git_info.dart';
-import '../models/userdata/version.dart';
+import 'constants.dart';
+import 'file_plus/file_plus.dart';
 import 'method_channel/method_channel_chaldea.dart';
 
 class AppInfo {
@@ -61,7 +65,7 @@ class AppInfo {
         deviceParams['operatingSystemVersion'] = PlatformU.operatingSystemVersion;
       }
     } catch (e, s) {
-      logger.e('failed to load device info', e, s);
+      // logger.e('failed to load device info', e, s);
       deviceParams['failed'] = e.toString();
     }
   }
@@ -93,8 +97,6 @@ class AppInfo {
     appParams["packageName"] = _packageInfo?.packageName;
     appParams["commitHash"] = kCommitHash;
     appParams["commitTimestamp"] = commitDate;
-    logger.t('Resolved app version: ${_packageInfo?.packageName}'
-        ' ${_packageInfo?.version}+${_packageInfo?.buildNumber} $kCommitHash - $commitDate');
   }
 
   static Future<void> _loadUniqueId(String appPath) async {
@@ -167,7 +169,7 @@ class AppInfo {
     }
     _uuid = const Uuid().v5(Namespace.url.value, originId!).toUpperCase();
     _debugOn = FilePlus(joinPaths(appPath, '.debug')).existsSync();
-    logger.t('Unique ID: $_uuid');
+    // logger.t('Unique ID: $_uuid');
   }
 
   static void initiateForTest() {
@@ -216,13 +218,12 @@ class AppInfo {
 
   static AppVersion get version => AppVersion.tryParse(fullVersion)!;
 
-  static const String commitHash = kCommitHash;
+  static String commitHash = kCommitHash;
 
-  static const int commitTimestamp = kCommitTimestamp;
+  static int commitTimestamp = kCommitTimestamp;
 
   static String get commitDate => DateFormat.yMd().format(DateTime.fromMillisecondsSinceEpoch(commitTimestamp * 1000));
 
-  static String get commitUrl => "$kProjectHomepage/commit/$commitHash";
 
   /// e.g. "1.2.3"
   static String get versionString => _packageInfo?.version ?? '';

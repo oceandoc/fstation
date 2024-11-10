@@ -4,14 +4,13 @@ import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart' show kIsWeb, protected;
 
-import 'package:hive/hive.dart';
 import 'package:path/path.dart' as p;
 
 import 'file_plus_io.dart';
 import 'file_plus_web.dart';
 
 abstract class FilePlus {
-  factory FilePlus(String fp, {LazyBox<Uint8List>? box}) {
+  factory FilePlus(String fp, {Uint8List? box}) {
     if (kIsWeb) {
       return FilePlusWeb(fp, box: box);
     } else {

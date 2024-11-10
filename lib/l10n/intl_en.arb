@@ -13,5 +13,10 @@
   "theme_setting_system_primary_color_title": "Use system color",
   "page_home_title": "Home",
   "page_setting_title": "Setting",
-  "select_lang": "Select Language"
+  "select_lang": "Select Language",
+  "error_no_internet": "No internet",
+  "confirm": "Confirm",
+  "cancel": "Cancel",
+  "success": "Success",
+  "error": "Error"
 }

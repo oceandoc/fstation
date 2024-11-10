@@ -1,18 +1,19 @@
+import 'dart:ui';
+
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:fstation/util/extensions.dart';
+import 'package:fstation/util/platform/platform.dart';
 import 'package:tray_manager/tray_manager.dart';
 import 'package:window_manager/window_manager.dart';
 
-import 'package:chaldea/generated/l10n.dart';
-import 'package:chaldea/models/db.dart';
-import 'package:chaldea/packages/app_info.dart';
-import 'package:chaldea/packages/logger.dart';
-import 'package:chaldea/packages/platform/platform.dart';
-import 'package:chaldea/utils/constants.dart';
-import 'package:chaldea/utils/extension.dart';
-import 'package:chaldea/widgets/widgets.dart';
-import 'backup_backend/chaldea_backend.dart';
+import '../impl/logger.dart';
+import '../ui/dialog.dart';
+import 'app_info.dart';
+import 'constants.dart';
+
 
 class AppWindowUtil {
   const AppWindowUtil._();
@@ -92,33 +93,35 @@ class AppWindowUtil {
           disabled: true,
         ),
         MenuItem.separator(),
-        MenuItem(
-          label: S.current.show,
-          onClick: (menuItem) => showWindow(),
-        ),
-        MenuItem.separator(),
-        MenuItem(
-          label: S.current.hide,
-          onClick: (menuItem) => minimizeWindow(),
-        ),
-        MenuItem.separator(),
-        MenuItem(
-          label: S.current.quit,
-          onClick: (menuItem) async {
-            await db.saveAll();
-            if (await _shouldCloseCheckUpload()) {
-              await destroyWindow();
-            }
-          },
-        ),
+        // MenuItem(
+        //   label: S.current.show,
+        //   onClick: (menuItem) => showWindow(),
+        // ),
+        // MenuItem.separator(),
+        // MenuItem(
+        //   label: S.current.hide,
+        //   onClick: (menuItem) => minimizeWindow(),
+        // ),
+        // MenuItem.separator(),
+        // MenuItem(
+        //   label: S.current.quit,
+        //   onClick: (menuItem) async {
+        //     await db.saveAll();
+        //     if (await _shouldCloseCheckUpload()) {
+        //       await destroyWindow();
+        //     }
+        //   },
+        // ),
       ]);
 
       await trayManager.setContextMenu(_menuMain);
-      print('set tray menu');
+      if (kDebugMode) {
+        print('set tray menu');
+      }
       _trayInstalled = true;
     } catch (e, s) {
-      logger.e('init system tray failed', e, s);
-      EasyLoading.showError('${S.current.failed}: ${S.current.show_system_tray}');
+      Logger.error('init system tray failed', e, s);
+      // EasyLoading.showError('${S.current.failed}: ${S.current.show_system_tray}');
     }
   }
 
@@ -147,24 +150,24 @@ class AppWindowUtil {
   }
 
   static Future<void> onWindowClose() async {
-    await db.saveAll();
-    if (db.settings.showSystemTray) {
-      await minimizeWindow();
-      return;
-    }
-    if (await _shouldCloseCheckUpload()) {
-      await destroyWindow();
-    }
+    // await db.saveAll();
+    // if (db.settings.showSystemTray) {
+    //   await minimizeWindow();
+    //   return;
+    // }
+    // if (await _shouldCloseCheckUpload()) {
+    //   await destroyWindow();
+    // }
   }
 
   // close window if return true
   static Future<bool> _shouldCloseCheckUpload() async {
-    logger.i('closing desktop app...');
-    final alertUploadUserData = db.settings.alertUploadUserData && kDebugMode;
-    if (!alertUploadUserData) {
-      await Future.delayed(const Duration(milliseconds: 200));
-      return true;
-    }
+    Logger.info('closing desktop app...');
+    // final alertUploadUserData = db.settings.alertUploadUserData && kDebugMode;
+    // if (!alertUploadUserData) {
+    //   await Future.delayed(const Duration(milliseconds: 200));
+    //   return true;
+    // }
 
     final visible = await windowManager.isVisible();
     if (!visible) await windowManager.show();
@@ -172,38 +175,38 @@ class AppWindowUtil {
     final ctx = kAppKey.currentContext;
     if (ctx == null || !ctx.mounted) return true;
 
-    final close = await showDialog(
-      context: ctx,
-      builder: (context) => AlertDialog(
-        content: Text(S.current.upload_and_close_app_alert),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context, false);
-            },
-            child: Text(S.current.cancel),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context, true);
-            },
-            child: Text(S.current.general_close),
-          ),
-          TextButton(
-            onPressed: () async {
-              bool success;
-              if (kDebugMode) {
-                success = true;
-              } else {
-                success = await ChaldeaServerBackup().backup();
-              }
-              if (success && context.mounted) Navigator.pop(context, true);
-            },
-            child: Text(S.current.upload_and_close_app),
-          ),
-        ],
-      ),
-    );
-    return close == true;
+    // final close = await showDialog(
+    //   context: ctx,
+    //   builder: (context) => AlertDialog(
+    //     content: Text(S.current.upload_and_close_app_alert),
+    //     actions: [
+    //       TextButton(
+    //         onPressed: () {
+    //           Navigator.pop(context, false);
+    //         },
+    //         child: Text(S.current.cancel),
+    //       ),
+    //       TextButton(
+    //         onPressed: () {
+    //           Navigator.pop(context, true);
+    //         },
+    //         child: Text(S.current.general_close),
+    //       ),
+    //       TextButton(
+    //         onPressed: () async {
+    //           bool success;
+    //           if (kDebugMode) {
+    //             success = true;
+    //           } else {
+    //             success = await ChaldeaServerBackup().backup();
+    //           }
+    //           if (success && context.mounted) Navigator.pop(context, true);
+    //         },
+    //         child: Text(S.current.upload_and_close_app),
+    //       ),
+    //     ],
+    //   ),
+    // );
+    return  true;
   }
 }

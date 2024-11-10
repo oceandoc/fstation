@@ -1,10 +1,14 @@
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 final isTest = Platform.environment.containsKey('FLUTTER_TEST');
 
-const String kAppName = 'Chaldea';
+final kAppKey = GlobalKey<NavigatorState>();
+const String kAppName = 'FastStation';
+const String kPackageName = 'com.xiedeacc.fstation';
+const String kPackageNameFDroid = 'com.xiedeacc.fstation.fdroid';
 const bool isWeb = kIsWeb;
 final bool isLinux = !kIsWeb && Platform.isLinux;
 final bool isMacOS = !kIsWeb && Platform.isMacOS;

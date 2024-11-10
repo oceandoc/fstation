@@ -1,4 +1,6 @@
-import 'package:chaldea/models/gamedata/_helper.dart';
+
+
+import 'package:json_annotation/json_annotation.dart';
 
 class AppVersion implements Comparable<AppVersion> {
   /// valid format:

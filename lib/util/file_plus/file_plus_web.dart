@@ -2,33 +2,29 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
-
-import 'package:hive/hive.dart';
-
-import 'package:chaldea/utils/hive_extention.dart';
 import 'file_plus.dart';
 
 const fsName = 'webfs';
 
 /// all async methods are not async actually
 class FilePlusWeb implements FilePlus {
-  static late LazyBox<Uint8List> _defaultBox;
+  static late Uint8List _defaultBox;
 
   final String _path;
-  final LazyBox<Uint8List>? _box;
+  final Uint8List? _box;
 
-  LazyBox<Uint8List> get effectiveBox => _box ?? _defaultBox;
+  Uint8List get effectiveBox => _box ?? _defaultBox;
 
-  FilePlusWeb(String fp, {LazyBox<Uint8List>? box})
+  FilePlusWeb(String fp, {Uint8List? box})
       : _path = normalizePath(fp),
         _box = box;
 
   static Future<void> initWebFileSystem() async {
     assert(kIsWeb, 'DO NOT init for non-web');
-    FilePlusWeb._defaultBox = await Hive.openLazyBoxRetry(fsName);
+   
   }
 
-  static Iterable<String> list() => _defaultBox.keys.whereType<String>();
+  
 
   static String normalizePath(String fp) {
     return fp.split(RegExp(r'[/\\]+')).map((e) => e.trim()).where((e) => e.isNotEmpty).join('/');
@@ -40,18 +36,8 @@ class FilePlusWeb implements FilePlus {
   @override
   Future<bool> exists() => Future.value(existsSync());
 
-  @override
-  bool existsSync() => effectiveBox.containsKey(_path);
 
-  /// raise error if not found
-  @override
-  Future<Uint8List> readAsBytes() async {
-    final bytes = await effectiveBox.get(_path);
-    if (bytes == null) {
-      throw OSError('FileNotFound: $_path');
-    }
-    return Uint8List.fromList(bytes);
-  }
+
 
   /// failed
   @override
@@ -74,18 +60,7 @@ class FilePlusWeb implements FilePlus {
   @override
   String readAsStringSync({Encoding encoding = utf8}) => encoding.decode(readAsBytesSync());
 
-  @override
-  Future<FilePlus> writeAsBytes(List<int> bytes, {FileMode mode = FileMode.write, bool flush = false}) async {
-    if (mode == FileMode.append) {
-      final previous = await effectiveBox.get(_path);
-      if (previous != null) {
-        await effectiveBox.put(_path, previous..addAll(bytes));
-        return this;
-      }
-    }
-    await effectiveBox.put(_path, Uint8List.fromList(bytes));
-    return this;
-  }
+
 
   /// not sync
   @override
@@ -112,9 +87,32 @@ class FilePlusWeb implements FilePlus {
   @override
   void createSync({bool recursive = false}) {}
 
-  @override
-  Future<void> delete() => effectiveBox.delete(_path);
+ 
 
   @override
   Future<void> deleteSafe() => Future.value();
+
+  @override
+  Future<void> delete() {
+    // TODO: implement delete
+    throw UnimplementedError();
+  }
+
+  @override
+  bool existsSync() {
+    // TODO: implement existsSync
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Uint8List> readAsBytes() {
+    // TODO: implement readAsBytes
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<FilePlus> writeAsBytes(List<int> bytes, {FileMode mode = FileMode.write, bool flush = false}) {
+    // TODO: implement writeAsBytes
+    throw UnimplementedError();
+  }
 }

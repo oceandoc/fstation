@@ -2,14 +2,13 @@ import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 
-import '../models/db.dart';
 
 class _NetworkStat {
   List<ConnectivityResult>? _connectivity;
   List<ConnectivityResult>? get connectivity => _connectivity;
 
   bool get available =>
-      db.settings.forceOnline || (_connectivity != null && _connectivity!.any((e) => e != ConnectivityResult.none));
+      _connectivity != null && _connectivity!.any((e) => e != ConnectivityResult.none);
 
   bool get unavailable => !available;
 
@@ -17,7 +16,7 @@ class _NetworkStat {
 
   Future<void> init() async {
     await check();
-    _subscription?.cancel();
+    await _subscription?.cancel();
     _subscription = Connectivity().onConnectivityChanged.asBroadcastStream().listen((result) {
       _connectivity = result.toList();
     });

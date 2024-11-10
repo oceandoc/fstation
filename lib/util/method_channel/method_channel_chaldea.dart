@@ -1,6 +1,6 @@
 import 'package:flutter/services.dart';
 
-import '../../models/db.dart';
+// import '../../models/db.dart';
 import '../platform/platform.dart';
 
 // default channel
@@ -13,7 +13,7 @@ class MethodChannelChaldea {
       if (call.method == 'onWindowPos') {
         if (call.arguments != null && call.arguments['pos'] != null) {
           // print('onWindowRect: args=${call.arguments}');
-          db.settings.windowPosition = List.from(call.arguments['pos']);
+          // db.settings.windowPosition = List.from(call.arguments['pos']);
           return;
         } else {
           print('onWindowRect invalid args=${call.arguments}');
@@ -36,7 +36,7 @@ class MethodChannelChaldea {
   @Deprecated('use [windowManager]')
   static Future<void> setAlwaysOnTop([bool? onTop]) async {
     if (PlatformU.isWindows || PlatformU.isMacOS) {
-      onTop ??= db.settings.alwaysOnTop;
+     //  onTop ??= db.settings.alwaysOnTop;
       return kMethodChannel.invokeMethod<bool?>(
         'alwaysOnTop',
         <String, dynamic>{
@@ -48,7 +48,7 @@ class MethodChannelChaldea {
 
   static Future<void> setWindowPos([dynamic rect]) async {
     if (PlatformU.isWindows) {
-      rect ??= db.settings.windowPosition;
+      // rect ??= db.settings.windowPosition;
       print('rect ${rect.runtimeType}: $rect');
       if (rect != null && rect is List && rect.length == 4 && rect.any((e) => e is int && e > 0)) {
         print('ready to set window rect: $rect');

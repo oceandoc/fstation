@@ -1,3 +1,4 @@
+import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:fstation/util/extensions.dart';
 
@@ -19,6 +20,37 @@ Color getPrimaryColorWithAlpha(bool light, int a) {
   }
   return darkPrimaryColor.withAlpha(getColorAlpha(a));
 }
+
+class ImmichTheme {
+  ColorScheme light;
+  ColorScheme dark;
+
+  ImmichTheme({required this.light, required this.dark});
+}
+
+ImmichTheme? _immichDynamicTheme;
+
+
+Future<void> fetchSystemPalette() async {
+  try {
+    final corePalette = await DynamicColorPlugin.getCorePalette();
+    if (corePalette != null) {
+      final primaryColor = corePalette.toColorScheme().primary;
+      _immichDynamicTheme = ImmichTheme(
+        light: ColorScheme.fromSeed(
+          seedColor: primaryColor,
+        ),
+        dark: ColorScheme.fromSeed(
+          seedColor: primaryColor,
+          brightness: Brightness.dark,
+        ),
+      );
+    }
+  } catch (e) {
+    debugPrint('dynamic_color: Failed to obtain core palette.');
+  }
+}
+
 
 
 TextStyle secondaryTextStyleMedium =

@@ -37,7 +37,7 @@ class CatcherUtil {
       Catcher2.getInstance();
       Catcher2.reportCheckedError(error, stacktrace);
     } catch (e) {
-      FlutterError.reportError(FlutterErrorDetails(exception: error, stack: stacktrace));
+      FlutterError.reportError(FlutterErrorDetails(exception: error as Object, stack: stacktrace));
     }
   }
 }

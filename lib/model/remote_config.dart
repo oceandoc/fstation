@@ -1,10 +1,8 @@
-import 'package:chaldea/utils/utils.dart';
-import '../db.dart';
-import '_helper.dart';
-import 'local_settings.dart';
+import 'package:fstation/util/extensions.dart';
+import 'package:json_annotation/json_annotation.dart';
 
-part '../../generated/models/userdata/remote_config.g.dart';
 
+part 'remote_config.g.dart';
 @JsonSerializable()
 class RemoteConfig {
   String? forceUpgradeVersion;
@@ -125,10 +123,49 @@ class AdConfig {
   Map<String, dynamic> toJson() => _$AdConfigToJson(this);
 }
 
+@JsonSerializable()
+class ProxySettings {
+  bool proxy;
+  bool api;
+  bool worker;
+  bool data;
+  bool atlasApi;
+  bool atlasAsset;
+
+  bool enableHttpProxy = false;
+  String? proxyHost;
+  int? proxyPort;
+
+  ProxySettings({
+    this.proxy = false,
+    bool? api,
+    bool? worker,
+    bool? data,
+    bool? atlasApi,
+    bool? atlasAsset,
+    this.enableHttpProxy = false,
+    this.proxyHost,
+    this.proxyPort,
+  })  : api = api ?? proxy,
+        worker = worker ?? proxy,
+        data = data ?? proxy,
+        atlasApi = atlasApi ?? proxy,
+        atlasAsset = atlasAsset ?? false;
+
+  void setAll(bool v) {
+    proxy = api = worker = data = atlasApi = v;
+  }
+
+  factory ProxySettings.fromJson(Map<String, dynamic> data) => _$ProxySettingsFromJson(data);
+
+  Map<String, dynamic> toJson() => _$ProxySettingsToJson(this);
+}
+
+
 class HostsX {
   const HostsX._();
-  static ServerUrlConfig get _config => db.settings.remoteConfig.urls;
-  static ProxySettings get proxy => db.settings.proxy;
+  static ServerUrlConfig _config = ServerUrlConfig();
+  static ProxySettings proxy = ProxySettings();
 
   static UrlProxy get app => _config.app;
   static String get appHost => _config.app.of(proxy.data);
@@ -179,7 +216,7 @@ class Hosts0 {
   static const kWorkerHostCN = 'https://worker-cn.chaldea.center';
 
   // FireFox may send OPTIONS request which cf pages denied
-  @protected
+
   static const kDataHostGlobal = 'https://data.chaldea.center';
   static const kDataHostCN = 'https://data-cn.chaldea.center';
 

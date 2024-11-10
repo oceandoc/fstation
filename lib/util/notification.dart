@@ -10,7 +10,8 @@ import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:timezone/data/latest_10y.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
-import '../packages/logger.dart';
+import '../impl/logger.dart';
+
 
 abstract class LocalNotificationUtil {
   static int _id = 0;
@@ -41,7 +42,7 @@ abstract class LocalNotificationUtil {
         onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
       );
     } catch (e, s) {
-      logger.e('init local notification failed', e, s);
+      Logger.error('init local notification failed', e, s);
     }
   }
 

@@ -23,6 +23,10 @@ class MessageLookup extends MessageLookupByLibrary {
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "about_app": MessageLookupByLibrary.simpleMessage("关于"),
+        "cancel": MessageLookupByLibrary.simpleMessage("取消"),
+        "confirm": MessageLookupByLibrary.simpleMessage("确定"),
+        "error": MessageLookupByLibrary.simpleMessage("错误"),
+        "error_no_internet": MessageLookupByLibrary.simpleMessage("无网络连接"),
         "language": MessageLookupByLibrary.simpleMessage("简体中文"),
         "language_en":
             MessageLookupByLibrary.simpleMessage("Simplified Chinese"),
@@ -30,6 +34,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "page_home_title": MessageLookupByLibrary.simpleMessage("Home"),
         "page_setting_title": MessageLookupByLibrary.simpleMessage("设置"),
         "select_lang": MessageLookupByLibrary.simpleMessage("选择语言"),
+        "success": MessageLookupByLibrary.simpleMessage("成功"),
         "theme_setting_dark_mode": MessageLookupByLibrary.simpleMessage("深色模式"),
         "theme_setting_dark_mode_dark":
             MessageLookupByLibrary.simpleMessage("深色"),

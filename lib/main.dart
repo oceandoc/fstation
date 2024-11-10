@@ -1,24 +1,41 @@
-import 'dart:ui';
+import 'dart:convert';
+import 'dart:io';
+import 'dart:io' as io;
 
+import 'package:catcher_2/model/catcher_2_options.dart';
+import 'package:device_info_plus/device_info_plus.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_displaymode/flutter_displaymode.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:fstation/bloc/app_setting_bloc.dart';
 import 'package:fstation/generated/l10n.dart';
 import 'package:fstation/impl/router.dart';
+import 'package:fstation/util/analysis/analysis.dart';
+import 'package:fstation/util/app_window.dart';
+import 'package:fstation/util/extensions.dart';
+import 'package:fstation/util/http_override.dart';
 import 'package:fstation/util/language.dart';
+import 'package:fstation/util/network.dart';
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:worker_manager/worker_manager.dart';
 
 import 'impl/db.dart';
+import 'impl/logger.dart';
 import 'impl/setting.dart';
 import 'ui/themes.dart';
 
 // TODO(xieyz): fix Localization initialize exception
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  GestureBinding.instance.resamplingEnabled = true;
+  Logger();
 
   FlutterError.onError = (FlutterErrorDetails details) {
     FlutterError.dumpErrorToConsole(details);
@@ -30,12 +47,58 @@ void main() async {
     return true;
   };
 
+  dynamic initError, initStack;
+  Catcher2Options? catcherOptions;
+  try {
+    await AppWindowUtil.init();
+    await workerManager.init();
+    await network.init();
+    if (!kIsWeb) {
+      HttpOverrides.global = CustomHttpOverrides();
+    }
+    await db.initiate();
+    AppAnalysis.instance.initiate();
+    catcherOptions = CatcherUtil.getOptions(
+      logPath: db.paths.crashLog,
+      feedbackHandler: ServerFeedbackHandler(
+        screenshotController: db.runtimeData.screenshotController,
+        screenshotPath: joinPaths(db.paths.tempDir, 'crash.jpg'),
+        attachments: [db.paths.appLog, db.paths.crashLog, db.paths.userDataPath],
+        onGenerateAttachments: () => {
+          'userdata.memory.json': Uint8List.fromList(utf8.encode(jsonEncode(db.userData))),
+          'settings.memory.json': Uint8List.fromList(utf8.encode(jsonEncode(db.settings))),
+        },
+      ),
+    );
+  } catch (e, s) {
+    initError = e;
+    initStack = s;
+    try {
+      // logger.e('initiate app failed at startup', e, s);
+    } catch (e, s) {
+      print(e);
+      print(s);
+    }
+  }
+
   final systemLocale = PlatformDispatcher.instance.locale;
   await Localization.load(systemLocale);
 
+  await setHighRefreshRate();
+  await fetchSystemPalette();
   await loadDb();
   await SettingImpl.instance.init();
   runApp(const App());
+}
+
+Future<void> setHighRefreshRate() async {
+  if (kReleaseMode && Platform.isAndroid) {
+    try {
+      await FlutterDisplayMode.setHighRefreshRate();
+    } catch (e) {
+      debugPrint('Error setting high refresh rate: $e');
+    }
+  }
 }
 
 Future<Isar> loadDb() async {
@@ -56,15 +119,49 @@ class App extends StatefulWidget {
   State<App> createState() => _AppState();
 }
 
-class _AppState extends State<App> {
+class _AppState extends State<App> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
 
     // Load localization using the system locale
-
+    initApp();
     Future.microtask(
         () => context.read<AppSettingBloc>().add(LoadSettingsEvent()));
+
+    // TODO(xieyz): background task
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   // needs to be delayed so that EasyLocalization is working
+    //   ref.read(backgroundServiceProvider).resumeServiceIfEnabled();
+    // });
+
+  }
+
+  Future<void> initApp() async {
+    WidgetsBinding.instance.addObserver(this);
+    await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    var overlayStyle = const SystemUiOverlayStyle(
+      systemNavigationBarColor: Colors.transparent,
+    );
+    if (Platform.isAndroid) {
+      // Android 8 does not support transparent app bars
+      final info = await DeviceInfoPlugin().androidInfo;
+      if (info.version.sdkInt <= 26) {
+        overlayStyle = context.isDarkTheme
+            ? SystemUiOverlayStyle.dark
+            : SystemUiOverlayStyle.light;
+      }
+    }
+    SystemChrome.setSystemUIOverlayStyle(overlayStyle);
+    // TODO(xieyz): local notification
+    // await ref.read(localNotificationService).setup();
+
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
   @override
@@ -73,6 +170,8 @@ class _AppState extends State<App> {
     // Ensure localization is loaded
     final systemLocale = PlatformDispatcher.instance.locale;
     Localization.load(systemLocale);
+
+    // TODO(xieyz): app life cycle handler
   }
 
   @override

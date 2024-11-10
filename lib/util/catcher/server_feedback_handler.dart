@@ -11,22 +11,21 @@ import 'package:archive/archive.dart';
 import 'package:catcher_2/catcher_2.dart';
 import 'package:catcher_2/model/platform_type.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:image/image.dart';
 import 'package:path/path.dart' as p;
 import 'package:pool/pool.dart';
 import 'package:screenshot/screenshot.dart';
 
-import 'package:chaldea/app/api/chaldea.dart';
-import 'package:chaldea/app/app.dart';
-import 'package:chaldea/generated/l10n.dart';
-import 'package:chaldea/packages/file_plus/file_plus.dart';
-import 'package:chaldea/packages/network.dart';
-import 'package:chaldea/widgets/widgets.dart';
-import '../../models/db.dart';
-import '../../packages/app_info.dart';
-import '../../packages/language.dart';
-import '../../packages/logger.dart' as logger_;
-import '../../packages/platform/platform.dart';
+import '../../generated/l10n.dart';
+import '../app_info.dart';
+import '../chaldea.dart';
+import '../file_plus/file_plus.dart';
+import '../language.dart';
+import '../network.dart';
+import '../platform/platform.dart';
+
+
 
 class ServerFeedbackHandler extends ReportHandler {
   @override
@@ -90,7 +89,7 @@ class ServerFeedbackHandler extends ReportHandler {
     Uint8List? screenshotBytes,
     Map<String, Uint8List> generatedAttachments = const {},
   }) async {
-    if (network.unavailable) throw S.current.error_no_internet;
+    if (network.unavailable) throw Localization.current.error_no_internet;
 
     if (await _isBlockedError(report)) throw 'Blocked Error';
 
@@ -145,7 +144,7 @@ class ServerFeedbackHandler extends ReportHandler {
     );
     final success = response != null && !response.hasError;
     if (!success) {
-      logger_.logger.e('failed to send mail', response?.fullMessage);
+      // logger_.logger.e('failed to send mail', response?.fullMessage);
     }
     if (report is! FeedbackReport) {
       _sentReports.add(report.shownError);
@@ -199,11 +198,12 @@ class ServerFeedbackHandler extends ReportHandler {
         return true;
       }
     }
-    if (_blockedErrors == null) {
-      _blockedErrors = (await CachedApi.remoteConfig())?.blockedErrors ?? [];
-      _blockedErrors?.removeWhere((e) => e.isEmpty);
-      // logger_.logger.d('_blockedErrors=${jsonEncode(_blockedErrors)}');
-    }
+    // TODO(xieyz): fix this
+    // if (_blockedErrors == null) {
+    //   _blockedErrors = (await CachedApi.remoteConfig())?.blockedErrors ?? [];
+    //   _blockedErrors?.removeWhere((e) => e.isEmpty);
+    //   // logger_.logger.d('_blockedErrors=${jsonEncode(_blockedErrors)}');
+    // }
 
     bool? shouldIgnore = _blockedErrors?.any((e) => error.contains(e) || stackTrace.contains(e));
     if (shouldIgnore == true) {
@@ -228,12 +228,12 @@ class ServerFeedbackHandler extends ReportHandler {
         try {
           await FilePlus(screenshotPath!).writeAsBytes(bytes);
         } catch (e, s) {
-          logger_.logger.e('save crash screenshot failed', e, s);
+          // logger_.logger.e('save crash screenshot failed', e, s);
         }
       }
       return bytes;
     } catch (e, s) {
-      logger_.logger.e('screenshot failed', e, s);
+      // logger_.logger.e('screenshot failed', e, s);
       return null;
     }
   }
@@ -275,12 +275,11 @@ class ServerFeedbackHandler extends ReportHandler {
     buffer.write("<h3>Summary:</h3>");
     Map<String, dynamic> summary = {
       'app': '${AppInfo.appName} v${AppInfo.fullVersion2} ${AppInfo.commitHash}-${AppInfo.commitDate}',
-      'dataset': db.gameData.version.utc,
       'os': '${PlatformU.operatingSystem} ${PlatformU.operatingSystemVersion}',
-      'lang': Language.current.code,
+      // 'lang': Language.current.code,
       'locale': Language.systemLocale.toString(),
       'uuid': AppInfo.uuid,
-      'user': db.settings.secrets.user?.name ?? "",
+      // 'user': db.settings.secrets.user?.name ?? "",
       if (kIsWeb) 'renderer': kPlatformMethods.rendererCanvasKit ? 'canvaskit' : 'html',
     };
     for (var entry in summary.entries) {
@@ -310,10 +309,11 @@ class ServerFeedbackHandler extends ReportHandler {
     }
 
     buffer.write("<h3>Pages</h3>");
-    for (final page in router.pages.reversed.take(5)) {
-      buffer.write(escape(page.toString()));
-      buffer.write("<br>");
-    }
+    // TODO(xieyz): add page info
+    // for (final page in router.pages.reversed.take(5)) {
+    //   buffer.write(escape(page.toString()));
+    //   buffer.write("<br>");
+    // }
     buffer.write("<hr>");
 
     if (enableDeviceParameters) {
