@@ -26,12 +26,12 @@ class SettingImpl {
   }
 
   Future<AppSettingState> getSettings() async {
-    language = Db.get(
-        DbKey.language,
+    language = Store.get(
+        StoreKey.language,
         PlatformDispatcher
             .instance.locale.languageCode); // Default to system locale
-    themeMode = Db.get(DbKey.themeMode, ThemeMode.system) as ThemeMode;
-    firstLanuch = Db.get(DbKey.firstLanuch, true);
+    themeMode = Store.get(StoreKey.themeMode, ThemeMode.system) as ThemeMode;
+    firstLanuch = Store.get(StoreKey.firstLanuch, true);
 
     final settingState = AppSettingState(
       themeMode: themeMode,
@@ -42,38 +42,38 @@ class SettingImpl {
 
   void saveThemeMode(ThemeMode themeMode) {
     this.themeMode = themeMode;
-    setSetting(DbKey.themeMode, themeMode);
+    setSetting(StoreKey.themeMode, themeMode);
   }
 
   void saveLanguage(String language) {
     this.language = language;
-    setSetting(DbKey.language, language);
+    setSetting(StoreKey.language, language);
   }
 
   void saveFirstLanuch({required bool firstLanuch}) {
     this.firstLanuch = firstLanuch;
-    setSetting(DbKey.firstLanuch, firstLanuch);
+    setSetting(StoreKey.firstLanuch, firstLanuch);
   }
 
-  void setSetting<T>(DbKey<T> key, T value) {
+  void setSetting<T>(StoreKey<T> key, T value) {
     switch (key) {
-      case DbKey.themeMode:
+      case StoreKey.themeMode:
         themeMode = value as ThemeMode;
-      case DbKey.themeColor:
+      case StoreKey.themeColor:
       // TODO: support color
-      case DbKey.language:
+      case StoreKey.language:
         language = value as String;
-      case DbKey.assetETag:
+      case StoreKey.assetETag:
       // TODO: Handle this case.
-      case DbKey.deviceIdHash:
+      case StoreKey.deviceIdHash:
       // TODO: Handle this case.
-      case DbKey.deviceId:
+      case StoreKey.deviceId:
       // TODO: Handle this case.
-      case DbKey.version:
+      case StoreKey.version:
       // TODO: Handle this case.
-      case DbKey.firstLanuch:
+      case StoreKey.firstLanuch:
       // TODO: Handle this case.
     }
-    Db.put(key, value);
+    Store.put(key, value);
   }
 }

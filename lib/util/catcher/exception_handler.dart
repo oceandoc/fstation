@@ -5,12 +5,11 @@ import 'dart:async';
 import 'dart:collection';
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
-
 import 'package:archive/archive.dart';
 import 'package:catcher_2/catcher_2.dart';
 import 'package:catcher_2/model/platform_type.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image/image.dart';
 import 'package:path/path.dart' as p;
@@ -18,6 +17,7 @@ import 'package:pool/pool.dart';
 import 'package:screenshot/screenshot.dart';
 
 import '../../generated/l10n.dart';
+import '../../impl/logger.dart';
 import '../app_info.dart';
 import '../chaldea.dart';
 import '../file_plus/file_plus.dart';
@@ -27,7 +27,7 @@ import '../platform/platform.dart';
 
 
 
-class ServerFeedbackHandler extends ReportHandler {
+class ExceptionHandler extends ReportHandler {
   @override
   List<PlatformType> getSupportedPlatforms() => PlatformType.values;
 
@@ -55,7 +55,7 @@ class ServerFeedbackHandler extends ReportHandler {
   final bool sendHtml;
   final bool printLogs;
 
-  ServerFeedbackHandler({
+  ExceptionHandler({
     this.enableDeviceParameters = true,
     this.enableApplicationParameters = true,
     this.enableStackTrace = true,
@@ -216,7 +216,7 @@ class ServerFeedbackHandler extends ReportHandler {
   Future<Uint8List?> _captureScreenshot() async {
     if (kIsWeb && !kPlatformMethods.rendererCanvasKit) return null;
     try {
-      Uint8List? shotBinary = await screenshotController?.capture(
+      final shotBinary = await screenshotController?.capture(
         pixelRatio: 1,
         delay: const Duration(milliseconds: 200),
       );
@@ -228,12 +228,12 @@ class ServerFeedbackHandler extends ReportHandler {
         try {
           await FilePlus(screenshotPath!).writeAsBytes(bytes);
         } catch (e, s) {
-          // logger_.logger.e('save crash screenshot failed', e, s);
+          Logger.error('save crash screenshot failed', e, s);
         }
       }
       return bytes;
     } catch (e, s) {
-      // logger_.logger.e('screenshot failed', e, s);
+      Logger.error('screenshot failed', e, s);
       return null;
     }
   }
