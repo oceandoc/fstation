@@ -1,53 +1,97 @@
-import 'package:fstation/impl/logger.dart';
-import 'package:sqflite/sqflite.dart';
+import 'dart:io';
 
-import '../util/constants.dart';
+import 'package:flutter/foundation.dart';
+import 'package:fstation/impl/logger.dart';
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
+
 import '../model/settings.dart';
+import '../util/constants.dart';
 
 class Store {
+  // Factory constructor to return the same instance
+  factory Store() => _instance;
   // Private constructor
   Store._internal();
 
   // Singleton instance
   static final Store _instance = Store._internal();
 
-  // Factory constructor to return the same instance
-  factory Store() => _instance;
-
   // Make this static to easily access the instance
   static Store get instance => _instance;
 
-  var _db;
+  Database? _db;
 
   Future<bool> init() async {
-    _db = await databaseFactory.openDatabase(
-      'fstation.db',
-      options: OpenDatabaseOptions(
-        version: kCurrentDBVersion,
-        onUpgrade: (Database db, int oldVersion, int newVersion) async {
-          try {
-            await migrate(db, oldVersion, newVersion);
-          } catch (e, stack) {
-            Logger.error('upgrade database error', e, stack);
-          }
-        },
-        onCreate: initDatabase,
-        onOpen: (db) {
-          Logger.info('database path：${db.path}');
-        },
-      ),
-    );
+    if (_db != null) return true;
+
+    // Initialize appropriate database factory based on platform
+    if (kIsWeb) {
+      // Web platform
+      databaseFactory = databaseFactoryFfiWeb;
+      _db = await databaseFactory.openDatabase(
+        'fstation.db',
+        options: OpenDatabaseOptions(
+          version: kCurrentDBVersion,
+          onCreate: initDatabase,
+          onUpgrade: _onUpgrade,
+          onOpen: _onOpen,
+        ),
+      );
+    } else {
+      // Desktop and Mobile platforms
+      if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+        // Desktop platforms
+        sqfliteFfiInit();
+        databaseFactory = databaseFactoryFfi;
+      }
+      // else: Mobile platforms use default databaseFactory
+
+      // Get the database path
+      final dbFolder = await getApplicationDocumentsDirectory();
+      final dbPath = join(dbFolder.path, 'fstation.db');
+
+      // Set database path for desktop platforms
+      if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+        await databaseFactory.setDatabasesPath(dbFolder.path);
+      }
+
+      _db = await databaseFactory.openDatabase(
+        dbPath,
+        options: OpenDatabaseOptions(
+          version: kCurrentDBVersion,
+          onCreate: initDatabase,
+          onUpgrade: _onUpgrade,
+          onOpen: _onOpen,
+        ),
+      );
+    }
+
     return true;
   }
 
-  /// 执行数据库迁移
-  Future<void> migrate(Database db, int oldVersion, int newVersion) async {
-    if (oldVersion < 1) {
-      initDatabase(db, newVersion);
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    try {
+      await migrate(db, oldVersion, newVersion);
+    } catch (e, stack) {
+      Logger.error('upgrade database error', e, stack);
     }
   }
 
-  /// 数据库初始化
+  void _onOpen(Database db) {
+    Logger.info('database path: ${db.path}');
+  }
+
+  /// Execute database migration
+  Future<void> migrate(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 1) {
+      await initDatabase(db, newVersion);
+    }
+  }
+
+  /// Initialize database
   Future<void> initDatabase(Database db, int version) async {
     await db.execute('''
         CREATE TABLE settings (
@@ -69,8 +113,9 @@ class Store {
   }
 
   Future<Settings?> getSettings() async {
-    final List<Map<String, dynamic>> maps =
-        await _db.query('settings') as List<Map<String, dynamic>>;
+    if (_db == null) await init();
+
+    final maps = await _db!.query('settings') as List<Map<String, dynamic>>;
     if (maps.isEmpty) {
       return null;
     }
@@ -78,24 +123,28 @@ class Store {
   }
 
   Future<void> saveSettings(Settings settings) async {
+    if (_db == null) await init();
+
     if (settings.id != null) {
-      await _db.update(
+      await _db!.update(
         'settings',
         settings.toMap(),
         where: 'id = ?',
         whereArgs: [settings.id],
       );
     } else {
-      await _db.insert('settings', settings.toMap());
+      await _db!.insert('settings', settings.toMap());
     }
   }
 
   Future<void> updateSettings(Map<String, dynamic> values) async {
+    if (_db == null) await init();
+
     final settings = await getSettings();
     if (settings == null) {
       await saveSettings(Settings.fromMap(values));
     } else {
-      await _db.update(
+      await _db!.update(
         'settings',
         values,
         where: 'id = ?',

@@ -72,4 +72,4 @@ linter:
 custom_lint:
   debug: true
   allowed:
-    - lib/impl/db.dart
+    - lib/impl/store.dart

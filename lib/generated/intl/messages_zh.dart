@@ -27,6 +27,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "confirm": MessageLookupByLibrary.simpleMessage("确定"),
         "error": MessageLookupByLibrary.simpleMessage("错误"),
         "error_no_internet": MessageLookupByLibrary.simpleMessage("无网络连接"),
+        "general_close": MessageLookupByLibrary.simpleMessage("关闭"),
         "language": MessageLookupByLibrary.simpleMessage("简体中文"),
         "language_en":
             MessageLookupByLibrary.simpleMessage("Simplified Chinese"),

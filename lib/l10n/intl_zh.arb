@@ -18,6 +18,6 @@
   "confirm": "确定",
   "cancel": "取消",
   "success": "成功",
-  "error": "错误"
-
+  "error": "错误",
+  "general_close": "关闭"
 }

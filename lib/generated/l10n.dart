@@ -239,6 +239,16 @@ class Localization {
       args: [],
     );
   }
+
+  /// `Close`
+  String get general_close {
+    return Intl.message(
+      'Close',
+      name: 'general_close',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<Localization> {

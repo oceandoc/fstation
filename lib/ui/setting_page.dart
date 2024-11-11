@@ -6,7 +6,7 @@ import 'package:settings_ui/settings_ui.dart';
 
 import '../bloc/app_setting_bloc.dart';
 import '../generated/l10n.dart';
-import '../impl/setting.dart';
+import '../impl/setting_impl.dart';
 import '../util/custom_widgets.dart';
 import '../util/enums.dart';
 import '../util/extensions.dart';
@@ -36,7 +36,7 @@ class SettingPageState extends State<SettingPage> {
   Widget build(BuildContext context) {
     final bloc = context.read<AppSettingBloc>();
     var themeData = Theme.of(context);
-    final settingImpl = Provider.of<SettingImpl>(context);
+    final settingImpl = SettingImpl.instance;
 
     final interfaceTiles = <AbstractSettingsTile>[
       SettingsTile.navigation(
@@ -93,7 +93,7 @@ class SettingPageState extends State<SettingPage> {
   }
 
   Future pickI18N(BuildContext context) async {
-    final settingImpl = Provider.of<SettingImpl>(context, listen: false);
+    final settingImpl = SettingImpl.instance;
     return showCupertinoDialog(
       context: context,
       builder: (context) => CustomBlurryDialog(
@@ -146,8 +146,8 @@ class SettingPageState extends State<SettingPage> {
                         ),
                       ),
                       active: e == Language.getLanguage(settingImpl.language),
-                      onTap: () {
-                        settingImpl.language = e.code;
+                      onTap: () async {
+                        await settingImpl.saveLanguage(e.code);
                         context
                             .read<AppSettingBloc>()
                             .add(ChangeLanguageEvent(e.code));

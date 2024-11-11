@@ -28,6 +28,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "error": MessageLookupByLibrary.simpleMessage("Error"),
         "error_no_internet":
             MessageLookupByLibrary.simpleMessage("No internet"),
+        "general_close": MessageLookupByLibrary.simpleMessage("Close"),
         "language": MessageLookupByLibrary.simpleMessage("English"),
         "language_en": MessageLookupByLibrary.simpleMessage("English"),
         "language_setting_title":

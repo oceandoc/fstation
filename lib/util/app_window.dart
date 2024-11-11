@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:fstation/generated/l10n.dart';
 import 'package:fstation/util/extensions.dart';
 import 'package:fstation/util/platform/platform.dart';
 import 'package:tray_manager/tray_manager.dart';
@@ -50,7 +51,7 @@ class AppWindowUtil {
   static Future<void> destroyWindow() async {
     if (kDebugMode) {
       final confirm = await SimpleCancelOkDialog(
-        title: Text(S.current.general_close),
+        title: Text(Localization.current.general_close),
       ).showDialog(kAppKey.currentContext!);
       if (confirm != true) return;
     }
@@ -59,8 +60,8 @@ class AppWindowUtil {
 
   static Future<void> setAlwaysOnTop([bool? onTop]) async {
     if (PlatformU.isDesktop) {
-      onTop ??= db.settings.alwaysOnTop;
-      windowManager.setAlwaysOnTop(onTop);
+      // onTop ??= db.settings.alwaysOnTop;
+      windowManager.setAlwaysOnTop(true);
     }
   }
 

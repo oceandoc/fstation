@@ -2,7 +2,7 @@ import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:fstation/util/extensions.dart';
 
-import '../impl/setting.dart';
+import '../impl/setting_impl.dart';
 
 const lightPrimaryColor = Color(0xFFFFFFFF);
 const lightAccentColor = Color(0xFF3D75E3);

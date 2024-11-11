@@ -18,5 +18,6 @@
   "confirm": "Confirm",
   "cancel": "Cancel",
   "success": "Success",
-  "error": "Error"
+  "error": "Error",
+  "general_close": "Close"
 }

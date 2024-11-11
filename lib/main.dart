@@ -1,7 +1,6 @@
-import 'dart:convert';
 import 'dart:io';
-import 'dart:io' as io;
 
+import 'package:catcher_2/core/catcher_2.dart';
 import 'package:catcher_2/model/catcher_2_options.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
@@ -16,19 +15,19 @@ import 'package:fstation/generated/l10n.dart';
 import 'package:fstation/impl/router.dart';
 import 'package:fstation/util/analysis/analysis.dart';
 import 'package:fstation/util/app_window.dart';
+import 'package:fstation/util/catcher/catcher_util.dart';
+import 'package:fstation/util/constants.dart';
 import 'package:fstation/util/extensions.dart';
 import 'package:fstation/util/http_override.dart';
 import 'package:fstation/util/language.dart';
 import 'package:fstation/util/network.dart';
-import 'package:isar/isar.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:worker_manager/worker_manager.dart';
 
-import 'impl/db.dart';
 import 'impl/logger.dart';
-import 'impl/setting.dart';
+import 'impl/setting_impl.dart';
+import 'impl/store.dart';
 import 'ui/themes.dart';
 
 // TODO(xieyz): fix Localization initialize exception
@@ -36,6 +35,11 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   GestureBinding.instance.resamplingEnabled = true;
   Logger();
+  final systemLocale = PlatformDispatcher.instance.locale;
+  await Localization.load(systemLocale);
+  await setHighRefreshRate();
+  await fetchSystemPalette();
+  await SettingImpl.instance.init();
 
   FlutterError.onError = (FlutterErrorDetails details) {
     FlutterError.dumpErrorToConsole(details);
@@ -47,7 +51,6 @@ void main() async {
     return true;
   };
 
-  dynamic initError, initStack;
   Catcher2Options? catcherOptions;
   try {
     await AppWindowUtil.init();
@@ -56,39 +59,29 @@ void main() async {
     if (!kIsWeb) {
       HttpOverrides.global = CustomHttpOverrides();
     }
-    await db.initiate();
-    AppAnalysis.instance.initiate();
-    catcherOptions = CatcherUtil.getOptions(
-      logPath: db.paths.crashLog,
-      feedbackHandler: ServerFeedbackHandler(
-        screenshotController: db.runtimeData.screenshotController,
-        screenshotPath: joinPaths(db.paths.tempDir, 'crash.jpg'),
-        attachments: [db.paths.appLog, db.paths.crashLog, db.paths.userDataPath],
-        onGenerateAttachments: () => {
-          'userdata.memory.json': Uint8List.fromList(utf8.encode(jsonEncode(db.userData))),
-          'settings.memory.json': Uint8List.fromList(utf8.encode(jsonEncode(db.settings))),
-        },
-      ),
-    );
+    await Store.instance.init();
+    await AppAnalysis.instance.initiate();
+    catcherOptions = CatcherUtil.getOptions();
   } catch (e, s) {
-    initError = e;
-    initStack = s;
-    try {
-      // logger.e('initiate app failed at startup', e, s);
-    } catch (e, s) {
+    Logger.error('initiate app failed at startup', e, s);
+    if (kDebugMode) {
       print(e);
       print(s);
     }
   }
 
-  final systemLocale = PlatformDispatcher.instance.locale;
-  await Localization.load(systemLocale);
-
-  await setHighRefreshRate();
-  await fetchSystemPalette();
-  await loadDb();
-  await SettingImpl.instance.init();
-  runApp(const App());
+  if (kDebugMode) {
+    runApp(const App());
+  } else {
+    Catcher2(
+      rootWidget: const App(),
+      debugConfig: catcherOptions,
+      profileConfig: catcherOptions,
+      releaseConfig: catcherOptions,
+      navigatorKey: kAppKey,
+      ensureInitialized: true,
+    );
+  }
 }
 
 Future<void> setHighRefreshRate() async {
@@ -99,17 +92,6 @@ Future<void> setHighRefreshRate() async {
       debugPrint('Error setting high refresh rate: $e');
     }
   }
-}
-
-Future<Isar> loadDb() async {
-  final dir = await getApplicationDocumentsDirectory();
-  final db = await Isar.open(
-    [
-      DbValueSchema,
-    ],
-    directory: dir.path,
-  );
-  return db;
 }
 
 class App extends StatefulWidget {
@@ -134,7 +116,6 @@ class _AppState extends State<App> with WidgetsBindingObserver {
     //   // needs to be delayed so that EasyLocalization is working
     //   ref.read(backgroundServiceProvider).resumeServiceIfEnabled();
     // });
-
   }
 
   Future<void> initApp() async {
@@ -155,7 +136,6 @@ class _AppState extends State<App> with WidgetsBindingObserver {
     SystemChrome.setSystemUIOverlayStyle(overlayStyle);
     // TODO(xieyz): local notification
     // await ref.read(localNotificationService).setup();
-
   }
 
   @override

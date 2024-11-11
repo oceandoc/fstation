@@ -9,7 +9,7 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import '../bloc/app_setting_bloc.dart';
 import '../generated/l10n.dart';
-import '../impl/setting.dart';
+import '../impl/setting_impl.dart';
 import '../util/language.dart';
 
 class SplashPage extends StatefulWidget {
@@ -39,7 +39,7 @@ class SplashPageState extends State<SplashPage>
 
   @override
   Widget build(BuildContext context) {
-    if (!SettingImpl.instance.firstLanuch) {
+    if (!SettingImpl.instance.firstLaunch) {
       context.go('/home');
     }
     pages = [
@@ -126,8 +126,8 @@ class SplashPageState extends State<SplashPage>
                 : const SizedBox(),
             title: Text(lang.name),
             minLeadingWidth: 24,
-            onTap: () {
-              SettingImpl.instance.language = lang.code;
+            onTap: () async {
+              await SettingImpl.instance.saveLanguage(lang.code);
               context
                   .read<AppSettingBloc>()
                   .add(ChangeLanguageEvent(lang.code));
@@ -166,11 +166,11 @@ class SplashPageState extends State<SplashPage>
                     : const SizedBox(),
                 title: Text(_themeModeName(mode)),
                 minLeadingWidth: 24,
-                onTap: () {
+                onTap: () async {
+                  await SettingImpl.instance.saveThemeMode(mode);
                   context
                       .read<AppSettingBloc>()
                       .add(ChangeThemeModeEvent(mode));
-                  SettingImpl.instance.saveThemeMode(mode);
                 },
               );
             },

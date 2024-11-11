@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 
 final isTest = Platform.environment.containsKey('FLUTTER_TEST');
 
+// 本地数据库版本号
 final kAppKey = GlobalKey<NavigatorState>();
+const kCurrentDBVersion = 1;
 const String kAppName = 'FastStation';
 const String kPackageName = 'com.xiedeacc.fstation';
 const String kPackageNameFDroid = 'com.xiedeacc.fstation.fdroid';
@@ -37,4 +39,3 @@ bool get isTargetDesktop => !isTargetMobile;
 
 final bool supportCopyImage =
     kIsWeb || Platform.isIOS || Platform.isMacOS || Platform.isWindows;
-

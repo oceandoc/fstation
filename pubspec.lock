@@ -26,7 +26,7 @@ packages:
     source: hosted
     version: "0.4.0"
   archive:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: archive
       sha256: cb6a278ef2dbb298455e1a713bda08524a175630ec643a242c399c932a0a1f7d
@@ -281,14 +281,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.3.2"
-  dartx:
-    dependency: transitive
-    description:
-      name: dartx
-      sha256: "8b25435617027257d43e6508b5fe061012880ddfdaa75a71d607c3de2a13d244"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.2.0"
   dbus:
     dependency: transitive
     description:
@@ -297,6 +289,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.7.10"
+  dev_build:
+    dependency: transitive
+    description:
+      name: dev_build
+      sha256: "91aefce06d4c80c3c8a6c04af6a60ca8e5c01ec6780410ab82e07bfb4f8c49f2"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.0+2"
   device_info_plus:
     dependency: "direct main"
     description:
@@ -637,30 +637,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.4"
-  isar:
-    dependency: "direct main"
-    description:
-      name: isar
-      sha256: e17a9555bc7f22ff26568b8c64d019b4ffa2dc6bd4cb1c8d9b269aefd32e53ad
-      url: "https://pub.isar-community.dev"
-    source: hosted
-    version: "3.1.8"
-  isar_flutter_libs:
-    dependency: "direct main"
-    description:
-      name: isar_flutter_libs
-      sha256: "78710781e658ce4bff59b3f38c5b2735e899e627f4e926e1221934e77b95231a"
-      url: "https://pub.isar-community.dev"
-    source: hosted
-    version: "3.1.8"
-  isar_generator:
-    dependency: "direct dev"
-    description:
-      name: isar_generator
-      sha256: "484e73d3b7e81dbd816852fe0b9497333118a9aeb646fd2d349a62cc8980ffe1"
-      url: "https://pub.isar-community.dev"
-    source: hosted
-    version: "3.1.8"
   js:
     dependency: transitive
     description:
@@ -822,7 +798,7 @@ packages:
     source: hosted
     version: "3.0.1"
   path:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: path
       sha256: "087ce49c3f0dc39180befefc60fdb4acd8f8620e5682fe2476afd0b3688bb4af"
@@ -918,13 +894,21 @@ packages:
     source: hosted
     version: "2.1.8"
   pool:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: pool
       sha256: "20fe868b6314b322ea036ba325e6fc0711a22948856475e2c2b6306e8ab39c2a"
       url: "https://pub.dev"
     source: hosted
     version: "1.5.1"
+  process_run:
+    dependency: transitive
+    description:
+      name: process_run
+      sha256: "5736140acb1c54a11bd4c1e8d4821bfd684de69a4bf88835316cb05e596d8091"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.2"
   provider:
     dependency: transitive
     description:
@@ -1171,13 +1155,13 @@ packages:
     source: hosted
     version: "7.0.0"
   sqflite:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: sqflite
-      sha256: "79a297dc3cc137e758c6a4baf83342b039e5a6d2436fcdf3f96a00adaaf2ad62"
+      sha256: "2d7299468485dca85efeeadf5d38986909c5eb0cd71fd3db2c2f000e6c9454bb"
       url: "https://pub.dev"
     source: hosted
-    version: "2.4.0"
+    version: "2.4.1"
   sqflite_android:
     dependency: transitive
     description:
@@ -1194,14 +1178,30 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.5.4+5"
+  sqflite_common_ffi:
+    dependency: "direct main"
+    description:
+      name: sqflite_common_ffi
+      sha256: d316908f1537725427ff2827a5c5f3b2c1bc311caed985fe3c9b10939c9e11ca
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.3.4"
+  sqflite_common_ffi_web:
+    dependency: "direct main"
+    description:
+      name: sqflite_common_ffi_web
+      sha256: f540ad769e5fd31aabe77bfa6e774fdd36145a83e33cdc39239f310c5f8559c3
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.4.5+3"
   sqflite_darwin:
     dependency: transitive
     description:
       name: sqflite_darwin
-      sha256: "769733dddf94622d5541c73e4ddc6aa7b252d865285914b6fcd54a63c4b4f027"
+      sha256: "96a698e2bc82bd770a4d6aab00b42396a7c63d9e33513a56945cbccb594c2474"
       url: "https://pub.dev"
     source: hosted
-    version: "2.4.1-1"
+    version: "2.4.1"
   sqflite_platform_interface:
     dependency: transitive
     description:
@@ -1210,6 +1210,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.4.0"
+  sqlite3:
+    dependency: transitive
+    description:
+      name: sqlite3
+      sha256: bb174b3ec2527f9c5f680f73a89af8149dd99782fbb56ea88ad0807c5638f2ed
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.4.7"
   stack_trace:
     dependency: transitive
     description:
@@ -1266,14 +1274,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.7.2"
-  time:
-    dependency: transitive
-    description:
-      name: time
-      sha256: ad8e018a6c9db36cb917a031853a1aae49467a93e0d464683e029537d848c221
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.1.4"
   timezone:
     dependency: "direct main"
     description:
@@ -1514,14 +1514,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.5.0"
-  xxh3:
-    dependency: transitive
-    description:
-      name: xxh3
-      sha256: cbeb0e1d10f4c6bf67b650f395eac0cc689425b5efc2ba0cc3d3e069a0beaeec
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.1.0"
   yaml:
     dependency: transitive
     description:
