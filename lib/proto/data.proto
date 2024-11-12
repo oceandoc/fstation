@@ -1,0 +1,83 @@
+syntax = "proto3";
+package oceandoc.proto;
+
+enum FileType {
+  FT_Unused = 0;
+  Regular = 1;
+  Symlink = 2;
+  Direcotry = 3;
+}
+
+message File {
+  string file_name = 1;
+  uint64 file_size = 2;
+  FileType file_type = 3;
+  uint64 update_time = 4;  // local update time
+  string user = 5;
+  string group = 6;
+  string file_hash = 7;
+  repeated string visible_users = 8;
+}
+
+message Dir {
+  string path = 1;         // relateive to ScanStatus'path
+  uint64 update_time = 2;  // local update time
+  string user = 3;
+  string group = 4;
+  map<string, File> files = 5;  // key is filename relative to path
+  repeated string visible_users = 6;
+}
+
+message ScanStatus {
+  string path = 1;
+  map<string, Dir> scanned_dirs = 2;  // relative path
+  int64 complete_time = 4;
+  map<string, bool> ignored_dirs = 5;  // relative to path
+  string uuid = 6;
+  int64 file_num = 7;  // not include symlink file
+  int64 symlink_num = 8;
+  int32 hash_method = 9;  // see common/defs.h
+}
+
+enum RepoType {
+  RT_Unused = 0;
+  RT_Local = 1;
+  RT_Remote = 2;
+  RT_Ocean = 3;
+}
+
+message RepoFile {
+  string file_name = 1;
+  string file_hash = 2;
+  repeated string visible_users = 3;
+}
+
+message RepoDir {
+  string path = 1;                  // relateive to ScanStatus'path
+  map<string, RepoFile> files = 2;  // key is filename relative to path
+  repeated string visible_users = 3;
+}
+
+message RepoData {
+  string repo_name = 1;
+  string repo_path = 2;
+  string repo_uuid = 3;
+  string repo_location_uuid = 4;
+  uint64 file_num = 5;
+  uint64 symlink_num = 6;
+  map<string, RepoDir> dirs = 7;
+}
+
+message RepoMeta {
+  string repo_name = 1;
+  string repo_path = 2;
+  string repo_uuid = 3;
+  string repo_location_uuid = 4;
+  string create_time = 5;
+  string update_time = 6;
+  string owner = 7;
+}
+
+message Repos {
+  map<string, RepoMeta> repos = 1;
+}

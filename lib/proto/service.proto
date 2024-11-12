@@ -1,0 +1,136 @@
+syntax = "proto3";
+
+package oceandoc.proto;
+
+import "error.proto";
+import "data.proto";
+
+message Context {
+  repeated string private_ipv4 = 1;
+  repeated string private_ipv6 = 2;
+  repeated string public_ipv4 = 3;
+  repeated string public_ipv6 = 4;
+  repeated string mac = 5;
+}
+
+enum UserOp {
+  UserUnused = 0;
+  UserCreate = 1;
+  UserDelete = 2;
+  UserLogin = 3;
+  UserLogout = 4;
+  UserChangePassword = 5;
+}
+
+message UserReq {
+  string request_id = 1;
+  UserOp op = 2;
+  string user = 3;
+  string password = 4;
+  string token = 5;
+  string to_delete_user = 6;
+  string old_password = 7;
+}
+
+message UserRes {
+  ErrCode err_code = 1;
+  string token = 5;
+}
+
+enum ServerOp {
+  ServerUnused = 0;
+  ServerStatus = 1;
+  ServerRestart = 2;
+  ServerShutdown = 3;
+  ServerFullScan = 4;
+}
+
+message ServerReq {
+  string request_id = 1;
+  ServerOp op = 2;
+  string path = 3;
+  string repo_uuid = 4;
+}
+
+message ServerRes {
+  ErrCode err_code = 1;
+  string status = 2;
+}
+
+enum RepoOp {
+  RepoUnused = 0;
+  RepoListServerDir = 1;
+  RepoCreateServerDir = 2;
+  RepoListUserRepo = 3;
+  RepoCreateRepo = 4;
+  RepoDeleteRepo = 5;
+  RepoChangeRepoOwner = 6;
+  RepoListRepoDir = 7;
+  RepoCreateRepoDir = 8;
+  RepoDeleteRepoDir = 9;
+  RepoDeleteRepoFile = 10;
+}
+
+message RepoReq {
+  string request_id = 1;
+  RepoOp op = 2;
+  RepoType type = 3;
+  string path = 4;
+  string repo_uuid = 5;
+  string repo_name = 6;
+  string token = 7;
+  string user = 8;
+}
+
+message RepoRes {
+  ErrCode err_code = 1;
+  map<string, RepoMeta> repos = 2;
+  RepoDir repo_dir = 3;
+  Dir dir = 4;
+  RepoMeta repo = 5;
+}
+
+enum FileOp {
+  FileUnused = 0;
+  FileExists = 1;
+  FilePut = 2;
+  FileDelete = 3;
+}
+
+message FileReq {
+  string request_id = 1;
+  RepoType repo_type = 2;
+  FileOp op = 3;
+  string src = 4;
+  string dst = 5;
+  FileType file_type = 6;
+  string file_hash = 7;
+  int64 file_size = 8;
+  bytes content = 9;
+  int64 update_time = 10;
+  int32 partition_num = 11;
+  string repo_uuid = 12;
+  int64 partition_size = 13;
+  string user = 14;
+  string group = 15;
+  string token = 17;
+}
+
+message FileRes {
+  ErrCode err_code = 1;
+  string src = 2;
+  string dst = 3;
+  FileType file_type = 4;
+  string file_hash = 5;
+  int32 partition_num = 6;
+  string request_id = 7;
+  FileOp op = 8;
+  bool can_skip_upload = 9;
+}
+
+service OceanFile {
+  rpc UserOp(UserReq) returns (UserRes);
+  rpc ServerOp(ServerReq) returns (ServerRes);
+  rpc RepoOp(RepoReq) returns (RepoRes);
+  rpc FileOp(stream FileReq) returns (stream FileRes);
+}

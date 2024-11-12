@@ -14,14 +14,14 @@ import 'package:fstation/util/screenshot.dart';
 import 'package:path/path.dart' as p;
 import 'package:pool/pool.dart';
 
+import '../../generated/git_info.dart';
 import '../../generated/l10n.dart';
 import '../../impl/router.dart';
-import '../app_info.dart';
+import '../app_device_info.dart';
 import '../chaldea.dart';
 import '../file_plus/file_plus.dart';
 import '../language.dart';
 import '../network.dart';
-import '../platform/platform.dart';
 
 // TODO(xieyz): store send timestamp to db, send only once in a week
 class ExceptionHandler extends ReportHandler {
@@ -116,7 +116,7 @@ class ExceptionHandler extends ReportHandler {
     // TODO(xieyz): send email
     final response = await ChaldeaWorkerApi.sendFeedback(
       subject: 'Error: ${report.error}',
-      senderName: 'fStation ${AppInfo.versionString} Crash',
+      senderName: 'fStation ${AppDeviceInfo.versionString} Crash',
       html: sendHtml ? await _setupHtmlMessageText(report) : null,
       files: resolvedAttachments,
     );
@@ -208,14 +208,16 @@ Future<String> _setupHtmlMessageText(Report report) async {
   buffer.write('<h3>Summary:</h3>');
   final summary = <String, dynamic>{
     'app':
-        '${AppInfo.appName} v${AppInfo.fullVersion2} ${AppInfo.commitHash}-${AppInfo.commitDate}',
-    'os': '${PlatformU.operatingSystem} ${PlatformU.operatingSystemVersion}',
+        '${AppDeviceInfo.appName} v${AppDeviceInfo.fullVersion2} $kCommitHash-${AppDeviceInfo.commitDate}',
+    'os': '$kOperatingSystem $kOperatingSystemVersion',
     // 'lang': Language.current.code,
     'locale': Language.systemLocale.toString(),
-    'uuid': AppInfo.uuid,
+    'uuid': AppDeviceInfo.uuid,
     // 'user': db.settings.secrets.user?.name ?? "",
     if (kIsWeb)
-      'renderer': kPlatformMethods.rendererCanvasKit ? 'canvaskit' : 'html',
+      // TODO(xieyz): support canvaskit
+      'renderer': 'html',
+      // 'renderer': kPlatformMethods.rendererCanvasKit ? 'canvaskit' : 'html',
   };
   for (final entry in summary.entries) {
     buffer.write('<b>${entry.key}</b>: ${escape(entry.value.toString())}<br>');
@@ -283,7 +285,7 @@ Future<String> _setupHtmlMessageText(Report report) async {
 
 class FeedbackReport extends Report {
   FeedbackReport(this.contactInfo, this.body)
-      : super(null, '', DateTime.now(), AppInfo.deviceParams, AppInfo.appParams,
+      : super(null, '', DateTime.now(), AppDeviceInfo.deviceParams, AppDeviceInfo.appParams,
             {}, null, PlatformType.unknown, null);
   final String? contactInfo;
   final String body;

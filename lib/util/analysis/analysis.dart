@@ -1,18 +1,18 @@
 import 'dart:async';
 
-import '../platform/platform.dart';
+import '../app_device_info.dart';
 import './analysis_impl.dart';
 
 class AppAnalysis {
-  static AppAnalysis instance = AppAnalysis._instantiate();
   AppAnalysis._();
   factory AppAnalysis._instantiate() {
-    if (PlatformU.isAndroid || PlatformU.isIOS) {
+    if (isAndroid || isIOS) {
       return AppAnalysisImpl();
     }
     return AppAnalysis._();
   }
-  static final bool isSupported = PlatformU.isAndroid || PlatformU.isIOS;
+  static AppAnalysis instance = AppAnalysis._instantiate();
+  static final bool isSupported = isAndroid || isIOS;
 
   Future<void> initiate() => Future.value();
   Future<String?> startView(String? viewName) => Future.value();
@@ -22,27 +22,28 @@ class AppAnalysis {
 
   static (String baseRoute, String subpath) splitViewName(String viewName) {
     final queryIndex = viewName.indexOf('?');
+    var finalViewName = viewName;
     if (queryIndex >= 0) {
-      viewName = viewName.substring(0, queryIndex);
+      finalViewName = viewName.substring(0, queryIndex);
     }
 
-    if (viewName.isEmpty) return (viewName, "");
+    if (finalViewName.isEmpty) return (finalViewName, '');
 
     String? baseRoute;
 
     for (final category in const ['buffAction', 'summon', 'script']) {
       final route = '/$category/';
-      if (viewName.startsWith(route)) {
+      if (finalViewName.startsWith(route)) {
         baseRoute = route;
         break;
       }
     }
-    baseRoute ??= viewName;
+    baseRoute ??= finalViewName;
     final match = RegExp(r'^(/.+?)(\-?\d+/)*\-?\d+$').firstMatch(baseRoute);
     baseRoute = match?.group(1) ?? baseRoute;
-    assert(viewName.startsWith(baseRoute), '$viewName -> $baseRoute');
-    String subpath = viewName.startsWith(baseRoute) ? viewName.substring(baseRoute.length) : "";
-    if (baseRoute.isEmpty) return (viewName, "");
-    return (baseRoute, subpath);
+    assert(finalViewName.startsWith(baseRoute), '$finalViewName -> $baseRoute');
+    final subPath = finalViewName.startsWith(baseRoute) ? finalViewName.substring(baseRoute.length) : '';
+    if (baseRoute.isEmpty) return (finalViewName, '');
+    return (baseRoute, subPath);
   }
 }

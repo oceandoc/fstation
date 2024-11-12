@@ -19,11 +19,12 @@ class GitInfoBuilder implements Builder {
     final timeResult = await Process.run('git', ['log', '-1', '--format=%ct']);
     final commitTimestamp = timeResult.stdout.toString().trim();
 
-    final outputId = AssetId(buildStep.inputId.package, 'lib/generated/git_info.dart');
+    final outputId =
+        AssetId(buildStep.inputId.package, 'lib/generated/git_info.dart');
     final content = '''
     // GENERATED CODE - DO NOT MODIFY BY HAND
     const String kCommitHash = ${json.encode(commitHash)};
-    const int kCommitTimestamp = ${json.encode(commitTimestamp)};
+    const int kCommitTimestamp = ${int.parse(commitTimestamp)};
     ''';
 
     await buildStep.writeAsString(outputId, content);

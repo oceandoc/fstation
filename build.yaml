@@ -12,3 +12,13 @@ targets:
       fstation|git_info_builder:
         generate_for:
           - lib/**
+      protoc_plugin:
+        enabled: true
+        generate_for:
+          - lib/proto/**.proto
+        options:
+          import_path: lib/proto
+          out: lib/generated/proto
+          protoc:
+            include:
+              - lib/proto

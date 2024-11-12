@@ -1,41 +1,5 @@
-import 'dart:io';
-
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-
-final isTest = Platform.environment.containsKey('FLUTTER_TEST');
-
-// 本地数据库版本号
-final kAppKey = GlobalKey<NavigatorState>();
-const kCurrentDBVersion = 1;
-const String kAppName = 'FastStation';
-const String kPackageName = 'com.xiedeacc.fstation';
-const String kPackageNameFDroid = 'com.xiedeacc.fstation.fdroid';
-const bool isWeb = kIsWeb;
-final bool isLinux = !kIsWeb && Platform.isLinux;
-final bool isMacOS = !kIsWeb && Platform.isMacOS;
-final bool isWindows = !kIsWeb && Platform.isWindows;
-final bool isAndroid = !kIsWeb && Platform.isAndroid;
-final bool isIOS = !kIsWeb && Platform.isIOS;
-final bool isFuchsia = !kIsWeb && Platform.isFuchsia;
-
-// extra
-final bool isMobile = isAndroid || isIOS;
-final bool isDesktop = isWindows || isMacOS || isLinux;
-final bool isDesktopOrWeb = isDesktop || isWeb;
-final bool isApple = isIOS || isMacOS;
-
-final String operatingSystem = kIsWeb ? 'browser' : Platform.operatingSystem;
-final String operatingSystemVersion =
-    kIsWeb ? '' : Platform.operatingSystemVersion;
-final String resolvedExecutable = kIsWeb
-    ? throw UnimplementedError('Not for web')
-    : Platform.resolvedExecutable;
-
-bool get isTargetMobile => [TargetPlatform.android, TargetPlatform.iOS]
-    .contains(defaultTargetPlatform);
-
-bool get isTargetDesktop => !isTargetMobile;
-
-final bool supportCopyImage =
-    kIsWeb || Platform.isIOS || Platform.isMacOS || Platform.isWindows;
+const url = r'https?://([\w-]+\.)+[\w-]+(/[\w-./?%&@\$=~#+]*)?';
+const phoneNumber = r'[+0]\d+[\d-]+\d';
+const email = r'[^@\s]+@([^@\s]+\.)+[^@\W]+';
+const duration = r'\b(\d{1,2}:)?(\d{1,2}):(\d{2})\b';
+const all = '($url|$duration|$phoneNumber|$email)';

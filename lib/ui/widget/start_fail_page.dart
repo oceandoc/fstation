@@ -1,21 +1,18 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import '../../util/constants.dart';
+import '../../util/app_device_info.dart';
 import '../../util/image_util.dart';
 
-
 class StartupFailedPage extends StatelessWidget {
-  final dynamic error;
-  final StackTrace? stackTrace;
-  final bool wrapApp;
   const StartupFailedPage({
-    super.key,
-    required this.error,
+    required this.error, super.key,
     this.stackTrace,
     this.wrapApp = false,
   });
+  final dynamic error;
+  final StackTrace? stackTrace;
+  final bool wrapApp;
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +35,7 @@ class StartupFailedPage extends StatelessWidget {
           child: ImageUtil.getChaldeaBackground(context),
         ),
         const SizedBox(height: 12),
-        Row(
+        const Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // TextButton(

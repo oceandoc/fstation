@@ -1,49 +1,44 @@
-import 'dart:ui';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:fstation/generated/l10n.dart';
 import 'package:fstation/util/extensions.dart';
-import 'package:fstation/util/platform/platform.dart';
 import 'package:tray_manager/tray_manager.dart';
 import 'package:window_manager/window_manager.dart';
 
 import '../impl/logger.dart';
 import '../ui/dialog.dart';
-import 'app_info.dart';
-import 'constants.dart';
-
+import 'app_device_info.dart';
 
 class AppWindowUtil {
   const AppWindowUtil._();
+
   static bool _trayInstalled = false;
 
   static Future<void> init() async {
-    if (PlatformU.isDesktop) {
+    if (isDesktop) {
       await windowManager.ensureInitialized();
-      windowManager.setTitle(kAppName);
-      windowManager.setMinimumSize(kDebugMode ? const Size(100, 100) : const Size(375, 568));
+      await windowManager.setTitle(kAppName);
+      await windowManager.setMinimumSize(
+          kDebugMode ? const Size(100, 100) : const Size(375, 568));
       // windowManager.setMaximumSize(Size.infinite); // ?
-      windowManager.setPreventClose(true);
+      await windowManager.setPreventClose(true);
     }
   }
 
   /// window ops
 
   static Future<void> minimizeWindow() async {
-    if (PlatformU.isWindows) {
+    if (isWindows) {
       return windowManager.hide();
-    } else if (PlatformU.isMacOS) {
+    } else if (isMacOS) {
       return windowManager.minimize();
-    } else if (PlatformU.isLinux) {
+    } else if (isLinux) {
       return windowManager.minimize();
     }
   }
 
   static Future<void> showWindow() async {
-    if (PlatformU.isDesktop) {
+    if (isDesktop) {
       return windowManager.show();
     }
   }
@@ -55,13 +50,13 @@ class AppWindowUtil {
       ).showDialog(kAppKey.currentContext!);
       if (confirm != true) return;
     }
-    windowManager.destroy();
+    await windowManager.destroy();
   }
 
   static Future<void> setAlwaysOnTop([bool? onTop]) async {
-    if (PlatformU.isDesktop) {
+    if (isDesktop) {
       // onTop ??= db.settings.alwaysOnTop;
-      windowManager.setAlwaysOnTop(true);
+      await windowManager.setAlwaysOnTop(true);
     }
   }
 
@@ -84,13 +79,14 @@ class AppWindowUtil {
   }
 
   static Future<void> setTray() async {
-    if (!PlatformU.isDesktop) return;
+    if (!isDesktop) return;
     try {
-      final icon = 'res/img/launcher_icon/${PlatformU.isWindows ? 'app_icon.ico' : 'app_icon_rounded.png'}';
-      trayManager.setIcon(icon);
-      final _menuMain = Menu(items: [
+      final icon =
+          'res/img/launcher_icon/${isWindows ? 'app_icon.ico' : 'app_icon_rounded.png'}';
+      await trayManager.setIcon(icon);
+      final menuMain = Menu(items: [
         MenuItem(
-          label: '$kAppName v${AppInfo.versionString}',
+          label: '$kAppName v${AppDeviceInfo.versionString}',
           disabled: true,
         ),
         MenuItem.separator(),
@@ -115,7 +111,7 @@ class AppWindowUtil {
         // ),
       ]);
 
-      await trayManager.setContextMenu(_menuMain);
+      await trayManager.setContextMenu(menuMain);
       if (kDebugMode) {
         print('set tray menu');
       }
@@ -129,11 +125,11 @@ class AppWindowUtil {
   /// events
 
   static Future<void> onTrayClick() async {
-    if (PlatformU.isWindows) {
+    if (isWindows) {
       return windowManager.show();
-    } else if (PlatformU.isMacOS) {
+    } else if (isMacOS) {
       return trayManager.popUpContextMenu();
-    } else if (PlatformU.isLinux) {
+    } else if (isLinux) {
       return windowManager.show();
       // not supported
       // trayManager.popUpContextMenu();
@@ -141,11 +137,11 @@ class AppWindowUtil {
   }
 
   static Future<void> onTrayRightClick() async {
-    if (PlatformU.isWindows) {
+    if (isWindows) {
       return trayManager.popUpContextMenu();
-    } else if (PlatformU.isMacOS) {
+    } else if (isMacOS) {
       return windowManager.show();
-    } else if (PlatformU.isLinux) {
+    } else if (isLinux) {
       return windowManager.show();
     }
   }
@@ -208,6 +204,6 @@ class AppWindowUtil {
     //     ],
     //   ),
     // );
-    return  true;
+    return true;
   }
 }

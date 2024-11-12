@@ -12,6 +12,8 @@ class Settings {
   String? proxyPassword;
   int autoUpdateCheckTime;
   bool firstLaunch;
+  List<int>? windowsPosition;
+  bool windowsAlwaysOnTop;
 
   Settings({
     this.id,
@@ -27,6 +29,8 @@ class Settings {
     this.proxyPassword,
     this.autoUpdateCheckTime = 0,
     this.firstLaunch = true,
+    this.windowsPosition,
+    this.windowsAlwaysOnTop = false,
   });
 
   // Create Settings from JSON/Map
@@ -47,6 +51,8 @@ class Settings {
       proxyPassword: map['proxy_password'] as String?,
       autoUpdateCheckTime: map['auto_update_check_time'] as int? ?? 0,
       firstLaunch: (map['first_launch'] as int? ?? 1) == 1,
+      windowsPosition: _parsePosition(map['windows_position'] as String?),
+      windowsAlwaysOnTop: (map['windows_always_ontop'] as int? ?? 0) == 1,
     );
   }
 
@@ -68,7 +74,21 @@ class Settings {
       'proxy_password': proxyPassword,
       'auto_update_check_time': autoUpdateCheckTime,
       'first_launch': firstLaunch ? 1 : 0,
+      'windows_position': _positionToString(windowsPosition),
+      'windows_always_ontop': windowsAlwaysOnTop ? 1 : 0,
     };
+  }
+
+  // Helper method to parse a string into a List<int>
+  static List<int>? _parsePosition(String? positionString) {
+    if (positionString == null || positionString.isEmpty) return null;
+    return positionString.split(',').map(int.parse).toList();
+  }
+
+  // Helper method to convert a List<int> to a string
+  static String? _positionToString(List<int>? position) {
+    if (position == null || position.isEmpty) return null;
+    return position.join(',');
   }
 
   // Create a copy of Settings with some fields updated
@@ -86,6 +106,8 @@ class Settings {
     String? proxyPassword,
     int? autoUpdateCheckTime,
     bool? firstLaunch,
+    List<int>? windowsPosition,
+    bool? windowsAlwaysOnTop,
   }) {
     return Settings(
       id: id ?? this.id,
@@ -105,11 +127,13 @@ class Settings {
       proxyPassword: proxyPassword ?? this.proxyPassword,
       autoUpdateCheckTime: autoUpdateCheckTime ?? this.autoUpdateCheckTime,
       firstLaunch: firstLaunch ?? this.firstLaunch,
+      windowsPosition: windowsPosition ?? this.windowsPosition,
+      windowsAlwaysOnTop: windowsAlwaysOnTop ?? this.windowsAlwaysOnTop,
     );
   }
 
   @override
   String toString() {
-    return 'Settings{id: $id, language: $language, themeMode: $themeMode, ...}';
+    return 'Settings{id: $id, language: $language, themeMode: $themeMode, windowsPosition: $windowsPosition, ...}';
   }
 }

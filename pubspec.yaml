@@ -41,7 +41,7 @@ dependencies:
   device_info_plus: ^11.1.1
   catcher_2: ^2.0.1
   worker_manager: ^7.2.2
-  countly_flutter_np: ^24.11.0
+  countly_flutter_np: ^24.1.0
   android_id: ^0.4.0
   package_info_plus: ^8.1.1
   json_serializable: ^6.8.0
@@ -57,6 +57,10 @@ dependencies:
   path: ^1.8.3
   archive: ^3.6.1
   pool: ^1.5.1
+  flutter_udid: ^3.0.0
+  uuid: ^4.5.1
+  grpc: ^4.0.1
+  protobuf: ^3.1.0
 
 dev_dependencies:
   flutter_test:
@@ -67,6 +71,7 @@ dev_dependencies:
   flutter_launcher_icons: ^0.14.1
   analyzer: 6.4.0
   meta: ^1.11.0
+  protoc_plugin: ^21.1.2
   #analyzer_plugin: ^0.11.3
 
 flutter:

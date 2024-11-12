@@ -8,8 +8,8 @@ class AppAnalysisImpl implements AppAnalysis {
   Future<void> initiate() async {
     final isInitialized = await Countly.isInitialized();
     if (!isInitialized) {
-      CountlyConfig config =
-          CountlyConfig("https://countly.chaldea.center", '46e56e032869aa7dc7e8627bfb6b00c4f0dc1b41');
+      final config =
+          CountlyConfig('https://countly.chaldea.center', '46e56e032869aa7dc7e8627bfb6b00c4f0dc1b41');
       // if (kDebugMode) config.setLoggingEnabled(true);
       // after db init
       // config

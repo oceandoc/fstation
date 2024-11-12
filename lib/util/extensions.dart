@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 
 import '../ui/themes.dart';
-import 'constants.dart';
+import 'app_device_info.dart';
 
 extension IterableX<E> on Iterable<E> {
   E? firstWhereOrNull(bool Function(E element) test) {

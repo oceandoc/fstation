@@ -8,7 +8,7 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
 
 import '../model/settings.dart';
-import '../util/constants.dart';
+import '../util/app_device_info.dart';
 
 class Store {
   // Factory constructor to return the same instance
@@ -107,7 +107,9 @@ class Store {
           proxy_username TEXT,
           proxy_password TEXT,
           auto_update_check_time INTEGER DEFAULT 0,
-          first_launch INTEGER DEFAULT 1
+          first_launch INTEGER DEFAULT 1,
+          windows_position TEXT,
+          windows_always_ontop INTEGER DEFAULT 0
         )
       ''');
   }

@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
-import 'package:fstation/util/platform/platform.dart';
 import 'package:image/image.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
@@ -56,7 +55,7 @@ class Screenshot {
   /// Capture screenshot of the widget
   /// Returns the captured image as Uint8List
   Future<Uint8List?> capture() async {
-    if (kIsWeb && !kPlatformMethods.rendererCanvasKit) return null;
+    if (kIsWeb) return null;
 
     try {
       final shotBinary = await _controller.capture(

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:catcher_2/core/catcher_2.dart';
@@ -14,13 +15,14 @@ import 'package:fstation/bloc/app_setting_bloc.dart';
 import 'package:fstation/generated/l10n.dart';
 import 'package:fstation/impl/router.dart';
 import 'package:fstation/util/analysis/analysis.dart';
+import 'package:fstation/util/app_device_info.dart';
 import 'package:fstation/util/app_window.dart';
 import 'package:fstation/util/catcher/catcher_util.dart';
-import 'package:fstation/util/constants.dart';
 import 'package:fstation/util/extensions.dart';
 import 'package:fstation/util/http_override.dart';
 import 'package:fstation/util/language.dart';
 import 'package:fstation/util/network.dart';
+import 'package:fstation/util/path_help.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:worker_manager/worker_manager.dart';
@@ -34,11 +36,25 @@ import 'ui/themes.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   GestureBinding.instance.resamplingEnabled = true;
-  Logger();
+
+  /// scheduleMicrotask is used to queue a function to be executed in the
+  /// microtask queue, which is processed before the event queue. This ensures
+  /// that the function runs as soon as the current synchronous code execution
+  /// completes, but before any I/O events or timers
+  scheduleMicrotask(() async {
+    await PathHelper().init();
+    Logger();
+  });
+
   final systemLocale = PlatformDispatcher.instance.locale;
   await Localization.load(systemLocale);
-  await setHighRefreshRate();
-  await fetchSystemPalette();
+
+  // execute simultaneously
+  await Future.wait([
+    setHighRefreshRate(),
+    fetchSystemPalette(),
+  ]);
+
   await SettingImpl.instance.init();
 
   FlutterError.onError = (FlutterErrorDetails details) {

@@ -56,6 +56,27 @@ class SettingImpl {
     });
   }
 
+  Future<void> saveWindowsPosition(List<int> position) async {
+    final positionString = position.join(','); // Convert list to string
+    _settings = settings.copyWith(windowsPosition: position);
+    await Store.instance.updateSettings({
+      'windows_position': positionString,
+    });
+  }
+
+  List<int>? get windowsPosition {
+    return settings.windowsPosition; // Directly return the list
+  }
+
+  Future<void> saveWindowsAlwaysOnTop(bool alwaysOnTop) async {
+    _settings = settings.copyWith(windowsAlwaysOnTop: alwaysOnTop);
+    await Store.instance.updateSettings({
+      'windows_always_ontop': alwaysOnTop ? 1 : 0,
+    });
+  }
+
+  bool get windowsAlwaysOnTop => settings.windowsAlwaysOnTop;
+
   Future<void> saveLogLevel(int logLevel) async {
     _settings = settings.copyWith(logLevel: logLevel);
     await Store.instance.updateSettings({
