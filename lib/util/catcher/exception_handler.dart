@@ -247,13 +247,15 @@ Future<String> _setupHtmlMessageText(Report report) async {
 
   buffer.write('<h3>Pages</h3>');
   // Get recent pages from history
-  final pages = routerObserver.lastFivePages;
-  for (final path in pages) {
-    buffer
-      ..write(escape(path))
+  final matchList = router.routerDelegate.currentConfiguration.matches
+      .map((match) => match.matchedLocation)
+      .take(5)
+      .toList();
+
+  for (final path in matchList) {
+    buffer..write(escape(path))
       ..write('<br>');
   }
-
   buffer
     ..write('<hr>')
     ..write('<h3>Device parameters:</h3>');

@@ -35,7 +35,7 @@ import 'ui/themes.dart';
 // TODO(xieyz): fix Localization initialize exception
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  GestureBinding.instance.resamplingEnabled = true;
+  // GestureBinding.instance.resamplingEnabled = true;
 
   /// scheduleMicrotask is used to queue a function to be executed in the
   /// microtask queue, which is processed before the event queue. This ensures
@@ -187,10 +187,7 @@ class _AppState extends State<App> with WidgetsBindingObserver {
             theme: AppThemes.instance.getAppTheme(true),
             darkTheme: AppThemes.instance.getAppTheme(false),
             themeMode: state.themeMode,
-            routeInformationParser: router.defaultRouteParser(),
-            routerDelegate: router.delegate(
-              // navigatorObservers: () => [routerObserver],
-            ),
+            routerConfig: router,
             localizationsDelegates: const [
               Localization.delegate,
               GlobalMaterialLocalizations.delegate,
