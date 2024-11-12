@@ -27,7 +27,7 @@ enum MacAppType {
 }
 
 final kAppKey = GlobalKey<NavigatorState>();
-const kCurrentDBVersion = 1;
+
 final isTest = Platform.environment.containsKey('FLUTTER_TEST');
 const String kAppName = 'FastStation';
 const String kPackageName = 'com.xiedeacc.fstation';

@@ -6,6 +6,7 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
+import 'package:sqflite/sqflite.dart';
 
 import '../model/settings.dart';
 import '../util/app_device_info.dart';
@@ -15,6 +16,7 @@ class Store {
   factory Store() => _instance;
   // Private constructor
   Store._internal();
+  static const kCurrentDBVersion = 2;
 
   // Singleton instance
   static final Store _instance = Store._internal();
@@ -22,16 +24,16 @@ class Store {
   // Make this static to easily access the instance
   static Store get instance => _instance;
 
-  Database? _db;
+  late final Database db;
 
   Future<bool> init() async {
-    if (_db != null) return true;
+    if (db != null) return true;
 
     // Initialize appropriate database factory based on platform
     if (kIsWeb) {
       // Web platform
       databaseFactory = databaseFactoryFfiWeb;
-      _db = await databaseFactory.openDatabase(
+      db = await databaseFactory.openDatabase(
         'fstation.db',
         options: OpenDatabaseOptions(
           version: kCurrentDBVersion,
@@ -58,7 +60,7 @@ class Store {
         await databaseFactory.setDatabasesPath(dbFolder.path);
       }
 
-      _db = await databaseFactory.openDatabase(
+      db = await databaseFactory.openDatabase(
         dbPath,
         options: OpenDatabaseOptions(
           version: kCurrentDBVersion,
@@ -73,11 +75,17 @@ class Store {
   }
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
-    try {
-      await migrate(db, oldVersion, newVersion);
-    } catch (e, stack) {
-      Logger.error('upgrade database error', e, stack);
+    if (oldVersion < 2) {
+      // Create user table
+      await db.execute('''
+        CREATE TABLE user (
+          name TEXT,
+          token TEXT,
+          token_update_time TEXT
+        )
+      ''');
     }
+    // Add future version upgrades here
   }
 
   void _onOpen(Database db) {
@@ -115,9 +123,7 @@ class Store {
   }
 
   Future<Settings?> getSettings() async {
-    if (_db == null) await init();
-
-    final maps = await _db!.query('settings') as List<Map<String, dynamic>>;
+    final maps = await db.query('settings') as List<Map<String, dynamic>>;
     if (maps.isEmpty) {
       return null;
     }
@@ -125,33 +131,80 @@ class Store {
   }
 
   Future<void> saveSettings(Settings settings) async {
-    if (_db == null) await init();
+    if (db == null) await init();
 
     if (settings.id != null) {
-      await _db!.update(
+      await db!.update(
         'settings',
         settings.toMap(),
         where: 'id = ?',
         whereArgs: [settings.id],
       );
     } else {
-      await _db!.insert('settings', settings.toMap());
+      await db!.insert('settings', settings.toMap());
     }
   }
 
   Future<void> updateSettings(Map<String, dynamic> values) async {
-    if (_db == null) await init();
+    if (db == null) await init();
 
     final settings = await getSettings();
     if (settings == null) {
       await saveSettings(Settings.fromMap(values));
     } else {
-      await _db!.update(
+      await db!.update(
         'settings',
         values,
         where: 'id = ?',
         whereArgs: [settings.id],
       );
     }
+  }
+
+  Future<void> addUser({
+    required String name,
+    required String token,
+    String? tokenUpdateTime,
+  }) async {
+    await db.insert('user', {
+      'name': name,
+      'token': token,
+      'token_update_time': tokenUpdateTime ?? DateTime.now().toIso8601String(),
+    });
+  }
+
+  Future<void> updateUser({
+    required String name,
+    String? token,
+    String? tokenUpdateTime,
+  }) async {
+    final values = <String, dynamic>{'name': name};
+    if (token != null) values['token'] = token;
+    if (tokenUpdateTime != null) values['token_update_time'] = tokenUpdateTime;
+
+    await db.update(
+      'user',
+      values,
+      where: 'name = ?',
+      whereArgs: [name],
+    );
+  }
+
+  Future<void> deleteUser(String name) async {
+    await db.delete(
+      'user',
+      where: 'name = ?',
+      whereArgs: [name],
+    );
+  }
+
+  Future<Map<String, dynamic>?> getUser(String name) async {
+    final result = await db.query(
+      'user',
+      where: 'name = ?',
+      whereArgs: [name],
+      limit: 1,
+    );
+    return result.isNotEmpty ? result.first : null;
   }
 }

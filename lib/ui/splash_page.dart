@@ -4,13 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import '../bloc/app_setting_bloc.dart';
 import '../generated/l10n.dart';
 import '../impl/setting_impl.dart';
 import '../util/language.dart';
-
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -52,7 +52,8 @@ class SplashPageState extends State<SplashPage>
       controller: _pageController,
       physics: const BouncingScrollPhysics(),
       onPageChanged: (i) {
-        // FocusScope.of(context).requestFocus(FocusNode());
+        FocusScope.of(context)
+            .requestFocus(FocusNode()); //Dismiss keyboard on page change
         setState(() {
           page = i;
         });
@@ -85,11 +86,12 @@ class SplashPageState extends State<SplashPage>
   Widget get welcomePage {
     return Column(
       children: [
+        const SizedBox(height: 80),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 20),
-          child: Image.asset('assets/logo.png', width: 180),
+          child: Image.asset('assets/logo_color.png', width: 180),
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: 30),
         const _AnimatedHello(),
         const SizedBox(height: 100)
       ],
@@ -173,37 +175,52 @@ class SplashPageState extends State<SplashPage>
   }
 
   Widget _bottom() {
-    final children = <Widget>[
-      Expanded(
-        flex: 2,
-        child: Center(
-          child: SmoothPageIndicator(
-            controller: _pageController,
-            count: pages.length,
-            effect: const WormEffect(
-                dotHeight: 10, dotWidth: 10, activeDotColor: Colors.blue),
-            onDotClicked: (i) {
-              setState(() {
-                page = i;
-                _pageController.animateToPage(
-                  i,
-                  duration: kTabScrollDuration,
-                  curve: Curves.easeInOut,
-                );
-              });
-            },
-          ),
-        ),
-      )
-    ];
-    if (page >= pages.length - 1) {
-      // TODO(xieyz): jump logic
-    }
     return PositionedDirectional(
       bottom: 10,
       start: 10,
       end: 10,
-      child: Row(children: children),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (page >= pages.length - 1) ...[
+            Center(
+              child: TextButton(
+                style: TextButton.styleFrom(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                  textStyle: const TextStyle(fontSize: 18),
+                ),
+                child: Text(Localization.current.done),
+                onPressed: () async {
+                  await SettingImpl.instance.saveFirstLaunch(false);
+                  if (mounted) {
+                    context.go('/home');
+                  }
+                },
+              ),
+            ),
+            const SizedBox(height: 20),
+          ],
+          Center(
+            child: SmoothPageIndicator(
+              controller: _pageController,
+              count: pages.length,
+              effect: const WormEffect(
+                  dotHeight: 10, dotWidth: 10, activeDotColor: Colors.blue),
+              onDotClicked: (i) {
+                setState(() {
+                  page = i;
+                  _pageController.animateToPage(
+                    i,
+                    duration: kTabScrollDuration,
+                    curve: Curves.easeInOut,
+                  );
+                });
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -281,10 +298,10 @@ class _AnimatedHelloState extends State<_AnimatedHello> {
         setState(() {});
       },
       child: SizedBox(
-        height: 36,
+        height: 80,
         child: Text(
           _hellos[index],
-          style: const TextStyle(fontSize: 18),
+          style: const TextStyle(fontSize: 64),
           textAlign: TextAlign.center,
         ),
       ),
