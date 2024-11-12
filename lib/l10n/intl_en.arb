@@ -19,5 +19,6 @@
   "cancel": "Cancel",
   "success": "Success",
   "error": "Error",
-  "general_close": "Close"
+  "general_close": "Close",
+  "done": "Done"
 }

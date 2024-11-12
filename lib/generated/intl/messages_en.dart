@@ -25,6 +25,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "about_app": MessageLookupByLibrary.simpleMessage("About"),
         "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
         "confirm": MessageLookupByLibrary.simpleMessage("Confirm"),
+        "done": MessageLookupByLibrary.simpleMessage("Done"),
         "error": MessageLookupByLibrary.simpleMessage("Error"),
         "error_no_internet":
             MessageLookupByLibrary.simpleMessage("No internet"),

@@ -19,5 +19,6 @@
   "cancel": "取消",
   "success": "成功",
   "error": "错误",
-  "general_close": "关闭"
+  "general_close": "关闭",
+  "done": "完成"
 }

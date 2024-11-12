@@ -1,10 +1,10 @@
 import 'dart:math';
 
+import 'package:auto_route/annotations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:go_router/go_router.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import '../bloc/app_setting_bloc.dart';
@@ -12,6 +12,8 @@ import '../generated/l10n.dart';
 import '../impl/setting_impl.dart';
 import '../util/language.dart';
 
+
+@RoutePage()
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
 
@@ -39,35 +41,25 @@ class SplashPageState extends State<SplashPage>
 
   @override
   Widget build(BuildContext context) {
-    if (!SettingImpl.instance.firstLaunch) {
-      context.go('/home');
-    }
+    // if (!SettingImpl.instance.firstLaunch) {
+    //   context.go('/home');
+    // }
     pages = [
       welcomePage,
       languagePage,
       darkModePage,
     ];
 
-    Widget child = NotificationListener<ScrollNotification>(
-      onNotification: (ScrollNotification notification) {
-        if (notification is ScrollEndNotification) {
-          if (_pageController.page == pages.length - 1) {
-            // User swiped past the last page
-            context.go('/home');
-          }
-        }
-        return false;
+    Widget child = PageView(
+      controller: _pageController,
+      physics: const BouncingScrollPhysics(),
+      onPageChanged: (i) {
+        // FocusScope.of(context).requestFocus(FocusNode());
+        setState(() {
+          page = i;
+        });
       },
-      child: PageView(
-        controller: _pageController,
-        children: pages,
-        onPageChanged: (i) {
-          FocusScope.of(context).requestFocus(FocusNode());
-          setState(() {
-            page = i;
-          });
-        },
-      ),
+      children: pages,
     );
 
     child = Stack(children: [child, _bottom()]);
@@ -84,7 +76,7 @@ class SplashPageState extends State<SplashPage>
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 768),
+            constraints: const BoxConstraints(),
             child: child,
           ),
         ),

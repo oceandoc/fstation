@@ -187,7 +187,10 @@ class _AppState extends State<App> with WidgetsBindingObserver {
             theme: AppThemes.instance.getAppTheme(true),
             darkTheme: AppThemes.instance.getAppTheme(false),
             themeMode: state.themeMode,
-            routerConfig: router,
+            routeInformationParser: router.defaultRouteParser(),
+            routerDelegate: router.delegate(
+              // navigatorObservers: () => [routerObserver],
+            ),
             localizationsDelegates: const [
               Localization.delegate,
               GlobalMaterialLocalizations.delegate,

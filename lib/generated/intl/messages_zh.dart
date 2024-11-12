@@ -25,6 +25,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "about_app": MessageLookupByLibrary.simpleMessage("关于"),
         "cancel": MessageLookupByLibrary.simpleMessage("取消"),
         "confirm": MessageLookupByLibrary.simpleMessage("确定"),
+        "done": MessageLookupByLibrary.simpleMessage("完成"),
         "error": MessageLookupByLibrary.simpleMessage("错误"),
         "error_no_internet": MessageLookupByLibrary.simpleMessage("无网络连接"),
         "general_close": MessageLookupByLibrary.simpleMessage("关闭"),

@@ -217,7 +217,7 @@ Future<String> _setupHtmlMessageText(Report report) async {
     if (kIsWeb)
       // TODO(xieyz): support canvaskit
       'renderer': 'html',
-      // 'renderer': kPlatformMethods.rendererCanvasKit ? 'canvaskit' : 'html',
+    // 'renderer': kPlatformMethods.rendererCanvasKit ? 'canvaskit' : 'html',
   };
   for (final entry in summary.entries) {
     buffer.write('<b>${entry.key}</b>: ${escape(entry.value.toString())}<br>');
@@ -246,19 +246,17 @@ Future<String> _setupHtmlMessageText(Report report) async {
   }
 
   buffer.write('<h3>Pages</h3>');
-  // Get recent pages from GoRouter
-  final matchList = router.routerDelegate.currentConfiguration.matches
-      .map((match) => match.matchedLocation)
-      .take(5)
-      .toList();
-
-  for (final path in matchList) {
-    buffer..write(escape(path))
-    ..write('<br>');
+  // Get recent pages from history
+  final pages = routerObserver.lastFivePages;
+  for (final path in pages) {
+    buffer
+      ..write(escape(path))
+      ..write('<br>');
   }
 
-  buffer..write('<hr>')
-  ..write('<h3>Device parameters:</h3>');
+  buffer
+    ..write('<hr>')
+    ..write('<h3>Device parameters:</h3>');
 
   for (final entry in report.deviceParameters.entries) {
     buffer.write('<b>${entry.key}</b>: ${escape(entry.value.toString())}<br>');
@@ -285,8 +283,8 @@ Future<String> _setupHtmlMessageText(Report report) async {
 
 class FeedbackReport extends Report {
   FeedbackReport(this.contactInfo, this.body)
-      : super(null, '', DateTime.now(), AppDeviceInfo.deviceParams, AppDeviceInfo.appParams,
-            {}, null, PlatformType.unknown, null);
+      : super(null, '', DateTime.now(), AppDeviceInfo.deviceParams,
+            AppDeviceInfo.appParams, {}, null, PlatformType.unknown, null);
   final String? contactInfo;
   final String body;
 }
