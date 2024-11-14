@@ -3,15 +3,13 @@ import 'package:flutter/material.dart';
 import '../../util/auth_page_theme_extensions.dart';
 
 class AuthEmailInput extends StatelessWidget {
+  const AuthEmailInput({
+    required this.getEmailErrors, required this.onEmailChanged, super.key,
+    this.autoFocus = false,
+  });
   final String? Function() getEmailErrors;
   final void Function(String email) onEmailChanged;
   final bool autoFocus;
-  const AuthEmailInput({
-    Key? key,
-    required this.getEmailErrors,
-    required this.onEmailChanged,
-    this.autoFocus = false,
-  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -37,16 +35,16 @@ class AuthEmailInput extends StatelessWidget {
           autofocus: autoFocus,
           style: TextStyle(color: textColor),
           decoration: InputDecoration(
-            hintText: "email",
+            hintText: 'email',
             hintStyle: TextStyle(color: hintTextColor),
             prefixIcon: Icon(
-              Icons.email,
+              Icons.account_circle,
               color: prefixIconColor,
             ),
             fillColor: fillColor,
             filled: true,
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(30.0),
+              borderRadius: BorderRadius.circular(30),
               borderSide: BorderSide(
                 color: borderColor,
                 width: 0.7,
@@ -58,7 +56,7 @@ class AuthEmailInput extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
             border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30.0),
+                borderRadius: BorderRadius.circular(30),
                 borderSide: BorderSide.none),
           ),
           textInputAction: TextInputAction.next,

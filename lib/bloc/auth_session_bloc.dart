@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
+import '../impl/user_manager.dart';
 import '../model/user.dart';
 
 part 'auth_session_event.dart';
@@ -10,11 +11,7 @@ class AuthSessionBloc extends Bloc<AuthSessionEvent, AuthSessionState> {
   AuthSessionBloc() : super(const Unauthenticated()) {
     on<InitalizeLastLoggedInUser>((event, emit) {
 
-      String? lastLoggedInUserId =
-          keyValueDataSource.getValue(Global.lastLoggedInUser);
-
-      if (lastLoggedInUserId != null &&
-          lastLoggedInUserId == GuestUserDetails.guestUserId) {
+      if (UserManager.instance.isAuth) {
         emit(Authenticated(
             user: LoggedInUser.getGuestUserModel(), freshLogin: true));
       } else {

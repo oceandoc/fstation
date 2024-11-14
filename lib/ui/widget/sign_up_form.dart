@@ -1,9 +1,9 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fstation/ui/widget/password_input_field.dart';
 import 'package:fstation/ui/widget/submit_button.dart';
 import '../../bloc/auth_form_bloc.dart';
+import '../../generated/l10n.dart';
 import '../../util/util.dart';
 import 'auth_change.dart';
 import 'email_input_field.dart';
@@ -11,11 +11,11 @@ import 'form_dimensions.dart';
 import 'glassmorphism_cover.dart';
 
 class SignUpForm extends StatefulWidget {
-
   const SignUpForm({
-    required this.flipCard, super.key,
+    required this.flipCard,
+    super.key,
   });
-  static String get route => '/auth';
+
   final void Function() flipCard;
 
   @override
@@ -45,23 +45,23 @@ class _SignUpFormState extends State<SignUpForm> {
       bloc: bloc,
       listener: (context, state) {
         if (state is AuthFormSubmissionFailed &&
-            state.errors.containsKey("general")) {
-          showToast(state.errors["general"]![0]);
+            state.errors.containsKey('general')) {
+          showToast(state.errors["general"]![0].toString());
         }
       },
       builder: (context, state) {
         String? _getEmailErrors() {
           if (state is AuthFormSubmissionFailed &&
-              state.errors.containsKey("email")) {
-            return state.errors["email"]![0];
+              state.errors.containsKey('email')) {
+            return state.errors["email"]![0].toString();
           }
           return null;
         }
 
         String? _getPasswordErrors() {
           if (state is AuthFormSubmissionFailed &&
-              state.errors.containsKey("password")) {
-            return state.errors["password"]?[0];
+              state.errors.containsKey('password')) {
+            return state.errors["password"]?[0].toString();
           }
           return null;
         }
@@ -83,7 +83,7 @@ class _SignUpFormState extends State<SignUpForm> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   Text(
-                    S.current.signUp,
+                    Localization.current.sign_up,
                     style: const TextStyle(
                       fontSize: 25,
                       color: Colors.white,
@@ -107,17 +107,17 @@ class _SignUpFormState extends State<SignUpForm> {
                         height: 30,
                       ),
                       SubmitButton(
-                        isLoading: (state is AuthFormSubmissionLoading),
+                        isLoading: state is AuthFormSubmissionLoading,
                         onSubmitted: _onSubmitted,
-                        buttonText: S.current.submit,
+                        buttonText: Localization.current.submit,
                       )
                     ],
                   ),
                   Column(
                     children: [
                       AuthChangePage(
-                        infoText: S.current.alreadyHaveAnAccount,
-                        flipPageText: S.current.logIn,
+                        infoText: Localization.current.already_have_account,
+                        flipPageText: Localization.current.log_in,
                         flipCard: widget.flipCard,
                       ),
                     ],

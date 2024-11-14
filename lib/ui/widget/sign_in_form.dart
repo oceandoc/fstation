@@ -1,29 +1,28 @@
-import 'package:dairy_app/app/themes/theme_extensions/auth_page_theme_extensions.dart';
-import 'package:dairy_app/core/utils/utils.dart';
-import 'package:dairy_app/core/widgets/glassmorphism_cover.dart';
-import 'package:dairy_app/core/widgets/submit_button.dart';
-import 'package:dairy_app/features/auth/core/failures/failures.dart';
-import 'package:dairy_app/features/auth/presentation/bloc/auth_form/auth_form_bloc.dart';
-import 'package:dairy_app/features/auth/presentation/widgets/email_input_field.dart';
-import 'package:dairy_app/features/auth/presentation/widgets/form_dimensions.dart';
-import 'package:dairy_app/generated/l10n.dart';
 import 'package:dartz/dartz.dart' as dz;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fstation/ui/widget/submit_button.dart';
+import '../../bloc/auth_form_bloc.dart';
+import '../../generated/l10n.dart';
+import '../../util/auth_page_theme_extensions.dart';
+import '../../util/util.dart';
 import 'auth_change.dart';
+import 'email_input_field.dart';
+import 'failures.dart';
 import 'forgot_password_popup.dart';
+import 'form_dimensions.dart';
+import 'glassmorphism_cover.dart';
 import 'password_input_field.dart';
 
 class SignInForm extends StatefulWidget {
-  static String get route => '/auth';
+  const SignInForm({
+    required this.flipCard,
+    super.key,
+    this.lastLoggedInUserId,
+  });
+
   final void Function() flipCard;
   final String? lastLoggedInUserId;
-
-  const SignInForm({
-    Key? key,
-    required this.flipCard,
-    this.lastLoggedInUserId,
-  }) : super(key: key);
 
   @override
   State<SignInForm> createState() => _SignInFormState();
@@ -57,16 +56,14 @@ class _SignInFormState extends State<SignInForm> {
       listener: (context, state) {
         if (state is AuthFormSubmissionFailed &&
             state.errors.containsKey("general")) {
-          showToast(
-            state.errors["general"]![0],
-          );
+          showToast(state.errors["general"]![0].toString());
         }
       },
       builder: (context, state) {
         String? _getEmailErrors() {
           if (state is AuthFormSubmissionFailed &&
               state.errors.containsKey("email")) {
-            return state.errors["email"]![0];
+            return state.errors["email"]![0].toString();
           }
           return null;
         }
@@ -74,7 +71,7 @@ class _SignInFormState extends State<SignInForm> {
         String? _getPasswordErrors() {
           if (state is AuthFormSubmissionFailed &&
               state.errors.containsKey("password")) {
-            return state.errors["password"]?[0];
+            return state.errors["password"]?[0].toString();
           }
           return null;
         }
@@ -100,7 +97,7 @@ class _SignInFormState extends State<SignInForm> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   Text(
-                    S.current.logIn,
+                    Localization.current.log_in,
                     style: const TextStyle(
                       fontSize: 25,
                       color: Colors.white,
@@ -126,7 +123,7 @@ class _SignInFormState extends State<SignInForm> {
                       SubmitButton(
                         isLoading: (state is AuthFormSubmissionLoading),
                         onSubmitted: _onSubmitted,
-                        buttonText: S.current.submit,
+                        buttonText: Localization.current.submit,
                       )
                     ],
                   ),
@@ -138,7 +135,7 @@ class _SignInFormState extends State<SignInForm> {
                               context, submitForgotPasswordEmail);
                         },
                         child: Text(
-                          S.current.forgotPassword,
+                          Localization.current.forgot_password,
                           style: TextStyle(
                             color: linkColor,
                             fontWeight: FontWeight.bold,
@@ -146,8 +143,8 @@ class _SignInFormState extends State<SignInForm> {
                         ),
                       ),
                       AuthChangePage(
-                        infoText: S.current.dontHaveAccount,
-                        flipPageText: S.current.signUp,
+                        infoText: Localization.current.dont_have_account,
+                        flipPageText: Localization.current.sign_up,
                         flipCard: widget.flipCard,
                       ),
                     ],
