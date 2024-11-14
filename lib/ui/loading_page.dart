@@ -3,14 +3,14 @@ import 'package:fstation/ui/widget/animation.dart';
 import 'package:fstation/util/extensions.dart';
 import 'package:shimmer/shimmer.dart';
 
-class BlankPage extends StatefulWidget {
-  const BlankPage({super.key});
+class LoadingPage extends StatefulWidget {
+  const LoadingPage({super.key});
 
   @override
-  State<BlankPage> createState() => _BlankPageState();
+  State<LoadingPage> createState() => _LoadingPageState();
 }
 
-class _BlankPageState extends State<BlankPage> {
+class _LoadingPageState extends State<LoadingPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
