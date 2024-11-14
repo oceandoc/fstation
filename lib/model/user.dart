@@ -1,5 +1,5 @@
 class User {
-  const User({
+   User({
     this.name,
     this.token,
     this.tokenUpdateTime,
@@ -16,7 +16,7 @@ class User {
   }
 
   final String? name;
-  final String? token;
+  late String? token;
   final DateTime? tokenUpdateTime;
 
   User copyWith({

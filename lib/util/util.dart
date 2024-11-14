@@ -1,6 +1,7 @@
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:fstation/util/extensions.dart';
 import 'package:path/path.dart' as pathlib;
 
@@ -16,6 +17,18 @@ String joinPaths(
     ]) {
   return pathlib.join(part1, part2, part3, part4, part5, part6, part7, part8);
 }
+
+void showToast(String message) {
+  Fluttertoast.showToast(
+      msg: message,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 1,
+      backgroundColor: Colors.pinkAccent,
+      textColor: Colors.white,
+      fontSize: 16.0);
+}
+
 
 final nampack = _NamPackUtils();
 

@@ -25,13 +25,15 @@ const UserOp$json = {
     {'1': 'UserLogin', '2': 3},
     {'1': 'UserLogout', '2': 4},
     {'1': 'UserChangePassword', '2': 5},
+    {'1': 'UserUpdateToken', '2': 6},
   ],
 };
 
 /// Descriptor for `UserOp`. Decode as a `google.protobuf.EnumDescriptorProto`.
 final $typed_data.Uint8List userOpDescriptor = $convert.base64Decode(
     'CgZVc2VyT3ASDgoKVXNlclVudXNlZBAAEg4KClVzZXJDcmVhdGUQARIOCgpVc2VyRGVsZXRlEA'
-    'ISDQoJVXNlckxvZ2luEAMSDgoKVXNlckxvZ291dBAEEhYKElVzZXJDaGFuZ2VQYXNzd29yZBAF');
+    'ISDQoJVXNlckxvZ2luEAMSDgoKVXNlckxvZ291dBAEEhYKElVzZXJDaGFuZ2VQYXNzd29yZBAF'
+    'EhMKD1VzZXJVcGRhdGVUb2tlbhAG');
 
 @$core.Deprecated('Use serverOpDescriptor instead')
 const ServerOp$json = {

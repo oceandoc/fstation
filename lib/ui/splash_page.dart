@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:go_router/go_router.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import '../bloc/app_setting_bloc.dart';
@@ -184,19 +183,40 @@ class SplashPageState extends State<SplashPage>
         children: [
           if (page >= pages.length - 1) ...[
             Center(
-              child: TextButton(
-                style: TextButton.styleFrom(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-                  textStyle: const TextStyle(fontSize: 18),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  fixedSize: const Size.fromHeight(50),
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.blue.withOpacity(0.7),
                 ),
-                child: Text(Localization.current.done),
                 onPressed: () async {
-                  await SettingImpl.instance.saveFirstLaunch(false);
-                  if (mounted) {
-                    context.go('/home');
-                  }
+                  await Future.delayed(const Duration(milliseconds: 300));
                 },
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Get Started',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                        shadows: [Shadow(color: Colors.grey)],
+                      ),
+                    ),
+                    SizedBox(width: 8),
+                    Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      size: 30,
+                      shadows: [
+                        Shadow(
+                          color: Colors.grey,
+                          blurRadius: 3,
+                        )
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
             const SizedBox(height: 20),

@@ -30,6 +30,7 @@ import 'package:worker_manager/worker_manager.dart';
 import 'impl/logger.dart';
 import 'impl/setting_impl.dart';
 import 'impl/store.dart';
+import 'impl/user_manager.dart';
 import 'ui/themes.dart';
 
 // TODO(xieyz): fix Localization initialize exception
@@ -45,6 +46,9 @@ void main() async {
     await PathHelper().init();
     Logger();
   });
+
+  await Store.instance.init();
+  await UserManager.instance.init();
 
   final systemLocale = PlatformDispatcher.instance.locale;
   await Localization.load(systemLocale);
@@ -132,6 +136,14 @@ class _AppState extends State<App> with WidgetsBindingObserver {
     //   // needs to be delayed so that EasyLocalization is working
     //   ref.read(backgroundServiceProvider).resumeServiceIfEnabled();
     // });
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.resumed) {
+      UserManager.instance.updateToken();
+    }
   }
 
   Future<void> initApp() async {

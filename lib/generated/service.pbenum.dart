@@ -20,6 +20,7 @@ class UserOp extends $pb.ProtobufEnum {
   static const UserOp UserLogin = UserOp._(3, _omitEnumNames ? '' : 'UserLogin');
   static const UserOp UserLogout = UserOp._(4, _omitEnumNames ? '' : 'UserLogout');
   static const UserOp UserChangePassword = UserOp._(5, _omitEnumNames ? '' : 'UserChangePassword');
+  static const UserOp UserUpdateToken = UserOp._(6, _omitEnumNames ? '' : 'UserUpdateToken');
 
   static const $core.List<UserOp> values = <UserOp> [
     UserUnused,
@@ -28,6 +29,7 @@ class UserOp extends $pb.ProtobufEnum {
     UserLogin,
     UserLogout,
     UserChangePassword,
+    UserUpdateToken,
   ];
 
   static final $core.Map<$core.int, UserOp> _byValue = $pb.ProtobufEnum.initByValue(values);

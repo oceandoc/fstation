@@ -27,7 +27,6 @@ class Store {
   late final Database db;
 
   Future<bool> init() async {
-    if (db != null) return true;
 
     // Initialize appropriate database factory based on platform
     if (kIsWeb) {
@@ -76,12 +75,18 @@ class Store {
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
     if (oldVersion < 2) {
-      // Create user table
       await db.execute('''
         CREATE TABLE user (
-          name TEXT,
+          name TEXT PRIMARY KEY,
           token TEXT,
           token_update_time TEXT
+        )
+      ''');
+
+      await db.execute('''
+        CREATE TABLE current_user (
+          id INTEGER PRIMARY KEY,
+          user_name TEXT
         )
       ''');
     }
@@ -206,5 +211,25 @@ class Store {
       limit: 1,
     );
     return result.isNotEmpty ? result.first : null;
+  }
+
+  Future<void> setCurrentUser(String name) async {
+    await db.insert(
+      'current_user',
+      {'id': 1, 'user_name': name},
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  Future<Map<String, dynamic>?> getCurrentUser() async {
+    final currentUserResult = await db.query(
+      'current_user',
+      where: 'id = 1',
+      limit: 1,
+    );
+    if (currentUserResult.isEmpty) return null;
+
+    final userName = currentUserResult.first['user_name'] as String;
+    return await getUser(userName);
   }
 }

@@ -6,14 +6,15 @@ import 'package:fstation/generated/service.pb.dart';
 import 'package:grpc/grpc.dart';
 import 'package:uuid/uuid.dart';
 
-class OceanClient {
-  factory OceanClient() => _instance;
-  OceanClient._internal();
-  static final OceanClient _instance = OceanClient._internal();
-  static const _uuid = Uuid();
+import '../model/user.dart';
 
+class GrpcClient {
+  GrpcClient._();
+  static final instance = GrpcClient._();
+
+  static const _uuid = Uuid();
   ClientChannel? _channel;
-  OceanFileClient? _stub;
+  GrpcFileClient? _stub;
   String? _token;
 
   Future<void> connect(String host, int port, {bool secure = false}) async {
@@ -30,7 +31,7 @@ class OceanClient {
       ),
     );
 
-    _stub = OceanFileClient(_channel!);
+    _stub = GrpcFileClient(_channel!);
   }
 
   Future<void> shutdown() async {
@@ -87,6 +88,28 @@ class OceanClient {
 
     try {
       return await _stub!.userOp(request);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<UserRes> updateToken(User user) async {
+    if (user.name == null || user.token == null) {
+      throw Exception('User token is null');
+    }
+
+    final request = UserReq()
+      ..requestId = _uuid.v4()
+      ..op = UserOp.UserUpdateToken
+      ..user = user.name!
+      ..token = user.token!;
+
+    try {
+      final response = await _stub!.userOp(request);
+      if (response.errCode == ErrCode.Success) {
+        _token = response.token;
+      }
+      return response;
     } catch (e) {
       rethrow;
     }
@@ -182,8 +205,8 @@ class OceanClient {
   }
 }
 
-class OceanFileClient extends Client {
-  OceanFileClient(ClientChannel super.channel);
+class GrpcFileClient extends Client {
+  GrpcFileClient(ClientChannel super.channel);
 
   static final _$userOp = ClientMethod<UserReq, UserRes>(
     'OceanFile/UserOp',
