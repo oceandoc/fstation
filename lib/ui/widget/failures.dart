@@ -1,126 +1,101 @@
-
-
 import 'failure_template.dart';
 
 class SignUpFailure extends Failure {
-  static const UNKNOWN_ERROR = -1;
-  static const INVALID_EMAIL = 0;
-  static const EMAIL_ALREADY_EXISTS = 1;
-  static const INVALID_PASSWORD = 2;
-  static const NO_INTERNET_CONNECTION = 3;
 
-  const SignUpFailure._({required String message, required int code})
-      : super(message: message, code: code);
+  const SignUpFailure._({required super.message, required super.code});
 
   factory SignUpFailure.unknownError([String? message]) {
     return SignUpFailure._(
-        message: message ?? "unknown error occured, please try again",
-        code: UNKNOWN_ERROR);
+        message: message ?? 'unknown error occurred, please try again',
+        code: kUnknownError);
   }
 
-  factory SignUpFailure.invalidEmail([String? message]) {
+
+  factory SignUpFailure.userAlreadyExists([String? message]) {
     return SignUpFailure._(
-        message: message ?? "invalid email", code: INVALID_EMAIL);
+        message: message ?? 'user already exists',
+        code: kUserAlreadyExists);
   }
 
-  factory SignUpFailure.emailAlreadyExists([String? message]) {
+  factory SignUpFailure.invalidUserPasswordCombination([String? message]) {
     return SignUpFailure._(
-        message: message ?? "email already exissts",
-        code: EMAIL_ALREADY_EXISTS);
-  }
-
-  factory SignUpFailure.invalidPassword([String? message]) {
-    return SignUpFailure._(
-        message: message ?? "invalid password", code: INVALID_PASSWORD);
+        message: message ?? 'invalid password', code: kInvalidUserPasswordCombination);
   }
 
   factory SignUpFailure.noInternetConnection([String? message]) {
     return SignUpFailure._(
-        message: message ?? "please turn on internet for sign up",
-        code: NO_INTERNET_CONNECTION);
+        message: message ?? 'please turn on internet for sign up',
+        code: kNoInternetConnection);
   }
+
+  static const kUnknownError = -1;
+  static const kInvalidUserName = 0;
+  static const kUserAlreadyExists = 1;
+  static const kInvalidUserPasswordCombination = 2;
+  static const kNoInternetConnection = 3;
 }
 
 class SignInFailure extends Failure {
-  static const UNKNOWN_ERROR = -1;
-  static const INVALID_EMAIL = 0;
-  static const EMAIL_DOES_NOT_EXISTS = 1;
-  static const WRONG_PASSWORD = 2;
-  static const NO_INTERNET_CONNECTION = 3;
-  static const USER_DISABLED = 4;
 
-  const SignInFailure._({required String message, required int code})
-      : super(message: message, code: code);
+  const SignInFailure._({required super.message, required super.code});
 
   factory SignInFailure.unknownError([String? message]) {
     return SignInFailure._(
-        message: message ?? "unknown error occured, please try again",
-        code: UNKNOWN_ERROR);
+        message: message ?? 'unknown error occurred, please try again',
+        code: kUnknownError);
   }
 
-  factory SignInFailure.invalidEmail([String? message]) {
+  factory SignInFailure.invalidUserPasswordCombination([String? message]) {
     return SignInFailure._(
-        message: message ?? "invalid email", code: INVALID_EMAIL);
-  }
-
-  factory SignInFailure.emailDoesNotExists([String? message]) {
-    return SignInFailure._(
-        message: message ?? "email not found", code: EMAIL_DOES_NOT_EXISTS);
-  }
-
-  factory SignInFailure.wrongPassword([String? message]) {
-    return SignInFailure._(
-        message: message ?? "wrong password", code: WRONG_PASSWORD);
+        message: message ?? 'invalid email', code: kInvalidUserPasswordCombination);
   }
 
   factory SignInFailure.noInternetConnection([String? message]) {
     return SignInFailure._(
-        message: message ?? "please turn on internet for first log in",
-        code: NO_INTERNET_CONNECTION);
+        message: message ?? 'please turn on internet for first log in',
+        code: kNoInternetConnection);
   }
 
   factory SignInFailure.userDisabled([String? message]) {
     return SignInFailure._(
         message:
-            message ?? "user has been banned, please contact customer service",
-        code: USER_DISABLED);
+            message ?? 'user has been banned, please contact customer service',
+        code: kUserDisabled);
   }
+  static const kUnknownError = -1;
+  static const kInvalidUserName = 0;
+  static const kUserAlreadyExists = 1;
+  static const kInvalidUserPasswordCombination = 2;
+  static const kNoInternetConnection = 3;
+  static const kUserDisabled = 4;
 }
 
 class ForgotPasswordFailure extends Failure {
-  static const UNKNOWN_ERROR = -1;
-  static const INVALID_EMAIL = 0;
-  static const NO_INTERNET_CONNECTION = 1;
-  static const USER_NOT_FOUND = 2;
 
-  const ForgotPasswordFailure._({required String message, required int code})
-      : super(message: message, code: code);
+  const ForgotPasswordFailure._({required super.message, required super.code});
 
   factory ForgotPasswordFailure.unknownError([String? message]) {
     return ForgotPasswordFailure._(
-      message: message ?? "Unknown error occured",
-      code: UNKNOWN_ERROR,
-    );
-  }
-
-  factory ForgotPasswordFailure.invalidEmail([String? message]) {
-    return ForgotPasswordFailure._(
-      message: message ?? "Invalid email",
-      code: INVALID_EMAIL,
+      message: message ?? 'Unknown error occurred',
+      code: kUnknownError,
     );
   }
 
   factory ForgotPasswordFailure.noInternetConnection([String? message]) {
     return ForgotPasswordFailure._(
-      message: message ?? "No internet connection",
-      code: NO_INTERNET_CONNECTION,
+      message: message ?? 'No internet connection',
+      code: kNoInternetConnection,
     );
   }
 
   factory ForgotPasswordFailure.userNotFound([String? message]) {
     return ForgotPasswordFailure._(
-      message: message ?? "user not found",
-      code: USER_NOT_FOUND,
+      message: message ?? 'user not found',
+      code: kUserNotFound,
     );
   }
+
+  static const kUnknownError = -1;
+  static const kNoInternetConnection = 3;
+  static const kUserNotFound = 4;
 }

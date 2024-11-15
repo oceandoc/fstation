@@ -14,6 +14,8 @@ class Settings {
   bool firstLaunch;
   List<int>? windowsPosition;
   bool windowsAlwaysOnTop;
+  bool enableFingerprint;
+  bool enablePin;
 
   Settings({
     this.id,
@@ -31,6 +33,8 @@ class Settings {
     this.firstLaunch = true,
     this.windowsPosition,
     this.windowsAlwaysOnTop = false,
+    this.enableFingerprint = false,
+    this.enablePin = false,
   });
 
   // Create Settings from JSON/Map
@@ -53,6 +57,8 @@ class Settings {
       firstLaunch: (map['first_launch'] as int? ?? 1) == 1,
       windowsPosition: _parsePosition(map['windows_position'] as String?),
       windowsAlwaysOnTop: (map['windows_always_ontop'] as int? ?? 0) == 1,
+      enableFingerprint: (map['enable_fingerprint'] as int? ?? 0) == 1,
+      enablePin: (map['enable_pin'] as int? ?? 0) == 1,
     );
   }
 
@@ -76,6 +82,8 @@ class Settings {
       'first_launch': firstLaunch ? 1 : 0,
       'windows_position': _positionToString(windowsPosition),
       'windows_always_ontop': windowsAlwaysOnTop ? 1 : 0,
+      'enable_fingerprint': enableFingerprint ? 1 : 0,
+      'enable_pin': enablePin ? 1 : 0,
     };
   }
 
@@ -108,6 +116,8 @@ class Settings {
     bool? firstLaunch,
     List<int>? windowsPosition,
     bool? windowsAlwaysOnTop,
+    bool? enableFingerprint,
+    bool? enablePin,
   }) {
     return Settings(
       id: id ?? this.id,
@@ -129,6 +139,8 @@ class Settings {
       firstLaunch: firstLaunch ?? this.firstLaunch,
       windowsPosition: windowsPosition ?? this.windowsPosition,
       windowsAlwaysOnTop: windowsAlwaysOnTop ?? this.windowsAlwaysOnTop,
+      enableFingerprint: enableFingerprint ?? this.enableFingerprint,
+      enablePin: enablePin ?? this.enablePin,
     );
   }
 

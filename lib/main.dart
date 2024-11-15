@@ -75,7 +75,7 @@ void main() async {
   try {
     await AppWindowUtil.init();
     await workerManager.init();
-    await network.init();
+    await network.initialize();
     if (!kIsWeb) {
       HttpOverrides.global = CustomHttpOverrides();
     }

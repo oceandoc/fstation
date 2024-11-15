@@ -27,7 +27,6 @@ class Store {
   late final Database db;
 
   Future<bool> init() async {
-
     // Initialize appropriate database factory based on platform
     if (kIsWeb) {
       // Web platform
@@ -122,7 +121,9 @@ class Store {
           auto_update_check_time INTEGER DEFAULT 0,
           first_launch INTEGER DEFAULT 1,
           windows_position TEXT,
-          windows_always_ontop INTEGER DEFAULT 0
+          windows_always_ontop INTEGER DEFAULT 0,
+          enable_fingerprint INTEGER DEFAULT 0,
+          enable_pin INTEGER DEFAULT 0
         )
       ''');
   }

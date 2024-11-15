@@ -29,23 +29,23 @@ class SignInForm extends StatefulWidget {
 }
 
 class _SignInFormState extends State<SignInForm> {
-  bool inItialized = false;
+  bool initialized = false;
 
   late AuthFormBloc bloc;
 
   Future<dz.Either<ForgotPasswordFailure, bool>> submitForgotPasswordEmail(
       String forgotPasswordEmail) async {
-    return await bloc.submitForgotPasswordEmail(forgotPasswordEmail);
+    return bloc.submitForgotPasswordEmail(forgotPasswordEmail);
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    if (!inItialized) {
+    if (!initialized) {
       bloc = BlocProvider.of<AuthFormBloc>(context);
       bloc.add(ResetAuthForm());
-      inItialized = true;
+      initialized = true;
     }
   }
 
@@ -55,41 +55,41 @@ class _SignInFormState extends State<SignInForm> {
       bloc: bloc,
       listener: (context, state) {
         if (state is AuthFormSubmissionFailed &&
-            state.errors.containsKey("general")) {
-          showToast(state.errors["general"]![0].toString());
+            state.errors.containsKey('general')) {
+          showToast(state.errors['general']![0].toString());
         }
       },
       builder: (context, state) {
-        String? _getEmailErrors() {
+        String? getEmailErrors() {
           if (state is AuthFormSubmissionFailed &&
-              state.errors.containsKey("email")) {
-            return state.errors["email"]![0].toString();
+              state.errors.containsKey('email')) {
+            return state.errors['email']![0].toString();
           }
           return null;
         }
 
-        String? _getPasswordErrors() {
+        String? getPasswordErrors() {
           if (state is AuthFormSubmissionFailed &&
-              state.errors.containsKey("password")) {
-            return state.errors["password"]?[0].toString();
+              state.errors.containsKey('password')) {
+            return state.errors['password']?[0].toString();
           }
           return null;
         }
 
-        void _onEmailChanged(String email) =>
+        void onEmailChanged(String email) =>
             bloc.add(AuthFormInputsChangedEvent(email: email));
 
-        void _onPasswordChanged(String password) =>
+        void onPasswordChanged(String password) =>
             bloc.add(AuthFormInputsChangedEvent(password: password));
 
-        void _onSubmitted() => bloc.add(AuthFormSignInSubmitted(
+        void onSubmitted() => bloc.add(AuthFormSignInSubmitted(
             lastLoggedInUserId: widget.lastLoggedInUserId));
 
         final linkColor =
             Theme.of(context).extension<AuthPageThemeExtensions>()!.linkColor;
 
         return GlassMorphismCover(
-          borderRadius: BorderRadius.circular(16.0),
+          borderRadius: BorderRadius.circular(16),
           child: FormDimensions(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -107,22 +107,22 @@ class _SignInFormState extends State<SignInForm> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       AuthEmailInput(
-                        getEmailErrors: _getEmailErrors,
-                        onEmailChanged: _onEmailChanged,
+                        getEmailErrors: getEmailErrors,
+                        onEmailChanged: onEmailChanged,
                       ),
                       const SizedBox(
                         height: 20,
                       ),
                       AuthPasswordInput(
-                        getPasswordErrors: _getPasswordErrors,
-                        onPasswordChanged: _onPasswordChanged,
+                        getPasswordErrors: getPasswordErrors,
+                        onPasswordChanged: onPasswordChanged,
                       ),
                       const SizedBox(
                         height: 30,
                       ),
                       SubmitButton(
-                        isLoading: (state is AuthFormSubmissionLoading),
-                        onSubmitted: _onSubmitted,
+                        isLoading: state is AuthFormSubmissionLoading,
+                        onSubmitted: onSubmitted,
                         buttonText: Localization.current.submit,
                       )
                     ],

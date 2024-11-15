@@ -70,19 +70,19 @@ class AuthFormBloc extends Bloc<AuthFormEvent, AuthFormState> {
       result.fold((error) {
         Map<String, List> errorMap = {};
 
-        if (error.code == SignUpFailure.UNKNOWN_ERROR) {
+        if (error.code == SignUpFailure.kUnknownError) {
           errorMap["general"] = [error.message];
         }
-        if (error.code == SignUpFailure.INVALID_EMAIL) {
+        if (error.code == SignUpFailure.kInvalidUserName) {
           errorMap["email"] = [error.message];
         }
-        if (error.code == SignUpFailure.EMAIL_ALREADY_EXISTS) {
+        if (error.code == SignUpFailure.kUserAlreadyExists) {
           errorMap["email"] = [error.message];
         }
-        if (error.code == SignUpFailure.INVALID_PASSWORD) {
+        if (error.code == SignUpFailure.kInvalidUserPasswordCombine) {
           errorMap["password"] = [error.message];
         }
-        if (error.code == SignUpFailure.NO_INTERNET_CONNECTION) {
+        if (error.code == SignUpFailure.kNoInternetConnection) {
           errorMap["general"] = [error.message];
         }
 
@@ -112,10 +112,10 @@ class AuthFormBloc extends Bloc<AuthFormEvent, AuthFormState> {
       result.fold((error) {
         Map<String, List> errorMap = {};
 
-        if (error.code == SignInFailure.UNKNOWN_ERROR) {
+        if (error.code == SignInFailure.kUnknownError) {
           errorMap["general"] = [error.message];
         }
-        if (error.code == SignInFailure.INVALID_EMAIL) {
+        if (error.code == SignInFailure.kInvalidUserName) {
           errorMap["email"] = [error.message];
         }
         if (error.code == SignInFailure.EMAIL_DOES_NOT_EXISTS) {
@@ -124,7 +124,7 @@ class AuthFormBloc extends Bloc<AuthFormEvent, AuthFormState> {
         if (error.code == SignInFailure.WRONG_PASSWORD) {
           errorMap["password"] = [error.message];
         }
-        if (error.code == SignInFailure.NO_INTERNET_CONNECTION) {
+        if (error.code == SignInFailure.kNoInternetConnection) {
           errorMap["general"] = [error.message];
         }
         if (error.code == SignInFailure.USER_DISABLED) {

@@ -7,6 +7,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
   dynamic_color
   flutter_timezone
   flutter_udid
+  local_auth_windows
   screen_retriever_windows
   tray_manager
   url_launcher_windows

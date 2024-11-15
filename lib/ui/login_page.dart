@@ -1,19 +1,9 @@
 // ignore_for_file: prefer_const_constructors
 
-import 'package:dairy_app/app/themes/theme_extensions/auth_page_theme_extensions.dart';
-import 'package:dairy_app/core/animations/flip_card_animation.dart';
-import 'package:dairy_app/core/dependency_injection/injection_container.dart';
-import 'package:dairy_app/core/widgets/glassmorphism_cover.dart';
-import 'package:dairy_app/features/auth/data/repositories/fingerprint_auth_repo.dart';
-import 'package:dairy_app/features/auth/presentation/bloc/auth_session/auth_session_bloc.dart';
-import 'package:dairy_app/features/auth/presentation/widgets/fingerprint_button.dart';
-import 'package:dairy_app/features/auth/presentation/widgets/privacy_policy.dart';
-import 'package:dairy_app/features/auth/presentation/widgets/quit_app_dialog.dart';
-import 'package:dairy_app/features/auth/presentation/widgets/sign_in_form.dart';
-import 'package:dairy_app/features/auth/presentation/widgets/sign_up_form.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fstation/impl/user_manager.dart';
 import 'package:fstation/ui/widget/fingerprint_button.dart';
 import 'package:fstation/ui/widget/flip_card_animation.dart';
 import 'package:fstation/ui/widget/glassmorphism_cover.dart';
@@ -60,7 +50,7 @@ class _AuthPageState extends State<AuthPage> {
       final currentAuthState = BlocProvider.of<AuthSessionBloc>(context).state;
 
       if (currentAuthState is Unauthenticated) {
-        widget.fingerPrintAuthRepository.startFingerPrintAuthIfNeeded();
+        UserManager.instance.startFingerPrintAuthIfNeeded();
       }
 
       _isInitialized = true;
@@ -127,14 +117,14 @@ class _AuthPageState extends State<AuthPage> {
                 ),
               ),
             ),
-            Positioned(
-              child: Center(
-                child: PrivacyPolicy(linkColor: linkColor),
-              ),
-              bottom: 20,
-              right: 0,
-              left: 0,
-            ),
+            // Positioned(
+            //   child: Center(
+            //     child: PrivacyPolicy(linkColor: linkColor),
+            //   ),
+            //   bottom: 20,
+            //   right: 0,
+            //   left: 0,
+            // ),
             Positioned(
               top: 20,
               left: 20,

@@ -143,8 +143,24 @@ class SettingImpl {
     });
   }
 
+  Future<void> saveEnableFingerprint(bool enable) async {
+    _settings = settings.copyWith(enableFingerprint: enable);
+    await Store.instance.updateSettings({
+      'enable_fingerprint': enable ? 1 : 0,
+    });
+  }
+
+  Future<void> saveEnablePin(bool enable) async {
+    _settings = settings.copyWith(enablePin: enable);
+    await Store.instance.updateSettings({
+      'enable_pin': enable ? 1 : 0,
+    });
+  }
+
   // Getters for commonly used values
   ThemeMode get themeMode => ThemeMode.values[settings.themeMode];
   String get language => settings.language;
   bool get firstLaunch => settings.firstLaunch;
+  bool get enableFingerprint => settings.enableFingerprint;
+  bool get enablePin => settings.enablePin;
 }
