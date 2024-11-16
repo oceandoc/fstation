@@ -1,32 +1,30 @@
-import 'package:bloc/bloc.dart';
-import 'package:equatable/equatable.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:injectable/injectable.dart';
 
 import '../impl/user_manager.dart';
-import '../model/user.dart';
+import 'auth_session_event.dart';
+import 'auth_session_state.dart';
 
-part 'auth_session_event.dart';
-part 'auth_session_state.dart';
-
+@injectable
 class AuthSessionBloc extends Bloc<AuthSessionEvent, AuthSessionState> {
   AuthSessionBloc() : super(const Unauthenticated()) {
-    on<InitalizeLastLoggedInUser>((event, emit) {
-
+    on<InitializeLastLoggedInUser>((event, emit) {
       if (UserManager.instance.isAuth) {
         emit(Authenticated(
-            user: LoggedInUser.getGuestUserModel(), freshLogin: true));
+            lastLoggedInUserId: UserManager.instance.lastLoginUser));
       } else {
-        emit(Unauthenticated(lastLoggedInUserId: lastLoggedInUserId));
+        emit(Unauthenticated(
+            lastLoggedInUserId: UserManager.instance.lastLoginUser));
       }
     });
 
-    on<UserLoggedIn>((event, emit) =>
-        emit(Authenticated(user: event.user, freshLogin: event.freshLogin)));
+    on<UserLoggedIn>((event, emit) => emit(Authenticated(
+        lastLoggedInUserId: event.lastLoggedInUserId,
+        freshLogin: event.freshLogin)));
 
     on<UserLoggedOut>((event, emit) =>
-        emit(Unauthenticated(lastLoggedInUserId: state.user?.id)));
+        emit(Unauthenticated(lastLoggedInUserId: state.lastLoggedInUserId)));
 
-    // navigation will be handled differently for session timeout logouts
-    //! These 2 states aren't used as of now
     on<AppLostFocus>((event, emit) {
       if (state is Authenticated) {
         emit(const Unauthenticated(sessionTimeoutLogout: true));

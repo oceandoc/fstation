@@ -18,6 +18,7 @@ import 'package:fstation/util/analysis/analysis.dart';
 import 'package:fstation/util/app_device_info.dart';
 import 'package:fstation/util/app_window.dart';
 import 'package:fstation/util/catcher/catcher_util.dart';
+import 'package:fstation/util/dependency_injection.dart';
 import 'package:fstation/util/extensions.dart';
 import 'package:fstation/util/http_override.dart';
 import 'package:fstation/util/language.dart';
@@ -27,6 +28,8 @@ import 'package:responsive_framework/responsive_framework.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:worker_manager/worker_manager.dart';
 
+import 'bloc/auth_form_bloc.dart';
+import 'bloc/auth_session_bloc.dart';
 import 'impl/logger.dart';
 import 'impl/setting_impl.dart';
 import 'impl/store.dart';
@@ -184,8 +187,18 @@ class _AppState extends State<App> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => AppSettingBloc(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<AppSettingBloc>(
+          create: (context) => getIt<AppSettingBloc>(),
+        ),
+        BlocProvider<AuthFormBloc>(
+          create: (context) => getIt<AuthFormBloc>(),
+        ),
+        BlocProvider<AuthSessionBloc>(
+          create: (context) => getIt<AuthSessionBloc>(),
+        ),
+      ],
       child: ResponsiveBreakpoints.builder(
         breakpoints: [
           const Breakpoint(start: 0, end: 450, name: MOBILE),

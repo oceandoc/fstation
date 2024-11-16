@@ -519,6 +519,16 @@ class Localization {
       args: [],
     );
   }
+
+  /// `Close the App?`
+  String get close_app {
+    return Intl.message(
+      'Close the App?',
+      name: 'close_app',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<Localization> {

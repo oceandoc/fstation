@@ -26,6 +26,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "already_have_account":
             MessageLookupByLibrary.simpleMessage("Already have an account?"),
         "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
+        "close_app": MessageLookupByLibrary.simpleMessage("Close the App?"),
         "confirm": MessageLookupByLibrary.simpleMessage("Confirm"),
         "confirm_new_password":
             MessageLookupByLibrary.simpleMessage("Confirm new password"),

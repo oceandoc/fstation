@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fstation/ui/widget/submit_button.dart';
 import '../../bloc/auth_form_bloc.dart';
+import '../../bloc/auth_form_event.dart';
+import '../../bloc/auth_form_state.dart';
 import '../../generated/l10n.dart';
 import '../../util/auth_page_theme_extensions.dart';
 import '../../util/util.dart';
@@ -44,7 +46,7 @@ class _SignInFormState extends State<SignInForm> {
 
     if (!initialized) {
       bloc = BlocProvider.of<AuthFormBloc>(context);
-      bloc.add(ResetAuthForm());
+      bloc.add(ResetAuthFormEvent());
       initialized = true;
     }
   }
@@ -82,7 +84,7 @@ class _SignInFormState extends State<SignInForm> {
         void onPasswordChanged(String password) =>
             bloc.add(AuthFormInputsChangedEvent(password: password));
 
-        void onSubmitted() => bloc.add(AuthFormSignInSubmitted(
+        void onSubmitted() => bloc.add(AuthFormSignInSubmittedEvent(
             lastLoggedInUserId: widget.lastLoggedInUserId));
 
         final linkColor =

@@ -4,14 +4,19 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter/services.dart';
 import 'package:fstation/impl/setting_impl.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:get_it/get_it.dart';
 
 import '../bloc/auth_session_bloc.dart';
+import '../bloc/auth_session_event.dart';
+import '../exception/validation_exceptions.dart';
 import '../generated/error.pbenum.dart';
 import '../generated/l10n.dart';
 import '../model/user.dart';
 import '../ui/widget/failures.dart';
 import '../util/network.dart';
 import '../util/util.dart';
+import '../util/validator/email_validator.dart';
+import '../util/validator/password_validator.dart';
 import 'grpc_client.dart';
 import 'logger.dart';
 import 'store.dart';
@@ -24,12 +29,11 @@ enum FingerPrintAuthState {
 }
 
 class UserManager {
-  UserManager._(this.authSessionBloc);
+  UserManager._();
 
   static final instance = UserManager._();
 
   User? _currentUser;
-  final AuthSessionBloc authSessionBloc;
 
   User? get currentUser => _currentUser;
 
@@ -145,7 +149,7 @@ class UserManager {
       if (value == FingerPrintAuthState.success) {
         await fingerPrintAuthStreamSubscription?.cancel();
         isFingerPrintAuthActivated = false;
-        authSessionBloc.add(UserLoggedIn(user: currentUser, freshLogin: true));
+        GetIt.I<AuthSessionBloc>().add(UserLoggedIn(lastLoggedInUserId: lastLoginUser));
       } else if (value == FingerPrintAuthState.platformError) {
         await fingerPrintAuthStreamSubscription?.cancel();
         isFingerPrintAuthActivated = false;
@@ -163,7 +167,7 @@ class UserManager {
     });
   }
 
-  void cancel() {
+  void cancelFingerprintAuth() {
     Logger.info('Cancelling fingerprint auth stream');
     fingerPrintAuthStreamSubscription?.cancel();
   }
@@ -268,6 +272,32 @@ class UserManager {
         Logger.error(e.toString());
         await auth.stopAuthentication();
       }
+    }
+  }
+
+  Future<Either<SignUpFailure, User>> signUpWithEmailAndPassword(
+      String name, String password) {
+    try {
+      GetIt.I<EmailValidator>().validate(name);
+      GetIt.I<PasswordValidator>().validate(password);
+    } on InvalidPasswordException catch (e) {
+      return Future.value(
+          Left(SignUpFailure.invalidUserPasswordCombination(e.message)));
+    }
+    return signUp(email: name, password: password);
+  }
+
+  Future<Either<ForgotPasswordFailure, bool>> submitForgotPasswordEmail(
+      String forgotPasswordEmail) async {
+    try {
+      GetIt.I<EmailValidator>().validate(forgotPasswordEmail);
+
+      if (!network.hasInternetConnection()) {
+        return Left(ForgotPasswordFailure.noInternetConnection());
+      }
+      return const Right(true);
+    } catch (e) {
+      return Left(ForgotPasswordFailure.unknownError());
     }
   }
 }

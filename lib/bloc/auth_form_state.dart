@@ -1,42 +1,38 @@
-part of 'auth_form_bloc.dart';
+import 'package:equatable/equatable.dart';
 
 abstract class AuthFormState extends Equatable {
+  const AuthFormState({required this.email, required this.password});
+
   final String email;
   final String password;
-
-  const AuthFormState({required this.email, required this.password});
 
   @override
   List<Object> get props => [email, password];
 }
 
 class AuthFormInitial extends AuthFormState {
-  const AuthFormInitial({required String email, required String password})
-      : super(email: email, password: password);
+  const AuthFormInitial({required super.email, required super.password});
 }
 
 class AuthFormSubmissionLoading extends AuthFormState {
   const AuthFormSubmissionLoading(
-      {required String email, required String password})
-      : super(email: email, password: password);
+      {required super.email, required super.password});
 }
 
 class AuthFormSubmissionSuccessful extends AuthFormState {
   const AuthFormSubmissionSuccessful(
-      {required String email, required String password})
-      : super(email: email, password: password);
+      {required super.email, required super.password});
 }
 
 class AuthFormSubmissionFailed extends AuthFormState {
-  final Map<String, List> errors;
-
   const AuthFormSubmissionFailed(
-      {required String email, required String password, required this.errors})
-      : super(email: email, password: password);
+      {required super.email, required super.password, required this.errors});
+
+  final Map<String, List> errors;
 
   @override
   String toString() {
-    return "AuthFormSubmissionFailed(email: $email, password: $password, errors: $errors)";
+    return 'AuthFormSubmissionFailed(email: $email, password: $password, errors: $errors)';
   }
 
   @override

@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_constructors
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,17 +10,13 @@ import 'package:fstation/ui/widget/sign_in_form.dart';
 import 'package:fstation/ui/widget/sign_up_form.dart';
 
 import '../bloc/auth_session_bloc.dart';
+import '../bloc/auth_session_state.dart';
 import '../util/auth_page_theme_extensions.dart';
 
 class AuthPage extends StatefulWidget {
-  // user id of last logged in user to determine if it is a fresh login or not
-  final String? lastLoggedInUserId;
-  // late final FingerPrintAuthRepository fingerPrintAuthRepository;
+  const AuthPage({super.key, this.lastLoggedInUserId});
 
-  AuthPage({Key? key, this.lastLoggedInUserId}) : super(key: key) {
-    // fingerPrintAuthRepository = sl<FingerPrintAuthRepository>();
-  }
-  static String get route => '/auth';
+  final String? lastLoggedInUserId;
 
   @override
   State<AuthPage> createState() => _AuthPageState();
@@ -40,19 +34,10 @@ class _AuthPageState extends State<AuthPage> {
   @override
   void didChangeDependencies() {
     if (!_isInitialized) {
-      final backgroundImagePath = Theme.of(context)
-          .extension<AuthPageThemeExtensions>()!
-          .backgroundImage;
-
-      neonImage = Image.asset(backgroundImagePath);
-      precacheImage(neonImage.image, context);
-
       final currentAuthState = BlocProvider.of<AuthSessionBloc>(context).state;
-
       if (currentAuthState is Unauthenticated) {
         UserManager.instance.startFingerPrintAuthIfNeeded();
       }
-
       _isInitialized = true;
     }
     super.didChangeDependencies();
@@ -60,18 +45,12 @@ class _AuthPageState extends State<AuthPage> {
 
   @override
   Widget build(BuildContext context) {
-    final backgroundImagePath =
-        Theme.of(context).extension<AuthPageThemeExtensions>()!.backgroundImage;
-
-    final linkColor =
-        Theme.of(context).extension<AuthPageThemeExtensions>()!.linkColor;
     return WillPopScope(
       onWillPop: () async {
-        bool res = await quitAppDialog(context);
+        final res = await quitAppDialog(context);
         if (res == true) {
-          SystemNavigator.pop();
+          await SystemNavigator.pop();
         }
-
         return false;
       },
       child: Scaffold(
@@ -79,15 +58,7 @@ class _AuthPageState extends State<AuthPage> {
         body: Stack(
           children: [
             Container(
-              constraints: BoxConstraints.expand(),
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(
-                    backgroundImagePath,
-                  ),
-                  fit: BoxFit.cover,
-                ),
-              ),
+              constraints: const BoxConstraints.expand(),
               child: Center(
                 child: SingleChildScrollView(
                   child: Column(
@@ -108,7 +79,7 @@ class _AuthPageState extends State<AuthPage> {
                       ),
                       const SizedBox(height: 40),
                       if (MediaQuery.of(context).viewInsets.bottom == 0)
-                        FingerprintButton(),
+                        const FingerprintButton(),
                       SizedBox(
                         height: MediaQuery.of(context).viewInsets.bottom,
                       ),
@@ -130,18 +101,18 @@ class _AuthPageState extends State<AuthPage> {
               left: 20,
               child: Navigator.of(context).canPop()
                   ? GlassMorphismCover(
-                borderRadius: BorderRadius.circular(50),
-                child: IconButton(
-                  icon: Icon(
-                    Icons.arrow_back,
-                    color: Colors.white,
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              )
-                  : SizedBox.shrink(),
+                      borderRadius: BorderRadius.circular(50),
+                      child: IconButton(
+                        icon: const Icon(
+                          Icons.arrow_back,
+                          color: Colors.white,
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    )
+                  : const SizedBox.shrink(),
             ),
           ],
         ),

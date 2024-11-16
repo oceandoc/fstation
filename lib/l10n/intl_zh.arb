@@ -46,5 +46,6 @@
   "password_verified": "密码正确",
   "password_not_match": "密码不一致",
   "password_reset_success": "密码重置成功",
-  "unexpected_error": "未知错误"
+  "unexpected_error": "未知错误",
+  "close_app": "关闭应用？"
 }

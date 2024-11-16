@@ -6,16 +6,16 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
-import 'package:sqflite/sqflite.dart';
 
 import '../model/settings.dart';
-import '../util/app_device_info.dart';
 
 class Store {
   // Factory constructor to return the same instance
   factory Store() => _instance;
+
   // Private constructor
   Store._internal();
+
   static const kCurrentDBVersion = 2;
 
   // Singleton instance
@@ -73,22 +73,7 @@ class Store {
   }
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
-    if (oldVersion < 2) {
-      await db.execute('''
-        CREATE TABLE user (
-          name TEXT PRIMARY KEY,
-          token TEXT,
-          token_update_time TEXT
-        )
-      ''');
-
-      await db.execute('''
-        CREATE TABLE current_user (
-          id INTEGER PRIMARY KEY,
-          user_name TEXT
-        )
-      ''');
-    }
+    if (oldVersion < 2) {}
     // Add future version upgrades here
   }
 
@@ -126,6 +111,36 @@ class Store {
           enable_pin INTEGER DEFAULT 0
         )
       ''');
+    await db.execute('''
+        CREATE TABLE user (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          name TEXT PRIMARY KEY,
+          token TEXT,
+          token_update_time TEXT
+        )
+      ''');
+
+    await db.execute('''
+        CREATE TABLE current_user (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          user_name TEXT
+        )
+      ''');
+
+    // Insert default users after table creation
+    await db.insert('user', {
+      'id': 0,
+      'name': 'admin',
+      'token': '',
+      'token_update_time': DateTime.now().toIso8601String(),
+    });
+
+    await db.insert('user', {
+      'id': 1,
+      'name': 'guest',
+      'token': '',
+      'token_update_time': DateTime.now().toIso8601String(),
+    });
   }
 
   Future<Settings?> getSettings() async {
@@ -230,7 +245,7 @@ class Store {
     );
     if (currentUserResult.isEmpty) return null;
 
-    final userName = currentUserResult.first['user_name'] as String;
+    final userName = currentUserResult.first['user_name']! as String;
     return await getUser(userName);
   }
 }

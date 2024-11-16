@@ -61,7 +61,7 @@ class ExceptionHandler extends ReportHandler {
     Uint8List? screenshotBytes,
     Map<String, Uint8List> generatedAttachments = const <String, Uint8List>{},
   }) async {
-    if (network.unavailable) {
+    if (network.hasInternetConnection()) {
       Logger.error(Localization.current.error_no_internet);
       return false;
     }

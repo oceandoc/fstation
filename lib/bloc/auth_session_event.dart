@@ -1,23 +1,32 @@
-part of 'auth_session_bloc.dart';
+import 'package:equatable/equatable.dart';
 
 abstract class AuthSessionEvent extends Equatable {
-  const AuthSessionEvent();
-
+  const AuthSessionEvent({required this.lastLoggedInUserId});
+  final String? lastLoggedInUserId;
   @override
   List<Object> get props => [];
 }
 
-class AppLostFocus extends AuthSessionEvent {}
-
-class UserLoggedIn extends AuthSessionEvent {
-  final User user;
-  final bool freshLogin;
-
-  const UserLoggedIn({required this.user, this.freshLogin = true});
+class AppLostFocus extends AuthSessionEvent {
+  const AppLostFocus({required super.lastLoggedInUserId});
 }
 
-class UserLoggedOut extends AuthSessionEvent {}
+class UserLoggedIn extends AuthSessionEvent {
+  const UserLoggedIn(
+      {required super.lastLoggedInUserId, this.freshLogin = true});
 
-class AppSessionTimeout extends AuthSessionEvent {}
 
-class InitalizeLastLoggedInUser extends AuthSessionEvent {}
+  final bool freshLogin;
+}
+
+class UserLoggedOut extends AuthSessionEvent {
+  const UserLoggedOut({required super.lastLoggedInUserId});
+}
+
+class AppSessionTimeout extends AuthSessionEvent {
+  const AppSessionTimeout({required super.lastLoggedInUserId});
+}
+
+class InitializeLastLoggedInUser extends AuthSessionEvent {
+  const InitializeLastLoggedInUser({required super.lastLoggedInUserId});
+}

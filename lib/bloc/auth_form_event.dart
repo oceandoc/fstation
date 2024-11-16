@@ -1,4 +1,4 @@
-part of 'auth_form_bloc.dart';
+import 'package:equatable/equatable.dart';
 
 abstract class AuthFormEvent extends Equatable {
   const AuthFormEvent();
@@ -8,20 +8,19 @@ abstract class AuthFormEvent extends Equatable {
 }
 
 class AuthFormInputsChangedEvent extends AuthFormEvent {
+  const AuthFormInputsChangedEvent({this.email, this.password});
   final String? email;
   final String? password;
-
-  const AuthFormInputsChangedEvent({this.email, this.password});
 }
 
-class AuthFormSignUpSubmitted extends AuthFormEvent {}
+class AuthFormSignUpSubmittedEvent extends AuthFormEvent {}
 
-class AuthFormSignInSubmitted extends AuthFormEvent {
+class AuthFormSignInSubmittedEvent extends AuthFormEvent {
+
+  const AuthFormSignInSubmittedEvent({this.lastLoggedInUserId});
   final String? lastLoggedInUserId;
-
-  const AuthFormSignInSubmitted({this.lastLoggedInUserId});
 }
 
-class ResetAuthForm extends AuthFormEvent {}
+class ResetAuthFormEvent extends AuthFormEvent {}
 
-class AuthFormGuestSignIn extends AuthFormEvent {}
+class AuthFormGuestSignInEvent extends AuthFormEvent {}

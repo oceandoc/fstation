@@ -46,5 +46,6 @@
   "password_verified": "Password verified",
   "password_not_match": "Passwords don't match",
   "password_reset_success": "Password reset successful",
-  "unexpected_error": "Unexpected error"
+  "unexpected_error": "Unexpected error",
+  "close_app": "Close the App?"
 }

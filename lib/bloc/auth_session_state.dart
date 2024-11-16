@@ -1,33 +1,25 @@
-part of 'auth_session_bloc.dart';
+import 'package:equatable/equatable.dart';
 
 abstract class AuthSessionState extends Equatable {
-  final User? user;
-
-  const AuthSessionState({required this.user});
-
+  const AuthSessionState({required this.lastLoggedInUserId});
+  final String? lastLoggedInUserId;
   @override
   List<Object> get props {
     final propsList = <Object>[];
-
-    // Add user.id to propsList if user is not null
-    if (user != null) {
-      propsList.add(user!.name! as Object);
+    if (lastLoggedInUserId != null) {
+      propsList.add(lastLoggedInUserId! as Object);
     }
-
     return propsList;
   }
 }
 
 class Unauthenticated extends AuthSessionState {
-  final bool sessionTimeoutLogout;
-  final String? lastLoggedInUserId;
   const Unauthenticated(
-      {this.sessionTimeoutLogout = false, this.lastLoggedInUserId})
-      : super(user: null);
+      {this.sessionTimeoutLogout = false, super.lastLoggedInUserId});
+  final bool sessionTimeoutLogout;
 }
 
 class Authenticated extends AuthSessionState {
+  const Authenticated({this.freshLogin = true, super.lastLoggedInUserId});
   final bool freshLogin;
-  const Authenticated({required User user, this.freshLogin = true})
-      : super(user: user);
 }

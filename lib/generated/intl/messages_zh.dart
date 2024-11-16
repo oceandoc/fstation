@@ -25,6 +25,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "about_app": MessageLookupByLibrary.simpleMessage("关于"),
         "already_have_account": MessageLookupByLibrary.simpleMessage("已有帐户？"),
         "cancel": MessageLookupByLibrary.simpleMessage("取消"),
+        "close_app": MessageLookupByLibrary.simpleMessage("关闭应用？"),
         "confirm": MessageLookupByLibrary.simpleMessage("确定"),
         "confirm_new_password": MessageLookupByLibrary.simpleMessage("确认新密码"),
         "delete": MessageLookupByLibrary.simpleMessage("删除"),
