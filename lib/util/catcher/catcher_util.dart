@@ -9,7 +9,6 @@ import 'package:fstation/util/catcher/exception_handler.dart';
 import '../../impl/logger.dart';
 
 class CatcherUtil {
-  CatcherUtil._();
 
   static Catcher2Options getOptions() {
     final attachments = <String>[];

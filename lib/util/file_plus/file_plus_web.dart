@@ -2,12 +2,17 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+
 import 'file_plus.dart';
 
 const fsName = 'webfs';
 
 /// all async methods are not async actually
 class FilePlusWeb implements FilePlus {
+
+  FilePlusWeb(String fp, {Uint8List? box})
+      : _path = normalizePath(fp),
+        _box = box;
   static late Uint8List _defaultBox;
 
   final String _path;
@@ -15,19 +20,16 @@ class FilePlusWeb implements FilePlus {
 
   Uint8List get effectiveBox => _box ?? _defaultBox;
 
-  FilePlusWeb(String fp, {Uint8List? box})
-      : _path = normalizePath(fp),
-        _box = box;
-
   static Future<void> initWebFileSystem() async {
     assert(kIsWeb, 'DO NOT init for non-web');
-   
   }
 
-  
-
   static String normalizePath(String fp) {
-    return fp.split(RegExp(r'[/\\]+')).map((e) => e.trim()).where((e) => e.isNotEmpty).join('/');
+    return fp
+        .split(RegExp(r'[/\\]+'))
+        .map((e) => e.trim())
+        .where((e) => e.isNotEmpty)
+        .join('/');
   }
 
   @override
@@ -35,9 +37,6 @@ class FilePlusWeb implements FilePlus {
 
   @override
   Future<bool> exists() => Future.value(existsSync());
-
-
-
 
   /// failed
   @override
@@ -51,33 +50,39 @@ class FilePlusWeb implements FilePlus {
 
   /// failed
   @override
-  List<String> readAsLinesSync({Encoding encoding = utf8}) => readAsStringSync(encoding: encoding).split('\n');
+  List<String> readAsLinesSync({Encoding encoding = utf8}) =>
+      readAsStringSync(encoding: encoding).split('\n');
 
   @override
-  Future<String> readAsString({Encoding encoding = utf8}) => readAsBytes().then((value) => encoding.decode(value));
+  Future<String> readAsString({Encoding encoding = utf8}) =>
+      readAsBytes().then((value) => encoding.decode(value));
 
   /// failed
   @override
-  String readAsStringSync({Encoding encoding = utf8}) => encoding.decode(readAsBytesSync());
-
-
+  String readAsStringSync({Encoding encoding = utf8}) =>
+      encoding.decode(readAsBytesSync());
 
   /// not sync
   @override
-  void writeAsBytesSync(List<int> bytes, {FileMode mode = FileMode.write, bool flush = false}) {
+  void writeAsBytesSync(List<int> bytes,
+      {FileMode mode = FileMode.write, bool flush = false}) {
     writeAsBytes(bytes);
   }
 
   @override
   Future<FilePlus> writeAsString(String contents,
-      {FileMode mode = FileMode.write, Encoding encoding = utf8, bool flush = false}) async {
+      {FileMode mode = FileMode.write,
+      Encoding encoding = utf8,
+      bool flush = false}) async {
     return writeAsBytes(encoding.encode(contents), mode: mode, flush: flush);
   }
 
   /// not sync
   @override
   void writeAsStringSync(String contents,
-      {FileMode mode = FileMode.write, Encoding encoding = utf8, bool flush = false}) {
+      {FileMode mode = FileMode.write,
+      Encoding encoding = utf8,
+      bool flush = false}) {
     writeAsString(contents, mode: mode, encoding: encoding, flush: flush);
   }
 
@@ -86,8 +91,6 @@ class FilePlusWeb implements FilePlus {
 
   @override
   void createSync({bool recursive = false}) {}
-
- 
 
   @override
   Future<void> deleteSafe() => Future.value();
@@ -111,7 +114,8 @@ class FilePlusWeb implements FilePlus {
   }
 
   @override
-  Future<FilePlus> writeAsBytes(List<int> bytes, {FileMode mode = FileMode.write, bool flush = false}) {
+  Future<FilePlus> writeAsBytes(List<int> bytes,
+      {FileMode mode = FileMode.write, bool flush = false}) {
     // TODO: implement writeAsBytes
     throw UnimplementedError();
   }

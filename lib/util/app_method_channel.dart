@@ -30,15 +30,15 @@ class AppMethodChannel {
   ///
   /// only available on Android
   static Future<void> sendBackground() async {
-    assert(isAndroid, 'only support android');
-    if (isAndroid) {
+    assert(kIsAndroid, 'only support android');
+    if (kIsAndroid) {
       return kMethodChannel.invokeMethod('sendBackground');
     }
   }
 
   @Deprecated('use [windowManager]')
   static Future<void> setAlwaysOnTop({bool? onTop}) async {
-    if (isWindows || isMacOS) {
+    if (kIsWindows || kIsMacOS) {
       onTop ??= SettingImpl.instance.windowsAlwaysOnTop;
       return kMethodChannel.invokeMethod<bool?>(
         'alwaysOnTop',
@@ -50,7 +50,7 @@ class AppMethodChannel {
   }
 
   static Future<void> setWindowPos([dynamic rect]) async {
-    if (isWindows) {
+    if (kIsWindows) {
       rect ??= SettingImpl.instance.windowsPosition;
       if (kDebugMode) {
         Logger.info('rect ${rect.runtimeType}: $rect');
@@ -70,16 +70,16 @@ class AppMethodChannel {
   }
 
   static Future<String?> getUserAgent() async {
-    assert(isAndroid, 'only support android');
-    if (isAndroid) {
+    assert(kIsAndroid, 'only support android');
+    if (kIsAndroid) {
       return kMethodChannel.invokeMethod('getUserAgent');
     }
     return null;
   }
 
   static Future<String?> getCFNetworkVersion() async {
-    assert(isIOS, 'only support ios');
-    if (isIOS) {
+    assert(kIsIOS, 'only support ios');
+    if (kIsIOS) {
       return kMethodChannel.invokeMethod('getCFNetworkVersion');
     }
     return null;

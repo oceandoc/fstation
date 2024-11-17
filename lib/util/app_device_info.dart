@@ -4,9 +4,7 @@ import 'dart:io';
 import 'package:android_id/android_id.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_udid/flutter_udid.dart';
-import 'package:fstation/util/extensions.dart';
 import 'package:fstation/util/util.dart';
 import 'package:intl/intl.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -15,8 +13,8 @@ import 'package:uuid/uuid.dart';
 
 import '../generated/git_info.dart';
 import '../impl/logger.dart';
-import 'file_plus/file_plus.dart';
 import 'app_method_channel.dart';
+import 'file_plus/file_plus.dart';
 
 enum MacAppType {
   unknown,
@@ -26,23 +24,19 @@ enum MacAppType {
   notMacApp,
 }
 
-final kAppKey = GlobalKey<NavigatorState>();
-
 final isTest = Platform.environment.containsKey('FLUTTER_TEST');
 const String kAppName = 'FastStation';
 const String kPackageName = 'com.xiedeacc.fstation';
 const String kPackageNameFDroid = 'com.xiedeacc.fstation.fdroid';
-const bool isWeb = kIsWeb;
-final bool isLinux = !kIsWeb && Platform.isLinux;
-final bool isMacOS = !kIsWeb && Platform.isMacOS;
-final bool isWindows = !kIsWeb && Platform.isWindows;
-final bool isAndroid = !kIsWeb && Platform.isAndroid;
-final bool isIOS = !kIsWeb && Platform.isIOS;
-final bool isFuchsia = !kIsWeb && Platform.isFuchsia;
-final bool isMobile = isAndroid || isIOS;
-final bool isDesktop = isWindows || isMacOS || isLinux;
-final bool isDesktopOrWeb = isDesktop || isWeb;
-final bool isApple = isIOS || isMacOS;
+
+final bool kIsLinux = !kIsWeb && Platform.isLinux;
+final bool kIsMacOS = !kIsWeb && Platform.isMacOS;
+final bool kIsWindows = !kIsWeb && Platform.isWindows;
+final bool kIsAndroid = !kIsWeb && Platform.isAndroid;
+final bool kIsIOS = !kIsWeb && Platform.isIOS;
+final bool kIsMobile = kIsAndroid || kIsIOS;
+final bool kIsDesktop = kIsWindows || kIsMacOS || kIsLinux;
+final bool kIsApple = kIsIOS || kIsMacOS;
 final String kOperatingSystem = kIsWeb ? 'browser' : Platform.operatingSystem;
 final String kOperatingSystemVersion =
     kIsWeb ? '' : Platform.operatingSystemVersion;
@@ -54,71 +48,47 @@ bool get isTargetMobile => [TargetPlatform.android, TargetPlatform.iOS]
     .contains(defaultTargetPlatform);
 
 bool get isTargetDesktop => !isTargetMobile;
-
-final bool supportCopyImage =
-    kIsWeb || Platform.isIOS || Platform.isMacOS || Platform.isWindows;
-const bool supportScreenshot = !kIsWeb && true;
+const bool supportScreenshot = !kIsWeb;
 
 class AppDeviceInfo {
-  AppDeviceInfo._();
-
-  static String? _deviceId;
-
-  static String? get deviceId => _deviceId;
   static PackageInfo? _packageInfo;
-  static String? _uuid;
-  static bool _debugOn = false;
-  static MacAppType _macAppType = MacAppType.unknown;
-  static bool _isIPad = false;
-
-  static bool get isIPad => _isIPad;
-  static int? _androidSdk;
-
-  static int? get androidSdk => _androidSdk;
-  static final Map<String, dynamic> deviceParams = {};
-  static final Map<String, dynamic> appParams = {};
-  static final androidInfoCompleter = Completer<AndroidDeviceInfo>();
-  static final packageInfoCompleter = Completer<PackageInfo>();
-  static AndroidDeviceInfo? androidInfo;
-  static PackageInfo? packageInfo;
-  static String? version;
   static DateTime? buildDate;
-  static String? buildType;
-  static bool _fetchedAndroidInfo = false;
   static bool _fetchedPackageInfo = false;
+  static final packageInfoCompleter = Completer<PackageInfo>();
 
-  static Future<void> fetchAndroidInfo() async {
-    if (_fetchedAndroidInfo) return;
-    _fetchedAndroidInfo = true;
-    try {
-      final res = await DeviceInfoPlugin().androidInfo;
-      androidInfo = res;
-      androidInfoCompleter.complete(res);
-    } catch (_) {
-      _fetchedAndroidInfo = false;
+  static PackageInfo? get packageInfo => _packageInfo;
+
+  static String get packageName => packageInfo?.packageName ?? kPackageName;
+
+  static bool get isFDroid => kIsAndroid && packageName == kPackageNameFDroid;
+
+  static String get appName {
+    if (_packageInfo?.appName.isNotEmpty ?? false) {
+      return _packageInfo!.appName;
+    } else {
+      return kAppName;
     }
   }
 
-  static Future<void> fetchDeviceId() async {
-    if (_deviceId != null) return;
-    _deviceId = await FlutterUdid.udid;
+  static String get versionString => _packageInfo?.version ?? '';
+
+  static int get buildNumber =>
+      int.tryParse(_packageInfo?.buildNumber ?? '0') ?? 0;
+
+  static String get fullVersion {
+    var s = '';
+    s += versionString;
+    if (buildNumber > 0) s += '+$buildNumber';
+    return s;
   }
 
-  static Future<void> fetchPackageInfo() async {
-    if (_fetchedPackageInfo) return;
-    _fetchedPackageInfo = true;
-    try {
-      final res = await PackageInfo.fromPlatform();
-      packageInfo = res;
-      version = res.version;
-      _parseBuildNumber(res.buildNumber);
-      packageInfoCompleter.complete(res);
-    } catch (_) {
-      _fetchedPackageInfo = false;
+  static String get fullVersion2 {
+    final buffer = StringBuffer(versionString);
+    if (buildNumber > 0) {
+      buffer.write(' ($buildNumber)');
     }
+    return buffer.toString();
   }
-
-  static String get packageName => info?.packageName ?? kPackageName;
 
   static void _parseBuildNumber(String buildNumber) {
     try {
@@ -137,48 +107,6 @@ class AppDeviceInfo {
     } catch (_) {}
   }
 
-  static Future<void> _loadDeviceInfo() async {
-    try {
-      if (isAndroid) {
-        final androidInfo = await DeviceInfoPlugin().androidInfo;
-        deviceParams
-            .addAll(Map.from(androidInfo.data)..remove('systemFeatures'));
-        _androidSdk = androidInfo.version.sdkInt;
-        deviceParams['androidId'] = await const AndroidId().getId();
-        deviceParams['userAgent'] = await AppMethodChannel.getUserAgent();
-      } else if (isIOS) {
-        final iosInfo = await DeviceInfoPlugin().iosInfo;
-        _isIPad = iosInfo.model.toLowerCase().contains('ipad');
-        deviceParams.addAll(Map.from(iosInfo.data)..remove('name'));
-        deviceParams['CFNetworkVersion'] =
-            await AppMethodChannel.getCFNetworkVersion();
-      } else if (isMacOS) {
-        final macOsInfo = await DeviceInfoPlugin().macOsInfo;
-        deviceParams.addAll(Map.from(macOsInfo.data)..remove('computerName'));
-      } else if (isLinux) {
-        final linuxInfo = await DeviceInfoPlugin().linuxInfo;
-        deviceParams.addAll(Map.from(linuxInfo.data));
-      } else if (isWindows) {
-        final windowsInfo = await DeviceInfoPlugin().windowsInfo;
-        deviceParams
-            .addAll(Map.from(windowsInfo.data)..remove('digitalProductId'));
-      } else if (isWeb) {
-        final webInfo = await DeviceInfoPlugin().webBrowserInfo;
-        deviceParams.addAll({
-          ...webInfo.data,
-          'browserName': webInfo.browserName.name,
-        });
-      } else {
-        deviceParams['operatingSystem'] = kOperatingSystem;
-        deviceParams['operatingSystemVersion'] =
-            kOperatingSystemVersion;
-      }
-    } catch (e, s) {
-      Logger.error('failed to load device info', e, s);
-      deviceParams['failed'] = e.toString();
-    }
-  }
-
   /// PackageInfo: appName+version+buildNumber
   ///  - Android: support
   ///  - for iOS/macOS:
@@ -186,66 +114,113 @@ class AppDeviceInfo {
   ///   - if buildNumber not defined, return version instead
   ///  - Windows: Not Support
   static Future<void> _loadApplicationInfo() async {
-    ///Only android, iOS and macOS are implemented
-    _packageInfo =
-        await PackageInfo.fromPlatform().catchError((e) => PackageInfo(
-              appName: kAppName,
-              packageName: kPackageName,
-              version: '0.0.0',
-              buildNumber: '0',
-            ));
-    _packageInfo = PackageInfo(
-      appName: _packageInfo!.appName.toTitle(),
-      packageName: _packageInfo!.packageName,
-      version: _packageInfo!.version,
-      buildNumber: _packageInfo!.buildNumber,
-    );
-    appParams['version'] = _packageInfo?.version;
-    appParams['appName'] = _packageInfo?.appName;
-    appParams['buildNumber'] = _packageInfo?.buildNumber;
-    appParams['packageName'] = _packageInfo?.packageName;
-    appParams['commitHash'] = kCommitHash;
-    appParams['commitTimestamp'] = commitDate;
+    if (_fetchedPackageInfo) return;
+    _fetchedPackageInfo = true;
+    try {
+      final res = await PackageInfo.fromPlatform();
+      _packageInfo = res;
+      _parseBuildNumber(res.buildNumber);
+      packageInfoCompleter.complete(res);
+    } catch (_) {
+      _fetchedPackageInfo = false;
+      Logger.error('get package info error');
+    }
   }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  static int? _androidSdk;
+  static bool _isIPad = false;
+
+  static bool get isIPad => _isIPad;
+  static final Map<String, dynamic> deviceParams = {};
+
+  static int? get androidSdk => _androidSdk;
+  static String? _deviceId;
+
+  static String? get deviceId => _deviceId;
+
+  static Future<void> fetchDeviceId() async {
+    if (_deviceId != null) return;
+    _deviceId = await FlutterUdid.udid;
+  }
+
+  static Future<void> _loadDeviceInfo() async {
+    try {
+      if (kIsAndroid) {
+        final androidInfo = await DeviceInfoPlugin().androidInfo;
+        deviceParams
+            .addAll(Map.from(androidInfo.data)..remove('systemFeatures'));
+        _androidSdk = androidInfo.version.sdkInt;
+        deviceParams['androidId'] = await const AndroidId().getId();
+        deviceParams['userAgent'] = await AppMethodChannel.getUserAgent();
+      } else if (kIsIOS) {
+        final iosInfo = await DeviceInfoPlugin().iosInfo;
+        _isIPad = iosInfo.model.toLowerCase().contains('ipad');
+        deviceParams.addAll(Map.from(iosInfo.data)..remove('name'));
+        deviceParams['CFNetworkVersion'] =
+            await AppMethodChannel.getCFNetworkVersion();
+      } else if (kIsMacOS) {
+        final macOsInfo = await DeviceInfoPlugin().macOsInfo;
+        deviceParams.addAll(Map.from(macOsInfo.data)..remove('computerName'));
+      } else if (kIsLinux) {
+        final linuxInfo = await DeviceInfoPlugin().linuxInfo;
+        deviceParams.addAll(Map.from(linuxInfo.data));
+      } else if (kIsWindows) {
+        final windowsInfo = await DeviceInfoPlugin().windowsInfo;
+        deviceParams
+            .addAll(Map.from(windowsInfo.data)..remove('digitalProductId'));
+      } else if (kIsWeb) {
+        final webInfo = await DeviceInfoPlugin().webBrowserInfo;
+        deviceParams.addAll({
+          ...webInfo.data,
+          'browserName': webInfo.browserName.name,
+        });
+      } else {
+        deviceParams['operatingSystem'] = kOperatingSystem;
+        deviceParams['operatingSystemVersion'] = kOperatingSystemVersion;
+      }
+    } catch (e, s) {
+      Logger.error('failed to load device info', e, s);
+      deviceParams['failed'] = e.toString();
+    }
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  static String? _uuid;
+
+  static String get uuid => _uuid ?? '----';
+
+  static bool _debugOn = false;
+
+  static bool get isDebugOn => isDebugDevice || _debugOn;
 
   static Future<void> _loadUniqueId(String appPath) async {
     final deviceInfoPlugin = DeviceInfoPlugin();
     String? originId;
-    if (isWeb) {
-      // // use generated uuid
-      // originId = null;
-      // _uuid = '00000000-0000-0000-0000-000000000000';
-      // return;
-    } else if (isAndroid) {
+    if (kIsWeb) {
+      // TODO(xieyz): generate uuid then store persistent
+    } else if (kIsAndroid) {
       originId = await const AndroidId().getId();
-    } else if (isIOS) {
+    } else if (kIsIOS) {
       originId = (await deviceInfoPlugin.iosInfo).identifierForVendor;
-    } else if (isWindows) {
-      // reg query "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion" /v "ProductId"
-      // Output:
-      // HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion
-      //     ProductId    REG_SZ    XXXXX-XXXXX-XXXXX-XXXXX
+    } else if (kIsWindows) {
       final result = await Process.run(
         'reg',
         [
           'query',
-          // ProductId
-          // r'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion',
-          // MachineGuid
           r'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Cryptography',
           '/v',
-          // 'ProductId'
           'MachineGuid'
         ],
         runInShell: true,
       );
       final resultString = result.stdout.toString().trim();
-      // print('Windows MachineGuid query:\n$resultString');
       if (resultString.contains('MachineGuid') &&
           resultString.contains('REG_SZ')) {
         originId = resultString.trim().split(RegExp(r'\s+')).last;
       }
-    } else if (isMacOS) {
+    } else if (kIsMacOS) {
       // https://stackoverflow.com/a/944103
       // However, IOPlatformUUID will change every boot, use IOPlatformSerialNumber instead
       // ioreg -rd1 -c IOPlatformExpertDevice | awk '/IOPlatformSerialNumber/ { split($0, line, "\""); printf("%s\n", line[4]); }'
@@ -254,7 +229,7 @@ class AppDeviceInfo {
       //  "IOPlatformUUID" = "8-4-4-4-12 standard uuid"
       // need to parse output
       originId = (await DeviceInfoPlugin().macOsInfo).systemGUID;
-    } else if (isLinux) {
+    } else if (kIsLinux) {
       //cat /etc/machine-id
       final result = await Process.run(
         'cat',
@@ -284,25 +259,15 @@ class AppDeviceInfo {
     Logger.info('Unique ID: $_uuid');
   }
 
-  static void initiateForTest() {
-    _uuid = '00000000-0000-0000-0000-000000000000';
-    _packageInfo = PackageInfo(
-      appName: kAppName,
-      packageName: kPackageName,
-      version: '9.9.9',
-      buildNumber: '9999',
-    );
-  }
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  static MacAppType _macAppType = MacAppType.unknown;
 
-  static Future<void> resolve(String appPath) async {
-    await _loadUniqueId(appPath);
-    await _loadDeviceInfo();
-    await _loadApplicationInfo();
-    _checkMacAppType();
-  }
+  static MacAppType get macAppType => _macAppType;
+
+  static bool get isMacStoreApp => _macAppType == MacAppType.store;
 
   static void _checkMacAppType() {
-    if (!isMacOS) {
+    if (!kIsMacOS) {
       _macAppType = MacAppType.notMacApp;
     } else {
       final executable = kResolvedExecutable;
@@ -320,40 +285,7 @@ class AppDeviceInfo {
     }
   }
 
-  static PackageInfo? get info => _packageInfo;
-
-  static String get appName {
-    if (_packageInfo?.appName.isNotEmpty ?? false) {
-      return _packageInfo!.appName;
-    } else {
-      return kAppName;
-    }
-  }
-
-  static String get commitDate => DateFormat.yMd()
-      .format(DateTime.fromMillisecondsSinceEpoch(kCommitTimestamp * 1000));
-
-  static String get versionString => _packageInfo?.version ?? '';
-
-  static int get buildNumber =>
-      int.tryParse(_packageInfo?.buildNumber ?? '0') ?? 0;
-
-  static String get fullVersion {
-    var s = '';
-    s += versionString;
-    if (buildNumber > 0) s += '+$buildNumber';
-    return s;
-  }
-
-  static String get fullVersion2 {
-    final buffer = StringBuffer(versionString);
-    if (buildNumber > 0) {
-      buffer.write(' ($buildNumber)');
-    }
-    return buffer.toString();
-  }
-
-  static String get uuid => _uuid ?? '----';
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   static bool get isDebugDevice {
     if (kDebugMode) return true;
@@ -368,11 +300,23 @@ class AppDeviceInfo {
     return excludeIds.contains(AppDeviceInfo.uuid);
   }
 
-  static bool get isDebugOn => isDebugDevice || _debugOn;
+  static Future<void> resolve(String appPath) async {
+    await _loadUniqueId(appPath);
+    await _loadDeviceInfo();
+    await _loadApplicationInfo();
+    _checkMacAppType();
+  }
 
-  static MacAppType get macAppType => _macAppType;
+  static void initiateForTest() {
+    _uuid = '00000000-0000-0000-0000-000000000000';
+    _packageInfo = PackageInfo(
+      appName: kAppName,
+      packageName: kPackageName,
+      version: '9.9.9',
+      buildNumber: '9999',
+    );
+  }
 
-  static bool get isMacStoreApp => _macAppType == MacAppType.store;
-
-  static bool get isFDroid => isAndroid && packageName == kPackageNameFDroid;
+  static String get commitDate => DateFormat.yMd()
+      .format(DateTime.fromMillisecondsSinceEpoch(kCommitTimestamp * 1000));
 }

@@ -5,12 +5,12 @@ import 'package:path_provider/path_provider.dart';
 import '../impl/logger.dart';
 
 class PathHelper {
-
-  factory PathHelper() {
-    return _instance;
-  }
-
   PathHelper._internal();
+  static final PathHelper _instance = PathHelper._internal();
+
+  static PathHelper get instance => _instance;
+
+
   late final String cachePath;
   late final String documentsPath;
   late final String supportPath;
@@ -62,9 +62,6 @@ class PathHelper {
   String get getCachePath {
     return '$getHomePath/cache';
   }
-
-  /// 单例
-  static final PathHelper _instance = PathHelper._internal();
 
   Map<String, String> toMap() {
     return {

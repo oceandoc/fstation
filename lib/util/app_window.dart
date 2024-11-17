@@ -9,13 +9,17 @@ import '../impl/logger.dart';
 import '../ui/dialog.dart';
 import 'app_device_info.dart';
 
-class AppWindowUtil {
-  const AppWindowUtil._();
+class WindowUtil {
+  WindowUtil._internal();
+
+  static final WindowUtil _instance = WindowUtil._internal();
+
+  static WindowUtil get instance => _instance;
 
   static bool _trayInstalled = false;
 
   static Future<void> init() async {
-    if (isDesktop) {
+    if (kIsDesktop) {
       await windowManager.ensureInitialized();
       await windowManager.setTitle(kAppName);
       await windowManager.setMinimumSize(
@@ -28,17 +32,17 @@ class AppWindowUtil {
   /// window ops
 
   static Future<void> minimizeWindow() async {
-    if (isWindows) {
+    if (kIsWindows) {
       return windowManager.hide();
-    } else if (isMacOS) {
+    } else if (kIsMacOS) {
       return windowManager.minimize();
-    } else if (isLinux) {
+    } else if (kIsLinux) {
       return windowManager.minimize();
     }
   }
 
   static Future<void> showWindow() async {
-    if (isDesktop) {
+    if (kIsDesktop) {
       return windowManager.show();
     }
   }
@@ -54,7 +58,7 @@ class AppWindowUtil {
   }
 
   static Future<void> setAlwaysOnTop([bool? onTop]) async {
-    if (isDesktop) {
+    if (kIsDesktop) {
       // onTop ??= db.settings.alwaysOnTop;
       await windowManager.setAlwaysOnTop(true);
     }
@@ -79,10 +83,10 @@ class AppWindowUtil {
   }
 
   static Future<void> setTray() async {
-    if (!isDesktop) return;
+    if (!kIsDesktop) return;
     try {
       final icon =
-          'res/img/launcher_icon/${isWindows ? 'app_icon.ico' : 'app_icon_rounded.png'}';
+          'res/img/launcher_icon/${kIsWindows ? 'app_icon.ico' : 'app_icon_rounded.png'}';
       await trayManager.setIcon(icon);
       final menuMain = Menu(items: [
         MenuItem(
@@ -125,11 +129,11 @@ class AppWindowUtil {
   /// events
 
   static Future<void> onTrayClick() async {
-    if (isWindows) {
+    if (kIsWindows) {
       return windowManager.show();
-    } else if (isMacOS) {
+    } else if (kIsMacOS) {
       return trayManager.popUpContextMenu();
-    } else if (isLinux) {
+    } else if (kIsLinux) {
       return windowManager.show();
       // not supported
       // trayManager.popUpContextMenu();
@@ -137,11 +141,11 @@ class AppWindowUtil {
   }
 
   static Future<void> onTrayRightClick() async {
-    if (isWindows) {
+    if (kIsWindows) {
       return trayManager.popUpContextMenu();
-    } else if (isMacOS) {
+    } else if (kIsMacOS) {
       return windowManager.show();
-    } else if (isLinux) {
+    } else if (kIsLinux) {
       return windowManager.show();
     }
   }

@@ -18,7 +18,6 @@ import '../../generated/git_info.dart';
 import '../../generated/l10n.dart';
 import '../../impl/router.dart';
 import '../app_device_info.dart';
-import '../chaldea.dart';
 import '../file_plus/file_plus.dart';
 import '../language.dart';
 import '../network.dart';
@@ -32,19 +31,20 @@ class ExceptionHandler extends ReportHandler {
     this.printLogs = false,
   });
 
-  @override
-  List<PlatformType> getSupportedPlatforms() => PlatformType.values;
-
   final Pool _pool = Pool(1);
   final int _maxEmailCount = 10;
   final List<String> attachments;
   final Map<String, Uint8List> Function()? onGenerateAttachments;
   final bool sendHtml;
   final bool printLogs;
+  final HashSet<String> _sentReports = HashSet();
+
+  @override
+  List<PlatformType> getSupportedPlatforms() => PlatformType.values;
 
   @override
   Future<bool> handle(Report report, BuildContext? context) async {
-    final screenshotBytes = await _captureScreenshot();
+    final screenshotBytes = await Screenshot.instance.capture();
     final generatedAttachments =
         onGenerateAttachments?.call() ?? <String, Uint8List>{};
 
@@ -53,15 +53,12 @@ class ExceptionHandler extends ReportHandler {
         generatedAttachments: generatedAttachments));
   }
 
-  /// store html message that has already be sent
-  final HashSet<String> _sentReports = HashSet();
-
   Future<bool> _sendMail(
     Report report, {
     Uint8List? screenshotBytes,
     Map<String, Uint8List> generatedAttachments = const <String, Uint8List>{},
   }) async {
-    if (network.hasInternetConnection()) {
+    if (!ConnectivityUtil.instance.hasInternetConnection()) {
       Logger.error(Localization.current.error_no_internet);
       return false;
     }
@@ -93,9 +90,11 @@ class ExceptionHandler extends ReportHandler {
         archive.addFile(ArchiveFile(p.basename(fn), bytes.length, bytes));
       }
     }
+
     for (final entry in generatedAttachments.entries) {
       archive.addFile(ArchiveFile(entry.key, entry.value.length, entry.value));
     }
+
     List<int>? zippedBytes;
     if (archive.isNotEmpty) {
       zippedBytes = ZipEncoder().encode(archive);
@@ -105,7 +104,7 @@ class ExceptionHandler extends ReportHandler {
     }
 
     if (screenshotBytes != null) {
-      resolvedAttachments['_screenshot.jpg'] = screenshotBytes;
+      resolvedAttachments['screenshot.jpg'] = screenshotBytes;
     }
 
     if (kDebugMode) {
@@ -114,20 +113,7 @@ class ExceptionHandler extends ReportHandler {
     }
 
     // TODO(xieyz): send email
-    final response = await ChaldeaWorkerApi.sendFeedback(
-      subject: 'Error: ${report.error}',
-      senderName: 'fStation ${AppDeviceInfo.versionString} Crash',
-      html: sendHtml ? await _setupHtmlMessageText(report) : null,
-      files: resolvedAttachments,
-    );
-    final success = response != null && !response.hasError;
-    if (!success) {
-      Logger.error('failed to send mail', response?.fullMessage);
-    }
-    if (report is! FeedbackReport) {
-      _sentReports.add(report.shownError);
-    }
-    return success;
+    return true;
   }
 }
 
@@ -176,10 +162,6 @@ Future<bool> _isBlockedError(Report report) async {
     return true;
   }
   return false;
-}
-
-Future<Uint8List?> _captureScreenshot() async {
-  return Screenshot.instance.capture();
 }
 
 Future<String> _setupHtmlMessageText(Report report) async {

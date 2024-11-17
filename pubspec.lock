@@ -241,14 +241,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.1.2"
-  countly_flutter_np:
-    dependency: "direct main"
-    description:
-      name: countly_flutter_np
-      sha256: cdab38c25b3126f7d5ca62f9f5eb4575242e943d0c48cf55eaa7147c4444ada6
-      url: "https://pub.dev"
-    source: hosted
-    version: "24.11.0"
   cross_file:
     dependency: transitive
     description:
@@ -981,14 +973,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.3.0"
-  pedantic:
-    dependency: transitive
-    description:
-      name: pedantic
-      sha256: "67fc27ed9639506c856c840ccce7594d0bdcd91bc8d53d6e52359449a1d50602"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.11.1"
   petitparser:
     dependency: transitive
     description:

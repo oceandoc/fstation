@@ -1,14 +1,15 @@
-import 'package:flutter/material.dart';
 import 'dart:ui';
+
+import 'package:flutter/material.dart';
 
 import '../bloc/app_setting_bloc.dart';
 import '../model/settings.dart';
 import 'store.dart';
 
 class SettingImpl {
-  static final SettingImpl _instance = SettingImpl._internal();
-
   SettingImpl._internal();
+
+  static final SettingImpl _instance = SettingImpl._internal();
 
   static SettingImpl get instance => _instance;
 
@@ -159,8 +160,12 @@ class SettingImpl {
 
   // Getters for commonly used values
   ThemeMode get themeMode => ThemeMode.values[settings.themeMode];
+
   String get language => settings.language;
+
   bool get firstLaunch => settings.firstLaunch;
+
   bool get enableFingerprint => settings.enableFingerprint;
+
   bool get enablePin => settings.enablePin;
 }

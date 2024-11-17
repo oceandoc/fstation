@@ -1,31 +1,36 @@
 import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
-
+import 'package:flutter/foundation.dart';
 
 class ConnectivityUtil {
-  static final ConnectivityUtil _instance = ConnectivityUtil._internal();
-  factory ConnectivityUtil() => _instance;
   ConnectivityUtil._internal();
+
+  static final ConnectivityUtil _instance = ConnectivityUtil._internal();
+
+  static ConnectivityUtil get instance => _instance;
 
   final Connectivity _connectivity = Connectivity();
   List<ConnectivityResult> _connectionStatus = [];
-  StreamController<List<ConnectivityResult>> _controller = StreamController<List<ConnectivityResult>>.broadcast();
+  final StreamController<List<ConnectivityResult>> _controller =
+      StreamController<List<ConnectivityResult>>.broadcast();
   StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
 
   // Get current connection status
   List<ConnectivityResult> get connectionStatus => _connectionStatus;
 
   // Get stream of connectivity changes
-  Stream<List<ConnectivityResult>> get onConnectivityChanged => _controller.stream;
+  Stream<List<ConnectivityResult>> get onConnectivityChanged =>
+      _controller.stream;
 
   // Initialize connectivity monitoring
-  Future<void> initialize() async {
+  Future<void> init() async {
     // Check initial connectivity
     await checkConnectivity();
 
     // Listen for subsequent connectivity changes
-    _connectivitySubscription = _connectivity.onConnectivityChanged.listen((results) {
+    _connectivitySubscription =
+        _connectivity.onConnectivityChanged.listen((results) {
       _connectionStatus = results;
       _controller.add(results);
     });
@@ -38,7 +43,9 @@ class ConnectivityUtil {
       _controller.add(_connectionStatus);
       return _connectionStatus;
     } catch (e) {
-      print('Connectivity check failed: $e');
+      if (kDebugMode) {
+        print('Connectivity check failed: $e');
+      }
       return [];
     }
   }
@@ -52,9 +59,8 @@ class ConnectivityUtil {
   // Helper method to check if device has internet connection
   bool hasInternetConnection() {
     return _connectionStatus.any((result) =>
-    result != ConnectivityResult.none &&
-        result != ConnectivityResult.bluetooth
-    );
+        result != ConnectivityResult.none &&
+        result != ConnectivityResult.bluetooth);
   }
 
   // Helper method to check if connected to WiFi
@@ -94,17 +100,13 @@ class ConnectivityUtil {
         return 'Bluetooth';
       case ConnectivityResult.other:
         return 'Other Network';
-      default:
-        return 'Unknown';
     }
   }
 
   // Get all current connection types as list of strings
   List<String> getCurrentConnectionTypes() {
-    return _connectionStatus.map((result) => getConnectionString(result)).toList();
+    return _connectionStatus
+        .map(getConnectionString)
+        .toList();
   }
 }
-
-final network = ConnectivityUtil();
-
-bool get hasNetwork => network.hasInternetConnection();

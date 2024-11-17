@@ -6,22 +6,12 @@ import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 
 class Logger {
-  // Factory constructor to return the same instance
-  factory Logger([int maxSizeInBytes = 100 * 1024 * 1024]) {
-    _instance._maxSizeInBytes = maxSizeInBytes;
-    return _instance;
-  }
-
-  // Private constructor
   Logger._internal() {
     _logger = log.Logger('AppLogger');
-    _setupLogging();
   }
 
-  // Singleton instance
   static final Logger _instance = Logger._internal();
 
-  // Static getter for easy access
   static Logger get instance => _instance;
 
   late final log.Logger _logger;
@@ -31,39 +21,43 @@ class Logger {
   int logCount = 0;
   final int checkInterval = 100;
 
-  /// Get the path to the current app log file
   String? get appLogPath => _logFile?.path;
 
-  /// Get the directory containing log files
   Future<String> get logDirectory async {
     final directory = await getApplicationDocumentsDirectory();
     return path.join(directory.path, 'logs');
   }
 
-  Future<void> _setupLogging() async {
-    log.Logger.root.level = kReleaseMode ? log.Level.SEVERE : log.Level.ALL;
-
-    final directory = await getApplicationDocumentsDirectory();
-    final logsDir = path.join(directory.path, 'logs');
-
-    // Create logs directory if it doesn't exist
-    if (!Directory(logsDir).existsSync()) {
-      await Directory(logsDir).create(recursive: true);
-    }
-
-    _logFile = File(path.join(logsDir, 'app.log'));
-
-    log.Logger.root.onRecord.listen((record) async {
-      final logMessage =
-          '${record.time}: [${record.level.name}] ${record.loggerName} - ${record.message}';
-      _logFile?.writeAsStringSync('$logMessage\n', mode: FileMode.append);
-
-      logCount++;
-      if (logCount >= checkInterval) {
-        logCount = 0;
-        await _manageLogFileSize(logsDir);
+  Future<void> init([int maxSizeInBytes = 100 * 1024 * 1024]) async {
+    _instance._maxSizeInBytes = maxSizeInBytes;
+    if (kDebugMode) {
+      log.Logger.root.level = log.Level.ALL;
+      log.Logger.root.onRecord.listen((record) async {
+        final logMessage =
+            '${record.time}: [${record.level.name}] ${record.loggerName} - ${record.message}';
+        // ignore: avoid_print
+        print(logMessage);
+      });
+    } else {
+      final directory = await getApplicationDocumentsDirectory();
+      final logsDir = path.join(directory.path, 'logs');
+      // Create logs directory if it doesn't exist
+      if (!Directory(logsDir).existsSync()) {
+        await Directory(logsDir).create(recursive: true);
       }
-    });
+      _logFile = File(path.join(logsDir, 'app.log'));
+      log.Logger.root.level = log.Level.SEVERE;
+      log.Logger.root.onRecord.listen((record) async {
+        final logMessage =
+            '${record.time}: [${record.level.name}] ${record.loggerName} - ${record.message}';
+        _logFile?.writeAsStringSync('$logMessage\n', mode: FileMode.append);
+        logCount++;
+        if (logCount >= checkInterval) {
+          logCount = 0;
+          await _manageLogFileSize(logsDir);
+        }
+      });
+    }
   }
 
   Future<void> _manageLogFileSize(String directory) async {

@@ -6,7 +6,7 @@ import 'package:flutter/foundation.dart' show kIsWeb, protected;
 
 import 'package:path/path.dart' as p;
 
-import 'file_plus_io.dart';
+import 'file_plus_native.dart';
 import 'file_plus_web.dart';
 
 abstract class FilePlus {

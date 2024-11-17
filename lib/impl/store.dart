@@ -10,28 +10,21 @@ import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
 import '../model/settings.dart';
 
 class Store {
-  // Factory constructor to return the same instance
-  factory Store() => _instance;
-
-  // Private constructor
   Store._internal();
 
-  static const kCurrentDBVersion = 2;
-
-  // Singleton instance
   static final Store _instance = Store._internal();
 
-  // Make this static to easily access the instance
   static Store get instance => _instance;
 
-  late final Database db;
+  static const kCurrentDBVersion = 1;
+  late final Database _db;
 
   Future<bool> init() async {
     // Initialize appropriate database factory based on platform
     if (kIsWeb) {
       // Web platform
       databaseFactory = databaseFactoryFfiWeb;
-      db = await databaseFactory.openDatabase(
+      _db = await databaseFactory.openDatabase(
         'fstation.db',
         options: OpenDatabaseOptions(
           version: kCurrentDBVersion,
@@ -58,7 +51,7 @@ class Store {
         await databaseFactory.setDatabasesPath(dbFolder.path);
       }
 
-      db = await databaseFactory.openDatabase(
+      _db = await databaseFactory.openDatabase(
         dbPath,
         options: OpenDatabaseOptions(
           version: kCurrentDBVersion,
@@ -114,7 +107,7 @@ class Store {
     await db.execute('''
         CREATE TABLE user (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
-          name TEXT PRIMARY KEY,
+          name TEXT,
           token TEXT,
           token_update_time TEXT
         )
@@ -144,7 +137,7 @@ class Store {
   }
 
   Future<Settings?> getSettings() async {
-    final maps = await db.query('settings') as List<Map<String, dynamic>>;
+    final maps = await _db.query('settings') as List<Map<String, dynamic>>;
     if (maps.isEmpty) {
       return null;
     }
@@ -152,28 +145,28 @@ class Store {
   }
 
   Future<void> saveSettings(Settings settings) async {
-    if (db == null) await init();
+    if (_db == null) await init();
 
     if (settings.id != null) {
-      await db!.update(
+      await _db!.update(
         'settings',
         settings.toMap(),
         where: 'id = ?',
         whereArgs: [settings.id],
       );
     } else {
-      await db!.insert('settings', settings.toMap());
+      await _db!.insert('settings', settings.toMap());
     }
   }
 
   Future<void> updateSettings(Map<String, dynamic> values) async {
-    if (db == null) await init();
+    if (_db == null) await init();
 
     final settings = await getSettings();
     if (settings == null) {
       await saveSettings(Settings.fromMap(values));
     } else {
-      await db!.update(
+      await _db!.update(
         'settings',
         values,
         where: 'id = ?',
@@ -187,7 +180,7 @@ class Store {
     required String token,
     String? tokenUpdateTime,
   }) async {
-    await db.insert('user', {
+    await _db.insert('user', {
       'name': name,
       'token': token,
       'token_update_time': tokenUpdateTime ?? DateTime.now().toIso8601String(),
@@ -203,7 +196,7 @@ class Store {
     if (token != null) values['token'] = token;
     if (tokenUpdateTime != null) values['token_update_time'] = tokenUpdateTime;
 
-    await db.update(
+    await _db.update(
       'user',
       values,
       where: 'name = ?',
@@ -212,7 +205,7 @@ class Store {
   }
 
   Future<void> deleteUser(String name) async {
-    await db.delete(
+    await _db.delete(
       'user',
       where: 'name = ?',
       whereArgs: [name],
@@ -220,7 +213,7 @@ class Store {
   }
 
   Future<Map<String, dynamic>?> getUser(String name) async {
-    final result = await db.query(
+    final result = await _db.query(
       'user',
       where: 'name = ?',
       whereArgs: [name],
@@ -230,7 +223,7 @@ class Store {
   }
 
   Future<void> setCurrentUser(String name) async {
-    await db.insert(
+    await _db.insert(
       'current_user',
       {'id': 1, 'user_name': name},
       conflictAlgorithm: ConflictAlgorithm.replace,
@@ -238,7 +231,7 @@ class Store {
   }
 
   Future<Map<String, dynamic>?> getCurrentUser() async {
-    final currentUserResult = await db.query(
+    final currentUserResult = await _db.query(
       'current_user',
       where: 'id = 1',
       limit: 1,

@@ -29,9 +29,9 @@ enum FingerPrintAuthState {
 }
 
 class UserManager {
-  UserManager._();
-
-  static final instance = UserManager._();
+  UserManager._internal();
+  static final UserManager _instance = UserManager._internal();
+  static UserManager get instance => _instance;
 
   User? _currentUser;
 
@@ -189,7 +189,7 @@ class UserManager {
     required String password,
   }) async {
     Logger.info('signUpWithEmailAndPassword - [$email, $password]');
-    if (!network.hasInternetConnection()) {
+    if (!ConnectivityUtil.instance.hasInternetConnection()) {
       return Left(SignUpFailure.noInternetConnection());
     }
 
@@ -206,7 +206,7 @@ class UserManager {
     required String password,
   }) async {
     Logger.info('signInWithEmailAndPassword - [$email]');
-    if (!network.hasInternetConnection()) {
+    if (!ConnectivityUtil.instance.hasInternetConnection()) {
       return Left(SignInFailure.noInternetConnection());
     }
 
@@ -292,7 +292,7 @@ class UserManager {
     try {
       GetIt.I<EmailValidator>().validate(forgotPasswordEmail);
 
-      if (!network.hasInternetConnection()) {
+      if (!ConnectivityUtil.instance.hasInternetConnection()) {
         return Left(ForgotPasswordFailure.noInternetConnection());
       }
       return const Right(true);
