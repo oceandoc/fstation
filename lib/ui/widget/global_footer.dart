@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fstation/util/extensions.dart';
+import 'package:fstation/extension/context_extension.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:icons_plus/icons_plus.dart';

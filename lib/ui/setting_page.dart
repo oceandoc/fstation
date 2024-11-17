@@ -5,14 +5,13 @@ import 'package:provider/provider.dart';
 import 'package:settings_ui/settings_ui.dart';
 
 import '../bloc/app_setting_bloc.dart';
+import '../extension/extensions.dart';
 import '../generated/l10n.dart';
 import '../impl/setting_impl.dart';
-import '../util/custom_widgets.dart';
-import '../util/enums.dart';
-import '../util/extensions.dart';
+import '../impl/settings_search_controller.dart';
 import '../util/language.dart';
-import '../util/settings_search_controller.dart';
 import '../util/util.dart';
+import 'widget/custom_widgets.dart';
 
 enum _ThemeSettingsKeys {
   themeMode,

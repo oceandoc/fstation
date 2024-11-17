@@ -1,133 +1,18 @@
-import 'dart:async';
 import 'dart:io';
 
 import 'package:android_id/android_id.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_udid/flutter_udid.dart';
-import 'package:fstation/util/util.dart';
-import 'package:intl/intl.dart';
-import 'package:package_info_plus/package_info_plus.dart';
-import 'package:path/path.dart' as pathlib;
+import 'package:path/path.dart';
 import 'package:uuid/uuid.dart';
 
-import '../generated/git_info.dart';
 import '../impl/logger.dart';
 import 'app_method_channel.dart';
+import 'constants.dart';
 import 'file_plus/file_plus.dart';
 
-enum MacAppType {
-  unknown,
-  store,
-  notarized,
-  debug,
-  notMacApp,
-}
-
-final isTest = Platform.environment.containsKey('FLUTTER_TEST');
-const String kAppName = 'FastStation';
-const String kPackageName = 'com.xiedeacc.fstation';
-const String kPackageNameFDroid = 'com.xiedeacc.fstation.fdroid';
-
-final bool kIsLinux = !kIsWeb && Platform.isLinux;
-final bool kIsMacOS = !kIsWeb && Platform.isMacOS;
-final bool kIsWindows = !kIsWeb && Platform.isWindows;
-final bool kIsAndroid = !kIsWeb && Platform.isAndroid;
-final bool kIsIOS = !kIsWeb && Platform.isIOS;
-final bool kIsMobile = kIsAndroid || kIsIOS;
-final bool kIsDesktop = kIsWindows || kIsMacOS || kIsLinux;
-final bool kIsApple = kIsIOS || kIsMacOS;
-final String kOperatingSystem = kIsWeb ? 'browser' : Platform.operatingSystem;
-final String kOperatingSystemVersion =
-    kIsWeb ? '' : Platform.operatingSystemVersion;
-final String kResolvedExecutable = kIsWeb ? '' : Platform.resolvedExecutable;
-final bool kSupportCopyImage =
-    kIsWeb || Platform.isIOS || Platform.isMacOS || Platform.isWindows;
-
-bool get isTargetMobile => [TargetPlatform.android, TargetPlatform.iOS]
-    .contains(defaultTargetPlatform);
-
-bool get isTargetDesktop => !isTargetMobile;
-const bool supportScreenshot = !kIsWeb;
-
-class AppDeviceInfo {
-  static PackageInfo? _packageInfo;
-  static DateTime? buildDate;
-  static bool _fetchedPackageInfo = false;
-  static final packageInfoCompleter = Completer<PackageInfo>();
-
-  static PackageInfo? get packageInfo => _packageInfo;
-
-  static String get packageName => packageInfo?.packageName ?? kPackageName;
-
-  static bool get isFDroid => kIsAndroid && packageName == kPackageNameFDroid;
-
-  static String get appName {
-    if (_packageInfo?.appName.isNotEmpty ?? false) {
-      return _packageInfo!.appName;
-    } else {
-      return kAppName;
-    }
-  }
-
-  static String get versionString => _packageInfo?.version ?? '';
-
-  static int get buildNumber =>
-      int.tryParse(_packageInfo?.buildNumber ?? '0') ?? 0;
-
-  static String get fullVersion {
-    var s = '';
-    s += versionString;
-    if (buildNumber > 0) s += '+$buildNumber';
-    return s;
-  }
-
-  static String get fullVersion2 {
-    final buffer = StringBuffer(versionString);
-    if (buildNumber > 0) {
-      buffer.write(' ($buildNumber)');
-    }
-    return buffer.toString();
-  }
-
-  static void _parseBuildNumber(String buildNumber) {
-    try {
-      var hours = 0;
-      var minutes = 0;
-      final yyMMddHHP = buildNumber;
-      final year = 2000 + int.parse('${yyMMddHHP[0]}${yyMMddHHP[1]}');
-      final month = int.parse('${yyMMddHHP[2]}${yyMMddHHP[3]}');
-      final day = int.parse('${yyMMddHHP[4]}${yyMMddHHP[5]}');
-      try {
-        hours = int.parse('${yyMMddHHP[6]}${yyMMddHHP[7]}');
-        minutes = (60 * double.parse('0.${yyMMddHHP[8]}'))
-            .round(); // 0.5, 0.8, 1.0, etc.
-      } catch (_) {}
-      buildDate = DateTime.utc(year, month, day, hours, minutes);
-    } catch (_) {}
-  }
-
-  /// PackageInfo: appName+version+buildNumber
-  ///  - Android: support
-  ///  - for iOS/macOS:
-  ///   - if CF** keys not defined in info.plist, return null
-  ///   - if buildNumber not defined, return version instead
-  ///  - Windows: Not Support
-  static Future<void> _loadApplicationInfo() async {
-    if (_fetchedPackageInfo) return;
-    _fetchedPackageInfo = true;
-    try {
-      final res = await PackageInfo.fromPlatform();
-      _packageInfo = res;
-      _parseBuildNumber(res.buildNumber);
-      packageInfoCompleter.complete(res);
-    } catch (_) {
-      _fetchedPackageInfo = false;
-      Logger.error('get package info error');
-    }
-  }
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+class DeviceInfo {
   static int? _androidSdk;
   static bool _isIPad = false;
 
@@ -151,6 +36,8 @@ class AppDeviceInfo {
         deviceParams
             .addAll(Map.from(androidInfo.data)..remove('systemFeatures'));
         _androidSdk = androidInfo.version.sdkInt;
+
+        // same with FlutterUdid.udid?
         deviceParams['androidId'] = await const AndroidId().getId();
         deviceParams['userAgent'] = await AppMethodChannel.getUserAgent();
       } else if (kIsIOS) {
@@ -245,7 +132,7 @@ class AppDeviceInfo {
       throw UnimplementedError(kOperatingSystem);
     }
     if (originId?.isNotEmpty != true) {
-      final uuidFile = FilePlus(pathlib.join(appPath, '.uuid'));
+      final uuidFile = FilePlus(join(appPath, '.uuid'));
       if (uuidFile.existsSync()) {
         originId = await uuidFile.readAsString();
       }
@@ -255,34 +142,8 @@ class AppDeviceInfo {
       }
     }
     _uuid = const Uuid().v5(Namespace.url.value, originId).toUpperCase();
-    _debugOn = FilePlus(joinPaths(appPath, '.debug')).existsSync();
+    _debugOn = FilePlus(join(appPath, '.debug')).existsSync();
     Logger.info('Unique ID: $_uuid');
-  }
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  static MacAppType _macAppType = MacAppType.unknown;
-
-  static MacAppType get macAppType => _macAppType;
-
-  static bool get isMacStoreApp => _macAppType == MacAppType.store;
-
-  static void _checkMacAppType() {
-    if (!kIsMacOS) {
-      _macAppType = MacAppType.notMacApp;
-    } else {
-      final executable = kResolvedExecutable;
-      final fpStore = pathlib.absolute(
-          pathlib.dirname(executable), '../_MASReceipt/receipt');
-      final fpNotarized =
-          pathlib.absolute(pathlib.dirname(executable), '../CodeResources');
-      if (FilePlus(fpStore).existsSync()) {
-        _macAppType = MacAppType.store;
-      } else if (FilePlus(fpNotarized).existsSync()) {
-        _macAppType = MacAppType.notarized;
-      } else {
-        _macAppType = MacAppType.debug;
-      }
-    }
   }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -297,26 +158,15 @@ class AppDeviceInfo {
       'EFD686D5-2D83-56E5-8971-8F72D0D42D58', // macos
       '6986A299-F7CB-5BBF-9680-14ED34013C07', // windows
     ];
-    return excludeIds.contains(AppDeviceInfo.uuid);
+    return excludeIds.contains(DeviceInfo.uuid);
   }
 
-  static Future<void> resolve(String appPath) async {
+  static Future<void> init(String appPath) async {
     await _loadUniqueId(appPath);
     await _loadDeviceInfo();
-    await _loadApplicationInfo();
-    _checkMacAppType();
   }
 
-  static void initiateForTest() {
+  static void initForTest() {
     _uuid = '00000000-0000-0000-0000-000000000000';
-    _packageInfo = PackageInfo(
-      appName: kAppName,
-      packageName: kPackageName,
-      version: '9.9.9',
-      buildNumber: '9999',
-    );
   }
-
-  static String get commitDate => DateFormat.yMd()
-      .format(DateTime.fromMillisecondsSinceEpoch(kCommitTimestamp * 1000));
 }

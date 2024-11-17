@@ -11,7 +11,7 @@ import 'package:fstation/ui/widget/sign_up_form.dart';
 
 import '../bloc/auth_session_bloc.dart';
 import '../bloc/auth_session_state.dart';
-import '../util/auth_page_theme_extensions.dart';
+import '../extension/auth_page_theme_extensions.dart';
 
 class AuthPage extends StatefulWidget {
   const AuthPage({super.key, this.lastLoggedInUserId});

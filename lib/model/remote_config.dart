@@ -1,4 +1,4 @@
-import 'package:fstation/util/extensions.dart';
+import 'package:fstation/extension/extensions.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 

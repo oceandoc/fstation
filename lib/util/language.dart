@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fstation/util/extensions.dart';
+import 'package:fstation/extension/extensions.dart';
 import 'package:intl/intl.dart';
 
 class Language {

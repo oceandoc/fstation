@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:fstation/impl/setting_impl.dart';
 import '../impl/logger.dart';
-import 'app_device_info.dart';
+import 'constants.dart';
 
 const MethodChannel kMethodChannel =
     MethodChannel('com.xiedeacc.fstation/fstation');

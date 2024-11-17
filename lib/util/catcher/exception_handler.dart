@@ -17,10 +17,12 @@ import 'package:pool/pool.dart';
 import '../../generated/git_info.dart';
 import '../../generated/l10n.dart';
 import '../../impl/router.dart';
-import '../app_device_info.dart';
+import '../app_info.dart';
+import '../constants.dart';
+import '../device_info.dart';
 import '../file_plus/file_plus.dart';
 import '../language.dart';
-import '../network.dart';
+import '../network_util.dart';
 
 // TODO(xieyz): store send timestamp to db, send only once in a week
 class ExceptionHandler extends ReportHandler {
@@ -190,11 +192,11 @@ Future<String> _setupHtmlMessageText(Report report) async {
   buffer.write('<h3>Summary:</h3>');
   final summary = <String, dynamic>{
     'app':
-        '${AppDeviceInfo.appName} v${AppDeviceInfo.fullVersion2} $kCommitHash-${AppDeviceInfo.commitDate}',
+        '${AppInfo.appName} v${AppInfo.fullVersion2} $kCommitHash-${AppInfo.commitDate}',
     'os': '$kOperatingSystem $kOperatingSystemVersion',
     // 'lang': Language.current.code,
     'locale': Language.systemLocale.toString(),
-    'uuid': AppDeviceInfo.uuid,
+    'uuid': DeviceInfo.uuid,
     // 'user': db.settings.secrets.user?.name ?? "",
     if (kIsWeb)
       // TODO(xieyz): support canvaskit
@@ -267,8 +269,8 @@ Future<String> _setupHtmlMessageText(Report report) async {
 
 class FeedbackReport extends Report {
   FeedbackReport(this.contactInfo, this.body)
-      : super(null, '', DateTime.now(), AppDeviceInfo.deviceParams,
-            AppDeviceInfo.appParams, {}, null, PlatformType.unknown, null);
+      : super(null, '', DateTime.now(), DeviceInfo.deviceParams,
+            AppInfo.appParams, {}, null, PlatformType.unknown, null);
   final String? contactInfo;
   final String body;
 }

@@ -6,7 +6,7 @@ import '../../bloc/auth_form_bloc.dart';
 import '../../bloc/auth_form_event.dart';
 import '../../bloc/auth_form_state.dart';
 import '../../generated/l10n.dart';
-import '../../util/auth_page_theme_extensions.dart';
+import '../../extension/auth_page_theme_extensions.dart';
 import '../../util/util.dart';
 import 'auth_change.dart';
 import 'email_input_field.dart';

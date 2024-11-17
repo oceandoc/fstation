@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'enums.dart';
+import '../util/enums.dart';
 
 class SettingsSearchController {
   static final SettingsSearchController inst = SettingsSearchController._internal();

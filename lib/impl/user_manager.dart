@@ -13,7 +13,7 @@ import '../generated/error.pbenum.dart';
 import '../generated/l10n.dart';
 import '../model/user.dart';
 import '../ui/widget/failures.dart';
-import '../util/network.dart';
+import '../util/network_util.dart';
 import '../util/util.dart';
 import '../util/validator/email_validator.dart';
 import '../util/validator/password_validator.dart';

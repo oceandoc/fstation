@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:fstation/extension/context_extension.dart';
 import 'package:fstation/ui/widget/animation.dart';
-import 'package:fstation/util/extensions.dart';
 import 'package:shimmer/shimmer.dart';
 
 class LoadingPage extends StatefulWidget {

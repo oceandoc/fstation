@@ -1,7 +1,8 @@
 import 'package:checkmark/checkmark.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:fstation/util/extensions.dart';
+import 'package:fstation/extension/context_extension.dart';
+import 'package:fstation/extension/extensions.dart';
 
 class CustomBlurryDialog extends StatelessWidget {
   const CustomBlurryDialog({

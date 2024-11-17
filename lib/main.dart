@@ -17,11 +17,11 @@ import 'package:fstation/util/app_device_info.dart';
 import 'package:fstation/util/app_window.dart';
 import 'package:fstation/util/catcher/catcher_util.dart';
 import 'package:fstation/util/dependency_injection.dart';
-import 'package:fstation/util/extensions.dart';
+import 'package:fstation/extension/extensions.dart';
 import 'package:fstation/util/http_override.dart';
 import 'package:fstation/util/language.dart';
-import 'package:fstation/util/network.dart';
-import 'package:fstation/util/path_help.dart';
+import 'package:fstation/util/network_util.dart';
+import 'package:fstation/util/path_util.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:worker_manager/worker_manager.dart';
 
@@ -54,7 +54,7 @@ void main() async {
     /// that the function runs as soon as the current synchronous code execution
     /// completes, but before any I/O events or timers
     scheduleMicrotask(() async {
-      await PathHelper.instance.init();
+      await PathUtil.instance.init();
       await Logger.instance.init();
     });
 

@@ -1,6 +1,6 @@
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
-import 'package:fstation/util/extensions.dart';
+import 'package:fstation/extension/extensions.dart';
 
 import '../impl/setting_impl.dart';
 

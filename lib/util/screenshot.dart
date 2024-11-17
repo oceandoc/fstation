@@ -51,7 +51,6 @@ class Screenshot {
     }
   }
 
-  /// Fetch from https://gitee.com/chaldea-center/chaldea/wikis/blocked_error?sort_id=4200566
   /// Capture screenshot of the widget
   /// Returns the captured image as Uint8List
   Future<Uint8List?> capture() async {

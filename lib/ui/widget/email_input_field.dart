@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../util/auth_page_theme_extensions.dart';
+import '../../extension/auth_page_theme_extensions.dart';
 
 class AuthEmailInput extends StatelessWidget {
   const AuthEmailInput({

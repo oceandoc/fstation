@@ -4,11 +4,11 @@ import 'package:path_provider/path_provider.dart';
 
 import '../impl/logger.dart';
 
-class PathHelper {
-  PathHelper._internal();
-  static final PathHelper _instance = PathHelper._internal();
+class PathUtil {
+  PathUtil._internal();
+  static final PathUtil _instance = PathUtil._internal();
 
-  static PathHelper get instance => _instance;
+  static PathUtil get instance => _instance;
 
 
   late final String cachePath;

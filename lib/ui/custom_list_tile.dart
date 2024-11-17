@@ -1,6 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:fstation/util/extensions.dart';
+import 'package:fstation/extension/context_extension.dart';
+import 'package:fstation/extension/extensions.dart';
 
 class CustomListTile extends StatelessWidget {
   const CustomListTile({

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fstation/ui/widget/submit_button.dart';
 
 import '../../generated/l10n.dart';
-import '../../util/popup_theme_extensions.dart';
+import '../../extension/popup_theme_extensions.dart';
 import '../../util/util.dart';
 import 'email_input_field.dart';
 import 'failures.dart';
