@@ -2,9 +2,11 @@ import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 
 import '../impl/logger.dart';
+import 'constants.dart';
 
 class ImageUtil {
   const ImageUtil._();
@@ -18,10 +20,10 @@ class ImageUtil {
     ImageByteFormat format = ImageByteFormat.png,
     FutureOr<Uint8List?> Function(Object? e, StackTrace? s) onError = _defaultOnError,
   }) async {
-    // if (kIsWeb && !kPlatformMethods.rendererCanvasKit) {
-    //   await EasyLoading.showError('not supported using html renderer');
-    //   return null;
-    // }
+    if (kIsWeb && !kPlatformMethods.rendererCanvasKit) {
+      await EasyLoading.showError('not supported using html renderer');
+      return null;
+    }
     try {
       final recorder = PictureRecorder();
       final size = Size(width.toDouble(), height.toDouble());

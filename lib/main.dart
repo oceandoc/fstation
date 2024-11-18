@@ -11,13 +11,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_displaymode/flutter_displaymode.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:fstation/bloc/app_setting_bloc.dart';
+import 'package:fstation/extension/context_extension.dart';
 import 'package:fstation/generated/l10n.dart';
 import 'package:fstation/impl/router.dart';
-import 'package:fstation/util/app_device_info.dart';
+import 'package:fstation/util/app_info.dart';
 import 'package:fstation/util/app_window.dart';
 import 'package:fstation/util/catcher/catcher_util.dart';
+import 'package:fstation/util/constants.dart';
 import 'package:fstation/util/dependency_injection.dart';
-import 'package:fstation/extension/extensions.dart';
+import 'package:fstation/util/device_info.dart';
 import 'package:fstation/util/http_override.dart';
 import 'package:fstation/util/language.dart';
 import 'package:fstation/util/network_util.dart';
@@ -45,6 +47,8 @@ void main() async {
       setHighRefreshRate(),
       fetchSystemPalette(),
       workerManager.init(),
+      AppInfo.instance.init(),
+      DeviceInfo.init(),
     ]);
 
     configureDependencies();

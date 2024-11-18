@@ -120,6 +120,13 @@ class Store {
         )
       ''');
 
+    await db.execute('''
+        CREATE TABLE app_info (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          uuid TEXT
+        )
+      ''');
+
     // Insert default users after table creation
     await db.insert('user', {
       'id': 0,
@@ -240,5 +247,22 @@ class Store {
 
     final userName = currentUserResult.first['user_name']! as String;
     return await getUser(userName);
+  }
+
+  Future<String> getUuid() async {
+    final result = await _db.query(
+      'app_info',
+      columns: ['uuid'],
+      limit: 1,
+    );
+    return result.isNotEmpty ? result.first['uuid'] as String : '';
+  }
+
+  Future<void> setUuid(String uuid) async {
+    await _db.insert(
+      'app_info',
+      {'uuid': uuid},
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
   }
 }

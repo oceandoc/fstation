@@ -4,13 +4,12 @@ import 'package:android_id/android_id.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_udid/flutter_udid.dart';
-import 'package:path/path.dart';
 import 'package:uuid/uuid.dart';
 
 import '../impl/logger.dart';
+import '../impl/store.dart';
 import 'app_method_channel.dart';
 import 'constants.dart';
-import 'file_plus/file_plus.dart';
 
 class DeviceInfo {
   static int? _androidSdk;
@@ -78,15 +77,16 @@ class DeviceInfo {
 
   static String get uuid => _uuid ?? '----';
 
-  static bool _debugOn = false;
-
-  static bool get isDebugOn => isDebugDevice || _debugOn;
-
-  static Future<void> _loadUniqueId(String appPath) async {
+  static Future<void> _loadUniqueId() async {
     final deviceInfoPlugin = DeviceInfoPlugin();
     String? originId;
+
     if (kIsWeb) {
-      // TODO(xieyz): generate uuid then store persistent
+      originId = await Store.instance.getUuid();
+      if (originId.isEmpty) {
+        originId = const Uuid().v4();
+        await Store.instance.setUuid(originId);
+      }
     } else if (kIsAndroid) {
       originId = await const AndroidId().getId();
     } else if (kIsIOS) {
@@ -108,16 +108,8 @@ class DeviceInfo {
         originId = resultString.trim().split(RegExp(r'\s+')).last;
       }
     } else if (kIsMacOS) {
-      // https://stackoverflow.com/a/944103
-      // However, IOPlatformUUID will change every boot, use IOPlatformSerialNumber instead
-      // ioreg -rd1 -c IOPlatformExpertDevice | awk '/IOPlatformSerialNumber/ { split($0, line, "\""); printf("%s\n", line[4]); }'
-      // the filter is shell feature so it's not used
-      // Output containing:
-      //  "IOPlatformUUID" = "8-4-4-4-12 standard uuid"
-      // need to parse output
       originId = (await DeviceInfoPlugin().macOsInfo).systemGUID;
     } else if (kIsLinux) {
-      //cat /etc/machine-id
       final result = await Process.run(
         'cat',
         ['/etc/machine-id'],
@@ -131,18 +123,16 @@ class DeviceInfo {
     } else {
       throw UnimplementedError(kOperatingSystem);
     }
+
     if (originId?.isNotEmpty != true) {
-      final uuidFile = FilePlus(join(appPath, '.uuid'));
-      if (uuidFile.existsSync()) {
-        originId = await uuidFile.readAsString();
-      }
-      if (originId?.isNotEmpty != true) {
+      originId = await Store.instance.getUuid();
+      if (originId.isEmpty) {
         originId = const Uuid().v4();
-        await uuidFile.writeAsString(originId);
+        await Store.instance.setUuid(originId);
       }
     }
+
     _uuid = const Uuid().v5(Namespace.url.value, originId).toUpperCase();
-    _debugOn = FilePlus(join(appPath, '.debug')).existsSync();
     Logger.info('Unique ID: $_uuid');
   }
 
@@ -161,8 +151,8 @@ class DeviceInfo {
     return excludeIds.contains(DeviceInfo.uuid);
   }
 
-  static Future<void> init(String appPath) async {
-    await _loadUniqueId(appPath);
+  static Future<void> init() async {
+    await _loadUniqueId();
     await _loadDeviceInfo();
   }
 

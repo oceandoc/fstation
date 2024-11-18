@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:intl/intl.dart';
+import 'package:json_annotation/json_annotation.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import '../generated/git_info.dart';
@@ -16,20 +17,38 @@ enum MacAppType {
   notMacApp,
 }
 
-class AppInfo {
-  static final Map<String, dynamic> appParams = {};
-  static PackageInfo? _packageInfo;
-  static DateTime? buildDate;
-  static bool _fetchedPackageInfo = false;
-  static final packageInfoCompleter = Completer<PackageInfo>();
+class AppInfo extends JsonConverter<AppInfo, String>
+    implements Comparable<AppInfo> {
+  AppInfo(this.major, this.minor, this.patch, [this.build]);
 
-  static PackageInfo? get packageInfo => _packageInfo;
+  /// valid format:
+  ///   - v1.2.3+4,'v' and +4 is optional
+  ///   - 1.2.3.4, windows format
+  AppInfo._internal();
 
-  static String get packageName => packageInfo?.packageName ?? kPackageName;
+  static final AppInfo _instance = AppInfo._internal();
 
-  static bool get isFDroid => kIsAndroid && packageName == kPackageNameFDroid;
+  static AppInfo get instance => _instance;
 
-  static String get appName {
+  final Map<String, dynamic> appParams = {};
+  late final int major;
+  late final int minor;
+  late final int patch;
+  late final int? build;
+
+  late final PackageInfo? _packageInfo;
+  bool _fetchedPackageInfo = false;
+  final packageInfoCompleter = Completer<PackageInfo>();
+  static final RegExp _fullVersionRegex =
+      RegExp(r'^v?(\d+)\.(\d+)\.(\d+)(?:[+.](\d+))?$', caseSensitive: false);
+
+  PackageInfo? get packageInfo => _packageInfo;
+
+  String get packageName => packageInfo?.packageName ?? kPackageName;
+
+  bool get isFDroid => kIsAndroid && packageName == kPackageNameFDroid;
+
+  String get appName {
     if (_packageInfo?.appName.isNotEmpty ?? false) {
       return _packageInfo!.appName;
     } else {
@@ -37,50 +56,19 @@ class AppInfo {
     }
   }
 
-  static String get versionString => _packageInfo?.version ?? '';
+  String get versionString => _packageInfo?.version ?? '';
 
-  static int get buildNumber =>
-      int.tryParse(_packageInfo?.buildNumber ?? '0') ?? 0;
-
-  static String get fullVersion {
+  /// e.g. "1.2.3+4"
+  String get fullVersion {
     var s = '';
     s += versionString;
     if (buildNumber > 0) s += '+$buildNumber';
     return s;
   }
 
-  static String get fullVersion2 {
-    final buffer = StringBuffer(versionString);
-    if (buildNumber > 0) {
-      buffer.write(' ($buildNumber)');
-    }
-    return buffer.toString();
-  }
+  int get buildNumber => int.tryParse(_packageInfo?.buildNumber ?? '0') ?? 0;
 
-  static void _parseBuildNumber(String buildNumber) {
-    try {
-      var hours = 0;
-      var minutes = 0;
-      final yyMMddHHP = buildNumber;
-      final year = 2000 + int.parse('${yyMMddHHP[0]}${yyMMddHHP[1]}');
-      final month = int.parse('${yyMMddHHP[2]}${yyMMddHHP[3]}');
-      final day = int.parse('${yyMMddHHP[4]}${yyMMddHHP[5]}');
-      try {
-        hours = int.parse('${yyMMddHHP[6]}${yyMMddHHP[7]}');
-        minutes = (60 * double.parse('0.${yyMMddHHP[8]}'))
-            .round(); // 0.5, 0.8, 1.0, etc.
-      } catch (_) {}
-      buildDate = DateTime.utc(year, month, day, hours, minutes);
-    } catch (_) {}
-  }
-
-  /// PackageInfo: appName+version+buildNumber
-  ///  - Android: support
-  ///  - for iOS/macOS:
-  ///   - if CF** keys not defined in info.plist, return null
-  ///   - if buildNumber not defined, return version instead
-  ///  - Windows: Not Support
-  static Future<void> _loadApplicationInfo() async {
+  Future<void> _loadApplicationInfo() async {
     if (_fetchedPackageInfo) return;
     _fetchedPackageInfo = true;
     try {
@@ -91,9 +79,16 @@ class AppInfo {
                 version: '0.0.0',
                 buildNumber: '0',
               ));
-
-      _parseBuildNumber(_packageInfo!.buildNumber);
       packageInfoCompleter.complete(_packageInfo);
+
+      final Match? match = _fullVersionRegex.firstMatch(versionString);
+      if (match != null) {
+        major = int.parse(match.group(1)!);
+        minor = int.parse(match.group(2)!);
+        patch = int.parse(match.group(3)!);
+        build = int.tryParse(match.group(4) ?? '');
+      }
+
       appParams['version'] = _packageInfo?.version;
       appParams['appName'] = _packageInfo?.appName;
       appParams['buildNumber'] = _packageInfo?.buildNumber;
@@ -107,13 +102,13 @@ class AppInfo {
   }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  static MacAppType _macAppType = MacAppType.unknown;
+  MacAppType _macAppType = MacAppType.unknown;
 
-  static MacAppType get macAppType => _macAppType;
+  MacAppType get macAppType => _macAppType;
 
-  static bool get isMacStoreApp => _macAppType == MacAppType.store;
+  bool get isMacStoreApp => _macAppType == MacAppType.store;
 
-  static void _checkMacAppType() {
+  void _checkMacAppType() {
     if (!kIsMacOS) {
       _macAppType = MacAppType.notMacApp;
     } else {
@@ -134,12 +129,12 @@ class AppInfo {
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  static Future<void> init() async {
+  Future<void> init() async {
     await _loadApplicationInfo();
     _checkMacAppType();
   }
 
-  static void initForTest() {
+  void initForTest() {
     _packageInfo = PackageInfo(
       appName: kAppName,
       packageName: kPackageName,
@@ -148,6 +143,70 @@ class AppInfo {
     );
   }
 
-  static String get commitDate => DateFormat.yMd()
+  String get commitDate => DateFormat.yMd()
       .format(DateTime.fromMillisecondsSinceEpoch(kCommitTimestamp * 1000));
+
+  static AppInfo parse(String versionString) {
+    return tryParse(versionString)!;
+  }
+
+  static AppInfo? tryParse(String versionString, [int? build]) {
+    final finalVersionString = versionString.trim();
+    final Match? match = _fullVersionRegex.firstMatch(finalVersionString);
+    if (match == null) return null;
+    final major = int.parse(match.group(1)!);
+    final minor = int.parse(match.group(2)!);
+    final patch = int.parse(match.group(3)!);
+    final build = int.tryParse(match.group(4) ?? '');
+    return AppInfo(major, minor, patch, build ?? build);
+  }
+
+  static int compare(String versionLeft, String versionRight) {
+    return AppInfo.parse(versionLeft).compareTo(AppInfo.parse(versionRight));
+  }
+
+  bool equalTo(String other) {
+    final otherAppInfo = AppInfo.tryParse(other);
+    if (otherAppInfo == null) return false;
+    if (major == otherAppInfo.major &&
+        minor == otherAppInfo.minor &&
+        patch == otherAppInfo.patch) {
+      return build == null ||
+          otherAppInfo.build == null ||
+          build == otherAppInfo.build;
+    } else {
+      return false;
+    }
+  }
+
+  @override
+  int compareTo(AppInfo other) {
+    if (major != other.major) return major.compareTo(other.major);
+    if (minor != other.minor) return minor.compareTo(other.minor);
+    if (patch != other.patch) return patch.compareTo(other.patch);
+    return 0;
+  }
+
+  bool operator <(AppInfo other) => compareTo(other) < 0;
+
+  bool operator <=(AppInfo other) => compareTo(other) <= 0;
+
+  bool operator >(AppInfo other) => compareTo(other) > 0;
+
+  bool operator >=(AppInfo other) => compareTo(other) >= 0;
+
+  @override
+  String toString() {
+    return 'AppInfo($major, $minor, $patch${build == null ? "" : ", $build"})';
+  }
+
+  @override
+  AppInfo fromJson(String json) {
+    return AppInfo.tryParse(json) ?? AppInfo(0, 0, 0);
+  }
+
+  @override
+  String toJson(AppInfo object) {
+    return object.versionString;
+  }
 }

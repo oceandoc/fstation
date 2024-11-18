@@ -192,7 +192,7 @@ Future<String> _setupHtmlMessageText(Report report) async {
   buffer.write('<h3>Summary:</h3>');
   final summary = <String, dynamic>{
     'app':
-        '${AppInfo.appName} v${AppInfo.fullVersion2} $kCommitHash-${AppInfo.commitDate}',
+        '${AppInfo.instance.appName} v${AppInfo.instance.fullVersion} $kCommitHash-${AppInfo.instance.commitDate}',
     'os': '$kOperatingSystem $kOperatingSystemVersion',
     // 'lang': Language.current.code,
     'locale': Language.systemLocale.toString(),
@@ -270,7 +270,7 @@ Future<String> _setupHtmlMessageText(Report report) async {
 class FeedbackReport extends Report {
   FeedbackReport(this.contactInfo, this.body)
       : super(null, '', DateTime.now(), DeviceInfo.deviceParams,
-            AppInfo.appParams, {}, null, PlatformType.unknown, null);
+            AppInfo.instance.appParams, {}, null, PlatformType.unknown, null);
   final String? contactInfo;
   final String body;
 }

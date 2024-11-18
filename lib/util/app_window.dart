@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:fstation/generated/l10n.dart';
 import 'package:fstation/extension/extensions.dart';
+import 'package:fstation/generated/l10n.dart';
 import 'package:tray_manager/tray_manager.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -91,7 +91,7 @@ class WindowUtil {
       await trayManager.setIcon(icon);
       final menuMain = Menu(items: [
         MenuItem(
-          label: '$kAppName v${AppInfo.versionString}',
+          label: '$kAppName v${AppInfo.instance.versionString}',
           disabled: true,
         ),
         MenuItem.separator(),
