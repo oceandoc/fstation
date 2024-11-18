@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../extension/popup_theme_extensions.dart';
-import 'glassmorphism_cover.dart';
+import '../../../extension/popup_theme_extensions.dart';
+import '../glassmorphism_cover.dart';
 
 Future<dynamic> showCustomDialog(
     {required BuildContext context, required Widget child}) {

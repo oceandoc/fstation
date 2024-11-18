@@ -1,27 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:settings_ui/settings_ui.dart';
 
 import '../bloc/app_setting_bloc.dart';
-import '../extension/extensions.dart';
 import '../generated/l10n.dart';
 import '../impl/setting_impl.dart';
-import '../impl/settings_search_controller.dart';
-import '../util/language.dart';
 import '../util/util.dart';
 import 'widget/custom_widgets.dart';
-
-enum _ThemeSettingsKeys {
-  themeMode,
-  autoColoring,
-  wallpaperColors,
-  pitchBlack,
-  defaultColor,
-  defaultColorDark,
-  language,
-}
+import 'widget/dialog/blur_dialog.dart';
 
 class SettingPage extends StatefulWidget {
   const SettingPage({super.key});
@@ -33,10 +20,6 @@ class SettingPage extends StatefulWidget {
 class SettingPageState extends State<SettingPage> {
   @override
   Widget build(BuildContext context) {
-    final bloc = context.read<AppSettingBloc>();
-    var themeData = Theme.of(context);
-    final settingImpl = SettingImpl.instance;
-
     final interfaceTiles = <AbstractSettingsTile>[
       SettingsTile.navigation(
         trailing: Text(Localization.current.language),
@@ -49,16 +32,16 @@ class SettingPageState extends State<SettingPage> {
       SettingsTile.navigation(
         trailing: Text(Localization.current.theme_setting_theme_title),
         leading: const Icon(Icons.dark_mode),
-        title: Text("Theme"),
+        title: const Text('Theme'),
         onPressed: (context) {
           pickThemeStyle();
         },
       ),
     ];
 
-    List<AbstractSettingsTile> network = [
+    final network = <AbstractSettingsTile>[
       SettingsTile.navigation(
-        trailing: const Text("English"),
+        trailing: const Text('English'),
         leading: const Icon(Icons.language),
         title: const Text('English'),
         onPressed: (context) {
@@ -66,18 +49,18 @@ class SettingPageState extends State<SettingPage> {
         },
       ),
       SettingsTile.navigation(
-        trailing: Text("Theme"),
+        trailing: const Text('Theme'),
         leading: const Icon(Icons.dark_mode),
-        title: const Text("Theme"),
+        title: const Text('Theme'),
         onPressed: (context) {
           pickThemeStyle();
         },
       ),
     ];
 
-    List<SettingsSection> sections = [
+    final sections = <SettingsSection>[
       SettingsSection(title: const Text('Interface'), tiles: interfaceTiles),
-      SettingsSection(title: Text('network'), tiles: network)
+      SettingsSection(title: const Text('network'), tiles: network)
     ];
 
     final settingsList = SettingsList(
@@ -86,7 +69,7 @@ class SettingPageState extends State<SettingPage> {
         sections: sections);
 
     return CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(middle: Text('Setting')),
+      navigationBar: const CupertinoNavigationBar(middle: Text('Setting')),
       child: SafeArea(bottom: false, child: settingsList),
     );
   }
@@ -95,12 +78,12 @@ class SettingPageState extends State<SettingPage> {
     final settingImpl = SettingImpl.instance;
     return showCupertinoDialog(
       context: context,
-      builder: (context) => CustomBlurryDialog(
+      builder: (context) => BlurryDialog(
         title: Localization.current.language,
         normalTitleStyle: true,
         actions: [
           CupertinoDialogAction(
-            child: Text('Close'),
+            child: const Text('Close'),
             onPressed: () => Navigator.pop(context),
           ),
         ],
@@ -110,9 +93,9 @@ class SettingPageState extends State<SettingPage> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                ...Language.supportLanguages.map(
+                ...Localization.delegate.supportedLocales.map(
                   (e) => Padding(
-                    key: Key(e.code),
+                    key: Key(e.languageCode),
                     padding: const EdgeInsets.symmetric(vertical: 4.0),
                     child: ListTileWithCheckMark(
                       leading: Container(
@@ -128,28 +111,22 @@ class SettingPageState extends State<SettingPage> {
                           ),
                         ),
                         child: Text(
-                          e.name[0],
+                          e.languageCode[0],
                           style: const TextStyle(fontSize: 13.0),
                         ),
                       ),
                       titleWidget: Text.rich(
                         TextSpan(
-                          text: e.name,
+                          text: getLocaleName(e),
                           style: Theme.of(context).textTheme.bodyLarge,
-                          children: [
-                            TextSpan(
-                              text: ' (${e.country})',
-                              style: Theme.of(context).textTheme.bodyMedium,
-                            ),
-                          ],
                         ),
                       ),
-                      active: e == Language.getLanguage(settingImpl.language),
+                      active: e.languageCode == settingImpl.language,
                       onTap: () async {
-                        await settingImpl.saveLanguage(e.code);
+                        await settingImpl.saveLanguage(e.languageCode);
                         context
                             .read<AppSettingBloc>()
-                            .add(ChangeLanguageEvent(e.code));
+                            .add(ChangeLanguageEvent(e.languageCode));
                         Navigator.pop(context);
                       },
                     ),
@@ -160,62 +137,6 @@ class SettingPageState extends State<SettingPage> {
           ),
         ),
       ),
-    );
-  }
-
-  late final Enum? initialItem;
-
-  SettingSubpageEnum get settingPage => SettingSubpageEnum.theme;
-
-  GlobalKey getSettingWidgetGlobalKey(Enum key) {
-    return SettingsSearchController.inst
-        .getSettingWidgetGlobalKey(settingPage, key);
-  }
-
-  Color? getBgColor(Enum key) {
-    return key == initialItem ? Colors.grey.withAlpha(80) : null;
-  }
-
-  Widget getItemWrapper({required Enum key, required Widget child}) {
-    return Stack(
-      key: getSettingWidgetGlobalKey(key),
-      children: [
-        child,
-        if (key == initialItem)
-          () {
-            bool finished = false;
-            return Positioned.fill(
-              child: IgnorePointer(
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(18.0.multipliedRadius),
-                    color: Colors.grey.withAlpha(100),
-                  ),
-                ).animate(
-                  autoPlay: true,
-                  onComplete: (controller) async {
-                    if (!finished) {
-                      finished = true;
-                      Future<void> oneLap() async {
-                        await controller.animateTo(controller.upperBound);
-                        await controller.animateTo(controller.lowerBound);
-                      }
-
-                      await oneLap();
-                      await oneLap();
-                    }
-                  },
-                  effects: [
-                    const FadeEffect(
-                      duration: Duration(milliseconds: 200),
-                      delay: Duration(milliseconds: 50),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }()
-      ],
     );
   }
 

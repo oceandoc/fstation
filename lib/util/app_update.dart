@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../ui/widget/gradient_alert_widget.dart';
+import '../ui/widget/dialog/gradient_alert_dialog.dart';
 
 
 Future<Map<String, dynamic>> githubUpdate() async {

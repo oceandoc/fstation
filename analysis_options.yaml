@@ -13,6 +13,7 @@ analyzer:
     #    experimental lint
     use_build_context_synchronously: ignore
     body_might_complete_normally_nullable: ignore
+    prefer_int_literals: ignore
   exclude:
     - 'bin/cache/**'
     # the following two are relative to the stocks example and the flutter package respectively

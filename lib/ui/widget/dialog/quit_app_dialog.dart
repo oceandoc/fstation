@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:fstation/ui/widget/submit_button.dart';
+import 'package:fstation/ui/widget/buttons.dart';
 
-import '../../generated/l10n.dart';
-import '../../extension/popup_theme_extensions.dart';
-import 'cancel_button.dart';
+import '../../../extension/popup_theme_extensions.dart';
+import '../../../generated/l10n.dart';
 import 'glass_dialog.dart';
 
 Future<bool> quitAppDialog(BuildContext context) async {
@@ -30,11 +29,11 @@ Future<bool> quitAppDialog(BuildContext context) async {
                 mainAxisAlignment: MainAxisAlignment.end,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  CancelButton(
-                    buttonText: 'No',
+                  TextButton(
                     onPressed: () {
                       Navigator.pop(context, false);
                     },
+                    child: const Text('No'),
                   ),
                   const SizedBox(width: 10),
                   SubmitButton(

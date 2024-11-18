@@ -1,21 +1,18 @@
-
 import 'package:flutter/material.dart';
 
-import '../themes.dart';
-
-
 class GradientDialog extends StatefulWidget {
+  const GradientDialog(
+    this.message, {
+    required this.downloadURL,
+    this.onOk,
+    this.okText,
+    super.key,
+  });
+
   final String message;
   final Future<void> Function(String)? onOk;
   final String? okText;
   final String downloadURL;
-  const GradientDialog(
-    this.message, {
-    this.onOk,
-    this.okText,
-    required this.downloadURL,
-    super.key,
-  });
 
   @override
   State<StatefulWidget> createState() {
@@ -53,7 +50,7 @@ class _GradientDialogState extends State<GradientDialog> {
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                       color: Colors.white,
-                      fontFamily: "ReThink-Sans",
+                      fontFamily: 'ReThink-Sans',
                       fontWeight: FontWeight.bold,
                       fontSize: 20,
                     ),
@@ -72,37 +69,36 @@ class _GradientDialogState extends State<GradientDialog> {
                         child: Text('Cancel',
                             style: TextStyle(
                                 color: Colors.white,
-                                fontFamily: "ReThink-Sans",
+                                fontFamily: 'ReThink-Sans',
                                 fontSize: 15,
                                 fontWeight: FontWeight.w600)),
                       ),
                     ),
                     OutlinedButton(
-                        onPressed: () {
-                          if (widget.onOk != null) {
-                            widget.onOk!(widget.downloadURL);
-                          }
-                          Navigator.of(context).pop();
-                        },
-                        style: OutlinedButton.styleFrom(
-                          backgroundColor: lightAccentColor,
-                          side: const BorderSide(
-                              color: lightAccentColor),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.0)),
+                      onPressed: () {
+                        widget.onOk?.call(widget.downloadURL);
+                        Navigator.of(context).pop();
+                      },
+                      style: OutlinedButton.styleFrom(
+                        side: const BorderSide(),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0)),
+                      ),
+                      child: Text(
+                        widget.okText ?? 'OK',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontFamily: 'ReThink-Sans',
+                          fontSize: 15,
                         ),
-                        child: Text(widget.okText ?? "OK",
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontFamily: "ReThink-Sans",
-                              fontSize: 15,
-                            ))),
+                      ),
+                    ),
                   ],
                 )
               ],
             )),
       ),
-      contentPadding: const EdgeInsets.all(0.0),
+      contentPadding: EdgeInsets.zero,
     );
   }
 }

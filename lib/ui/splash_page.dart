@@ -9,7 +9,7 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import '../bloc/app_setting_bloc.dart';
 import '../generated/l10n.dart';
 import '../impl/setting_impl.dart';
-import '../util/language.dart';
+import '../util/util.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -110,37 +110,28 @@ class SplashPageState extends State<SplashPage>
       title: Localization.current.select_lang,
       content: ListView.separated(
         itemBuilder: (context, index) {
-          final lang = Language.supportLanguages[index];
+          final lang = Localization.delegate.supportedLocales[index];
           return ListTile(
-            leading: Language.getLanguage(SettingImpl.instance.language) == lang
+            leading: getLocale(SettingImpl.instance.language) == lang
                 ? const Icon(Icons.done_rounded)
                 : const SizedBox(),
-            title: Text(lang.name),
+            title: Text(getLocaleName(lang)),
             minLeadingWidth: 24,
             onTap: () async {
-              await SettingImpl.instance.saveLanguage(lang.code);
+              await SettingImpl.instance.saveLanguage(lang.languageCode);
               context
                   .read<AppSettingBloc>()
-                  .add(ChangeLanguageEvent(lang.code));
+                  .add(ChangeLanguageEvent(lang.languageCode));
             },
           );
         },
         separatorBuilder: separatorBuilder,
-        itemCount: Language.supportLanguages.length,
+        itemCount: Localization.delegate.supportedLocales.length,
       ),
     );
   }
 
-  String _themeModeName(ThemeMode mode) {
-    switch (mode) {
-      case ThemeMode.dark:
-        return Localization.current.theme_setting_dark_mode_dark;
-      case ThemeMode.light:
-        return Localization.current.theme_setting_dark_mode_light;
-      case ThemeMode.system:
-        return Localization.current.theme_setting_dark_mode_system;
-    }
-  }
+
 
   Widget get darkModePage {
     return BlocBuilder<AppSettingBloc, AppSettingState>(
@@ -155,7 +146,7 @@ class SplashPageState extends State<SplashPage>
                 leading: state.themeMode == mode
                     ? const Icon(Icons.done_rounded)
                     : const SizedBox(),
-                title: Text(_themeModeName(mode)),
+                title: Text(themeModeName(mode)),
                 minLeadingWidth: 24,
                 onTap: () async {
                   await SettingImpl.instance.saveThemeMode(mode);

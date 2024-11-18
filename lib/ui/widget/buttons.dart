@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 
 class SubmitButton extends StatelessWidget {
+  const SubmitButton({
+    required this.isLoading, required this.onSubmitted, required this.buttonText, super.key,
+  });
   final bool isLoading;
   final Function() onSubmitted;
   final String buttonText;
-  const SubmitButton({
-    Key? key,
-    required this.isLoading,
-    required this.onSubmitted,
-    required this.buttonText,
-  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

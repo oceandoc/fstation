@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 class FlipCardAnimation extends StatefulWidget {
   const FlipCardAnimation(
       {required this.frontWidget, required this.rearWidget, super.key});
+
   final Widget Function(void Function()) frontWidget;
   final Widget Function(void Function()) rearWidget;
 

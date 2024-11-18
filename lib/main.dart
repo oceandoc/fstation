@@ -21,9 +21,9 @@ import 'package:fstation/util/constants.dart';
 import 'package:fstation/util/dependency_injection.dart';
 import 'package:fstation/util/device_info.dart';
 import 'package:fstation/util/http_override.dart';
-import 'package:fstation/util/language.dart';
 import 'package:fstation/util/network_util.dart';
 import 'package:fstation/util/path_util.dart';
+import 'package:fstation/util/util.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:worker_manager/worker_manager.dart';
 
@@ -33,7 +33,7 @@ import 'impl/logger.dart';
 import 'impl/setting_impl.dart';
 import 'impl/store.dart';
 import 'impl/user_manager.dart';
-import 'ui/themes.dart';
+import 'util/themes.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -45,7 +45,6 @@ void main() async {
     // execute simultaneously
     await Future.wait([
       setHighRefreshRate(),
-      fetchSystemPalette(),
       workerManager.init(),
       AppInfo.instance.init(),
       DeviceInfo.init(),
@@ -119,7 +118,7 @@ class _AppState extends State<App> with WidgetsBindingObserver {
       // Android 8 does not support transparent app bars
       final info = await DeviceInfoPlugin().androidInfo;
       if (info.version.sdkInt <= 26) {
-        overlayStyle = context.isDarkTheme
+        overlayStyle = context.isDarkMode
             ? SystemUiOverlayStyle.dark
             : SystemUiOverlayStyle.light;
       }
@@ -190,8 +189,8 @@ class _AppState extends State<App> with WidgetsBindingObserver {
         child: BlocBuilder<AppSettingBloc, AppSettingState>(
           builder: (context, state) => MaterialApp.router(
             title: 'fStation',
-            theme: AppThemes.instance.getAppTheme(true),
-            darkTheme: AppThemes.instance.getAppTheme(false),
+            theme: AppThemes.instance.lightThemeData,
+            darkTheme: AppThemes.instance.darkThemeData,
             themeMode: state.themeMode,
             routerConfig: router,
             localizationsDelegates: const [
@@ -200,10 +199,8 @@ class _AppState extends State<App> with WidgetsBindingObserver {
               GlobalWidgetsLocalizations.delegate,
               GlobalCupertinoLocalizations.delegate,
             ],
-            locale: Language.getLanguage(state.language).locale,
-            supportedLocales: Language.supportLanguages
-                .map((language) => language.locale)
-                .toList(),
+            locale: getLocale(state.language),
+            supportedLocales: Localization.delegate.supportedLocales,
             localeResolutionCallback: (locale, supportedLocales) {
               for (final supportedLocale in supportedLocales) {
                 if (supportedLocale.languageCode == locale?.languageCode &&

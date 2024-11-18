@@ -1,7 +1,21 @@
-import 'failure_template.dart';
+import 'package:equatable/equatable.dart';
+
+abstract class Failure extends Equatable {
+  const Failure({required this.message, required this.code});
+
+  final String message;
+  final int code;
+
+  @override
+  List<Object?> get props => [code, message];
+
+  @override
+  String toString() {
+    return 'Error $code: $message';
+  }
+}
 
 class SignUpFailure extends Failure {
-
   const SignUpFailure._({required super.message, required super.code});
 
   factory SignUpFailure.unknownError([String? message]) {
@@ -10,16 +24,15 @@ class SignUpFailure extends Failure {
         code: kUnknownError);
   }
 
-
   factory SignUpFailure.userAlreadyExists([String? message]) {
     return SignUpFailure._(
-        message: message ?? 'user already exists',
-        code: kUserAlreadyExists);
+        message: message ?? 'user already exists', code: kUserAlreadyExists);
   }
 
   factory SignUpFailure.invalidUserPasswordCombination([String? message]) {
     return SignUpFailure._(
-        message: message ?? 'invalid password', code: kInvalidUserPasswordCombination);
+        message: message ?? 'invalid password',
+        code: kInvalidUserPasswordCombination);
   }
 
   factory SignUpFailure.noInternetConnection([String? message]) {
@@ -36,7 +49,6 @@ class SignUpFailure extends Failure {
 }
 
 class SignInFailure extends Failure {
-
   const SignInFailure._({required super.message, required super.code});
 
   factory SignInFailure.unknownError([String? message]) {
@@ -47,7 +59,8 @@ class SignInFailure extends Failure {
 
   factory SignInFailure.invalidUserPasswordCombination([String? message]) {
     return SignInFailure._(
-        message: message ?? 'invalid email', code: kInvalidUserPasswordCombination);
+        message: message ?? 'invalid email',
+        code: kInvalidUserPasswordCombination);
   }
 
   factory SignInFailure.noInternetConnection([String? message]) {
@@ -62,6 +75,7 @@ class SignInFailure extends Failure {
             message ?? 'user has been banned, please contact customer service',
         code: kUserDisabled);
   }
+
   static const kUnknownError = -1;
   static const kInvalidUserName = 0;
   static const kUserAlreadyExists = 1;
@@ -71,7 +85,6 @@ class SignInFailure extends Failure {
 }
 
 class ForgotPasswordFailure extends Failure {
-
   const ForgotPasswordFailure._({required super.message, required super.code});
 
   factory ForgotPasswordFailure.unknownError([String? message]) {

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 
 class Unfocus extends StatelessWidget {
-  const Unfocus({
-    required this.child,
+  const Unfocus({required this.child, super.key,
   });
 
   final Widget? child;

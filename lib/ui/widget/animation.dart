@@ -3,10 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 class Animator extends StatefulWidget {
+  const Animator({super.key, this.child, this.time});
   final Widget? child;
   final Duration? time;
-
-  const Animator({super.key, this.child, this.time});
 
   @override
   AnimatorState createState() => AnimatorState();
@@ -44,7 +43,7 @@ class AnimatorState extends State<Animator>
         return Opacity(
           opacity: animation.value as double,
           child: Transform.translate(
-            offset: Offset(0.0, (1 - (animation.value as double)) * 20),
+            offset: Offset(0, (1 - (animation.value as double)) * 20),
             child: child,
           ),
         );
@@ -54,22 +53,20 @@ class AnimatorState extends State<Animator>
 }
 
 Timer? timer;
-Duration duration = const Duration();
+Duration duration = Duration.zero;
 
 Duration wait() {
   if (timer == null || !timer!.isActive) {
     timer = Timer(const Duration(microseconds: 120), () {
-      duration = const Duration();
+      duration = Duration.zero;
     });
   }
-  duration += const Duration(milliseconds: 100);
-  return duration;
+  return duration += const Duration(milliseconds: 100);
 }
 
 class WidgetAnimator extends StatelessWidget {
-  final Widget? child;
-
   const WidgetAnimator({super.key, this.child});
+  final Widget? child;
 
   @override
   Widget build(BuildContext context) {

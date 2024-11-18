@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 
 class PopupThemeExtensions extends ThemeExtension<PopupThemeExtensions> {
-  final Color barrierColor;
-  final Color popupGradientStartColor;
-  final Color popupGradientEndColor;
-  final Color mainTextColor;
 
   PopupThemeExtensions({
     required this.barrierColor,
@@ -12,6 +8,10 @@ class PopupThemeExtensions extends ThemeExtension<PopupThemeExtensions> {
     required this.popupGradientEndColor,
     required this.mainTextColor,
   });
+  final Color barrierColor;
+  final Color popupGradientStartColor;
+  final Color popupGradientEndColor;
+  final Color mainTextColor;
 
   @override
   ThemeExtension<PopupThemeExtensions> copyWith({

@@ -1,15 +1,18 @@
+import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
-import 'package:fstation/ui/widget/submit_button.dart';
+import 'package:fstation/ui/widget/buttons.dart';
 
-import '../../generated/l10n.dart';
-import '../../extension/popup_theme_extensions.dart';
-import '../../util/util.dart';
+import '../../../extension/popup_theme_extensions.dart';
+import '../../../generated/l10n.dart';
+import '../../../model/failures.dart';
+import '../../../util/util.dart';
 import 'email_input_field.dart';
-import 'failures.dart';
-import 'glass_dialog.dart';
+import '../dialog/glass_dialog.dart';
 
 Future<void> forgotPasswordPopup(
-    BuildContext context, Function(String) submitForgotPassword) {
+    BuildContext context,
+    Future<Either<ForgotPasswordFailure, bool>> Function(String)
+        submitForgotPassword) {
   var forgotPasswordEmail = '';
 
   var isLoading = false;

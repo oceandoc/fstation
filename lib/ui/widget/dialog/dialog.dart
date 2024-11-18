@@ -1,25 +1,9 @@
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../generated/l10n.dart';
+import '../../../generated/l10n.dart';
 
 class SimpleCancelOkDialog extends StatelessWidget {
-  final Widget? title;
-  final Widget? content;
-  final EdgeInsetsGeometry contentPadding;
-  final String? confirmText;
-  final String? cancelText;
-  final VoidCallback? onTapOk;
-  final VoidCallback? onTapCancel;
-
-  /// ignore if onTapCancel is not null
-  final bool hideOk;
-  final bool hideCancel;
-  final List<Widget> actions;
-  final bool scrollable;
-  final bool wrapActionsInRow;
-  final EdgeInsets insetPadding;
 
   const SimpleCancelOkDialog({
     super.key,
@@ -37,10 +21,25 @@ class SimpleCancelOkDialog extends StatelessWidget {
     this.wrapActionsInRow = false,
     this.insetPadding = const EdgeInsets.symmetric(horizontal: 40.0, vertical: 24.0),
   });
+  final Widget? title;
+  final Widget? content;
+  final EdgeInsetsGeometry contentPadding;
+  final String? confirmText;
+  final String? cancelText;
+  final VoidCallback? onTapOk;
+  final VoidCallback? onTapCancel;
+
+  /// ignore if onTapCancel is not null
+  final bool hideOk;
+  final bool hideCancel;
+  final List<Widget> actions;
+  final bool scrollable;
+  final bool wrapActionsInRow;
+  final EdgeInsets insetPadding;
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> children = <Widget>[
+    var children = <Widget>[
       if (!hideCancel)
         TextButton(
           child: Text(cancelText ?? Localization.current.cancel),

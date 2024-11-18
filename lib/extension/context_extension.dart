@@ -3,7 +3,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
-import '../ui/themes.dart';
+import '../util/themes.dart';
 
 extension ContextExtension on BuildContext {
   FlutterView get view => View.of(this);
@@ -23,12 +23,10 @@ extension ContextExtension on BuildContext {
   bool get isLightMode => theme.brightness == Brightness.light;
   bool get isLandscape => orientation == Orientation.landscape;
   bool get isPortrait => orientation == Orientation.portrait;
-  Color getPrimaryColor() => isLightMode ? lightPrimaryColor: darkPrimaryColor;
-  Color getAccentColor() => isLightMode ? lightAccentColor: darkAccentColor;
-  Color getChosenColor() => isLightMode ? lightChosenColor: darkChosenColor;
+  Color get primaryColor => Theme.of(this).primaryColor;
+  // Color get accentColor => Theme.of(this).acc;
+  // Color getAccentColor() => isLightMode ? lightAccentColor: darkAccentColor;
+  // Color getChosenColor() => isLightMode ? lightChosenColor: darkChosenColor;
 
   ThemeData get themeData => Theme.of(this);
-
-  // Returns true if the app is using a dark theme
-  bool get isDarkTheme => themeData.brightness == Brightness.dark;
 }

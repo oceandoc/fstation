@@ -6,7 +6,7 @@ import 'package:tray_manager/tray_manager.dart';
 import 'package:window_manager/window_manager.dart';
 
 import '../impl/logger.dart';
-import '../ui/dialog.dart';
+import '../ui/widget/dialog/dialog.dart';
 import 'app_info.dart';
 import 'constants.dart';
 

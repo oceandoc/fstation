@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fstation/impl/user_manager.dart';
 
-import 'glassmorphism_cover.dart';
+import '../glassmorphism_cover.dart';
 
 class FingerprintButton extends StatelessWidget {
   const FingerprintButton({super.key});

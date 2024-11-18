@@ -93,10 +93,10 @@ class HorizontalNavBar extends StatelessWidget {
     return GNav(
       gap: 7,
       color: const Color(0xFF0A040C),
-      activeColor: context.getChosenColor(),
-      textStyle: TextStyle(color: context.getAccentColor(), fontSize: 18),
+      activeColor: Colors.blue,
+      textStyle: const TextStyle(color: Colors.blue, fontSize: 18),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      backgroundColor: context.getPrimaryColor().withOpacity(0.3),
+      backgroundColor: context.primaryColor.withOpacity(0.3),
       tabs: const [
         GButton(
           icon: MingCute.home_4_fill,

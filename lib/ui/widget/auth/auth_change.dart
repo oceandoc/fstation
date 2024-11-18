@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 
-import '../../extension/auth_page_theme_extensions.dart';
+import '../../../extension/auth_page_theme_extensions.dart';
 
 class AuthChangePage extends StatelessWidget {
   const AuthChangePage({
-    Key? key,
-    required this.infoText,
-    required this.flipPageText,
-    required this.flipCard,
-  }) : super(key: key);
+    required this.infoText, required this.flipPageText, required this.flipCard, super.key,
+  });
 
   final String infoText;
   final String flipPageText;
@@ -19,7 +16,6 @@ class AuthChangePage extends StatelessWidget {
     final linkColor =
         Theme.of(context).extension<AuthPageThemeExtensions>()!.linkColor;
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(

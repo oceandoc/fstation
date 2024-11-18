@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fstation/ui/themes.dart';
 
 import '../util/app_update.dart';
 
@@ -44,7 +43,6 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
         ),
-        backgroundColor: lightAccentColor,
       ),
     );
   }

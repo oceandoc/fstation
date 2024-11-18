@@ -12,7 +12,7 @@ import '../exception/validation_exceptions.dart';
 import '../generated/error.pbenum.dart';
 import '../generated/l10n.dart';
 import '../model/user.dart';
-import '../ui/widget/failures.dart';
+import '../model/failures.dart';
 import '../util/network_util.dart';
 import '../util/util.dart';
 import '../util/validator/email_validator.dart';

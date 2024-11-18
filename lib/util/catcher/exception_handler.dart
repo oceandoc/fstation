@@ -21,7 +21,6 @@ import '../app_info.dart';
 import '../constants.dart';
 import '../device_info.dart';
 import '../file_plus/file_plus.dart';
-import '../language.dart';
 import '../network_util.dart';
 
 // TODO(xieyz): store send timestamp to db, send only once in a week
@@ -195,7 +194,7 @@ Future<String> _setupHtmlMessageText(Report report) async {
         '${AppInfo.instance.appName} v${AppInfo.instance.fullVersion} $kCommitHash-${AppInfo.instance.commitDate}',
     'os': '$kOperatingSystem $kOperatingSystemVersion',
     // 'lang': Language.current.code,
-    'locale': Language.systemLocale.toString(),
+    'locale': Localization.current.language,
     'uuid': DeviceInfo.uuid,
     // 'user': db.settings.secrets.user?.name ?? "",
     if (kIsWeb)

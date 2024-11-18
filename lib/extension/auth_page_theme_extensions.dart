@@ -1,22 +1,7 @@
 import 'package:flutter/material.dart';
 
 class AuthPageThemeExtensions extends ThemeExtension<AuthPageThemeExtensions> {
-  final String backgroundImage; // path for background image
-  final Color linkColor; // color for clickable links (in auth page)
-  final Color errorTextColor; // color for error messages in auth page
-  final Color
-      prefixIconColor; // color for prefix icon in email and password inputs
-  final Color
-      hintTextColor; // color for placeholder text in email and password inputs
-  final Color
-      textColor; // color of text entered by user in email and password inputs
-  final Color borderColor; // color of TextField in email and password inputs
-  final Color fillColor; // fillColor of TextField in email and password inputs
-  final Color
-      authFormGradientStartColor; // start color of gradient in auth page flip card
-  final Color
-      authFormGradientEndColor; // end color of gradient in auth page flip card
-  final Color infoTextColor; // color for text on auth page
+  // color for text on auth page
 
   AuthPageThemeExtensions({
     required this.linkColor,
@@ -31,6 +16,18 @@ class AuthPageThemeExtensions extends ThemeExtension<AuthPageThemeExtensions> {
     required this.authFormGradientEndColor,
     required this.infoTextColor,
   });
+
+  final String backgroundImage; // path for background image
+  final Color linkColor; // color for clickable links (in auth page)
+  final Color errorTextColor; // color for error messages in auth page
+  final Color prefixIconColor;
+  final Color hintTextColor;
+  final Color textColor; // color of email and password inputs
+  final Color borderColor; // color of TextField in email and password inputs
+  final Color fillColor; // fillColor of TextField in email and password inputs
+  final Color authFormGradientStartColor;
+  final Color authFormGradientEndColor;
+  final Color infoTextColor;
 
   @override
   ThemeExtension<AuthPageThemeExtensions> copyWith({

@@ -4,9 +4,7 @@ import 'package:flutter/material.dart';
 
 class GlassMorphismCover extends StatelessWidget {
   const GlassMorphismCover({
-    super.key,
-    required this.child,
-    required this.borderRadius,
+    required this.child, required this.borderRadius, super.key,
     this.displayShadow = true,
     this.sigmaX = 40.0,
     this.sigmaY = 40.0,

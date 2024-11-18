@@ -4,7 +4,7 @@ import 'package:fstation/impl/user_manager.dart';
 import 'package:injectable/injectable.dart';
 
 import '../model/user.dart';
-import '../ui/widget/failures.dart';
+import '../model/failures.dart';
 import 'auth_form_event.dart';
 import 'auth_form_state.dart';
 import 'auth_session_bloc.dart';

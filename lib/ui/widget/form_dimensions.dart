@@ -2,12 +2,10 @@ import 'package:flutter/material.dart';
 
 import '../../extension/auth_page_theme_extensions.dart';
 
-/// specifies size of form and gradients
 class FormDimensions extends StatelessWidget {
   const FormDimensions({
-    Key? key,
-    required this.child,
-  }) : super(key: key);
+    required this.child, super.key,
+  });
 
   final Widget child;
 

@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fstation/impl/user_manager.dart';
-import 'package:fstation/ui/widget/fingerprint_button.dart';
+import 'package:fstation/ui/widget/auth/fingerprint_button.dart';
 import 'package:fstation/ui/widget/flip_card_animation.dart';
 import 'package:fstation/ui/widget/glassmorphism_cover.dart';
-import 'package:fstation/ui/widget/quit_app_dialog.dart';
-import 'package:fstation/ui/widget/sign_in_form.dart';
-import 'package:fstation/ui/widget/sign_up_form.dart';
+import 'package:fstation/ui/widget/dialog/quit_app_dialog.dart';
+import 'package:fstation/ui/widget/auth/sign_in_form.dart';
+import 'package:fstation/ui/widget/auth/sign_up_form.dart';
 
 import '../bloc/auth_session_bloc.dart';
 import '../bloc/auth_session_state.dart';
