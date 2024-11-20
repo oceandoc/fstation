@@ -1,3 +1,5 @@
+import 'package:fstation/impl/setting_impl.dart';
+import 'package:fstation/impl/user_manager.dart';
 import 'package:go_router/go_router.dart';
 
 import '../generated/l10n.dart';
@@ -9,7 +11,16 @@ import '../ui/splash_page.dart';
 import '../ui/widget/global_footer.dart';
 
 final GoRouter router = GoRouter(
-  initialLocation: '/splash',
+  initialLocation: '/',
+  redirect: (context, state) {
+    if (SettingImpl.instance.firstLaunch) {
+      return '/splash';
+    } else if (UserManager.instance.isAuth) {
+      return '/home';
+    } else {
+      return '/home';
+    }
+  },
   errorBuilder: (context, state) {
     return ErrorPage(error: state.error);
   },
@@ -19,6 +30,7 @@ final GoRouter router = GoRouter(
       builder: (context, state) => const SplashPage(),
       routes: [
         GoRoute(path: 'home', builder: (context, state) => const HomePage()),
+        GoRoute(path: 'login', builder: (context, state) => const HomePage()),
       ],
     ),
     GoRoute(

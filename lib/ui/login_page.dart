@@ -87,14 +87,6 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
             ),
-            // Positioned(
-            //   child: Center(
-            //     child: PrivacyPolicy(linkColor: linkColor),
-            //   ),
-            //   bottom: 20,
-            //   right: 0,
-            //   left: 0,
-            // ),
             Positioned(
               top: 20,
               left: 20,

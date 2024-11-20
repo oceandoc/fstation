@@ -1,21 +1,4 @@
 class Settings {
-  int? id;
-  int notificationBackgroundBackupProgress;
-  int notificationBackgroundBackupFailNotifyTime;
-  String language;
-  int themeMode;
-  int logLevel;
-  int logFileSize;
-  String? proxyHost;
-  int proxyPort;
-  String? proxyUsername;
-  String? proxyPassword;
-  int autoUpdateCheckTime;
-  bool firstLaunch;
-  List<int>? windowsPosition;
-  bool windowsAlwaysOnTop;
-  bool enableFingerprint;
-  bool enablePin;
 
   Settings({
     this.id,
@@ -61,6 +44,23 @@ class Settings {
       enablePin: (map['enable_pin'] as int? ?? 0) == 1,
     );
   }
+  int? id;
+  int notificationBackgroundBackupProgress;
+  int notificationBackgroundBackupFailNotifyTime;
+  String language;
+  int themeMode;
+  int logLevel;
+  int logFileSize;
+  String? proxyHost;
+  int proxyPort;
+  String? proxyUsername;
+  String? proxyPassword;
+  int autoUpdateCheckTime;
+  bool firstLaunch;
+  List<int>? windowsPosition;
+  bool windowsAlwaysOnTop;
+  bool enableFingerprint;
+  bool enablePin;
 
   // Convert Settings to JSON/Map
   Map<String, dynamic> toMap() {

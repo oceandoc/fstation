@@ -103,7 +103,7 @@ class _SignInFormState extends State<SignInForm> {
                     Localization.current.log_in,
                     style: const TextStyle(
                       fontSize: 25,
-                      color: Colors.white,
+                      // color: Colors.white,
                     ),
                   ),
                   Column(

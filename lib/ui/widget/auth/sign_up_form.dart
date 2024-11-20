@@ -88,7 +88,7 @@ class _SignUpFormState extends State<SignUpForm> {
                     Localization.current.sign_up,
                     style: const TextStyle(
                       fontSize: 25,
-                      color: Colors.white,
+                      // color: Colors.white,
                     ),
                   ),
                   Column(
