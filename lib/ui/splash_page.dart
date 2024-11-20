@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:fstation/impl/user_manager.dart';
+import 'package:go_router/go_router.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import '../bloc/app_setting_bloc.dart';
@@ -38,9 +40,6 @@ class SplashPageState extends State<SplashPage>
 
   @override
   Widget build(BuildContext context) {
-    // if (!SettingImpl.instance.firstLaunch) {
-    //   context.go('/home');
-    // }
     pages = [
       welcomePage,
       languagePage,
@@ -181,7 +180,12 @@ class SplashPageState extends State<SplashPage>
                   backgroundColor: Colors.blue.withOpacity(0.7),
                 ),
                 onPressed: () async {
-                  await Future.delayed(const Duration(milliseconds: 300));
+                  await SettingImpl.instance.saveFirstLaunch(firstLaunch: false);
+                  if (UserManager.instance.isAuth) {
+                    context.go('/home');
+                  } else {
+                    context.go('/login');
+                  }
                 },
                 child: const Row(
                   mainAxisSize: MainAxisSize.min,

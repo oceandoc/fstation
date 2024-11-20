@@ -32,7 +32,6 @@ class SettingImpl {
       _settings = Settings(
         themeMode: ThemeMode.system.index,
         language: PlatformDispatcher.instance.locale.languageCode,
-        firstLaunch: true,
       );
       await Store.instance.saveSettings(_settings!);
     }
@@ -45,51 +44,38 @@ class SettingImpl {
 
   Future<void> saveThemeMode(ThemeMode themeMode) async {
     _settings = settings.copyWith(themeMode: themeMode.index);
-    await Store.instance.updateSettings({
-      'theme_mode': themeMode.index,
-    });
+    await Store.instance.saveSettings(_settings!);
   }
 
   Future<void> saveLanguage(String language) async {
     _settings = settings.copyWith(language: language);
-    await Store.instance.updateSettings({
-      'language': language,
-    });
+    await Store.instance.saveSettings(_settings!);
   }
 
   Future<void> saveWindowsPosition(List<int> position) async {
-    final positionString = position.join(','); // Convert list to string
     _settings = settings.copyWith(windowsPosition: position);
-    await Store.instance.updateSettings({
-      'windows_position': positionString,
-    });
+    await Store.instance.saveSettings(_settings!);
   }
 
   List<int>? get windowsPosition {
     return settings.windowsPosition; // Directly return the list
   }
 
-  Future<void> saveWindowsAlwaysOnTop(bool alwaysOnTop) async {
+  Future<void> saveWindowsAlwaysOnTop({required bool alwaysOnTop}) async {
     _settings = settings.copyWith(windowsAlwaysOnTop: alwaysOnTop);
-    await Store.instance.updateSettings({
-      'windows_always_ontop': alwaysOnTop ? 1 : 0,
-    });
+    await Store.instance.saveSettings(_settings!);
   }
 
   bool get windowsAlwaysOnTop => settings.windowsAlwaysOnTop;
 
   Future<void> saveLogLevel(int logLevel) async {
     _settings = settings.copyWith(logLevel: logLevel);
-    await Store.instance.updateSettings({
-      'log_level': logLevel,
-    });
+    await Store.instance.saveSettings(_settings!);
   }
 
   Future<void> saveLogFileSize(int logFileSize) async {
     _settings = settings.copyWith(logFileSize: logFileSize);
-    await Store.instance.updateSettings({
-      'log_file_size': logFileSize,
-    });
+    await Store.instance.saveSettings(_settings!);
   }
 
   Future<void> saveProxySettings({
@@ -111,7 +97,7 @@ class SettingImpl {
       proxyPassword: password ?? settings.proxyPassword,
     );
 
-    await Store.instance.updateSettings(updates);
+    await Store.instance.saveSettings(_settings!);
   }
 
   Future<void> saveNotificationSettings({
@@ -134,28 +120,22 @@ class SettingImpl {
           failNotifyTime ?? settings.notificationBackgroundBackupFailNotifyTime,
     );
 
-    await Store.instance.updateSettings(updates);
+    await Store.instance.saveSettings(_settings!);
   }
 
-  Future<void> saveFirstLaunch(bool value) async {
-    _settings = settings.copyWith(firstLaunch: value);
-    await Store.instance.updateSettings({
-      'first_launch': value ? 1 : 0,
-    });
+  Future<void> saveFirstLaunch({required bool firstLaunch}) async {
+    _settings = settings.copyWith(firstLaunch: firstLaunch);
+    await Store.instance.saveSettings(_settings!);
   }
 
-  Future<void> saveEnableFingerprint(bool enable) async {
+  Future<void> saveEnableFingerprint({required bool enable}) async {
     _settings = settings.copyWith(enableFingerprint: enable);
-    await Store.instance.updateSettings({
-      'enable_fingerprint': enable ? 1 : 0,
-    });
+    await Store.instance.saveSettings(_settings!);
   }
 
-  Future<void> saveEnablePin(bool enable) async {
+  Future<void> saveEnablePin({required bool enable}) async {
     _settings = settings.copyWith(enablePin: enable);
-    await Store.instance.updateSettings({
-      'enable_pin': enable ? 1 : 0,
-    });
+    await Store.instance.saveSettings(_settings!);
   }
 
   // Getters for commonly used values

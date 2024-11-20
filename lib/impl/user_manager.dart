@@ -3,16 +3,16 @@ import 'dart:async';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/services.dart';
 import 'package:fstation/impl/setting_impl.dart';
-import 'package:local_auth/local_auth.dart';
 import 'package:get_it/get_it.dart';
+import 'package:local_auth/local_auth.dart';
 
 import '../bloc/auth_session_bloc.dart';
 import '../bloc/auth_session_event.dart';
 import '../exception/validation_exceptions.dart';
 import '../generated/error.pbenum.dart';
 import '../generated/l10n.dart';
-import '../model/user.dart';
 import '../model/failures.dart';
+import '../model/user.dart';
 import '../util/network_util.dart';
 import '../util/util.dart';
 import '../util/validator/email_validator.dart';
@@ -30,7 +30,9 @@ enum FingerPrintAuthState {
 
 class UserManager {
   UserManager._internal();
+
   static final UserManager _instance = UserManager._internal();
+
   static UserManager get instance => _instance;
 
   User? _currentUser;
@@ -48,71 +50,51 @@ class UserManager {
   Future<void> init() async {
     // First try to get current user from database
     final currentUser = await Store.instance.getCurrentUser();
-    if (currentUser != null) {
-      _currentUser = User.fromJson(currentUser);
-
-      // Update token using gRPC if we have a current user
-      if (_currentUser?.token != null) {
-        try {
-          final response = await GrpcClient.instance.updateToken(_currentUser!);
-          if (response.errCode == ErrCode.Success) {
-            // Update user with new token
-            await updateUser(
-              User(
-                name: _currentUser!.name,
-                token: response.token,
-                tokenUpdateTime: DateTime.now(),
-              ),
-            );
-          }
-        } catch (e) {
-          Logger.error('Failed to update token: $e');
-        }
-      }
+    if (currentUser == null) {
       return;
+    }
+    _currentUser = User.fromJson(currentUser);
+    await updateToken();
+  }
+
+  Future<void> updateToken() async {
+    if (_currentUser == null) {
+      return;
+    }
+    if (!isAuth) {
+      return;
+    }
+
+    try {
+      final response = await GrpcClient.instance.updateToken(_currentUser!);
+      if (response.errCode == ErrCode.Success) {
+        _currentUser!.token = response.token;
+        _currentUser!.tokenUpdateTime = DateTime.now();
+        await updateUser(_currentUser);
+      }
+    } catch (e, s) {
+      Logger.error('Failed to update token:', e, s);
     }
   }
 
-  Future<void> updateUser(User? user) async {
+  Future<void> updateUser(User? user, {bool updateCurrentUser = false}) async {
     if (user == null || user.name == null) return;
-
     await Store.instance.updateUser(
       name: user.name!,
       token: user.token,
       tokenUpdateTime: user.tokenUpdateTime?.toIso8601String(),
     );
-    _currentUser = user;
-    await Store.instance.setCurrentUser(user.name!);
-  }
-
-  Future<void> clear() async {
-    if (_currentUser == null || _currentUser!.name == null) return;
-
-    await Store.instance.deleteUser(_currentUser!.name!);
-    _currentUser = null;
-  }
-
-  Future<void> updateToken() async {
-    if (!isAuth) return;
-
-    try {
-      final response = await GrpcClient.instance.updateToken(_currentUser!);
-      if (response.errCode == ErrCode.Success) {
-        await updateUser(
-          User(
-            name: _currentUser!.name,
-            token: response.token,
-            tokenUpdateTime: DateTime.now(),
-          ),
-        );
-      } else {
-        Logger.error('Failed to update token: ${_currentUser!.name}');
-        _currentUser?.token = null;
-        await updateUser(_currentUser);
-      }
-    } catch (e) {
-      Logger.error('Failed to update token: $e');
+    if (updateCurrentUser) {
+      _currentUser = user;
+      await Store.instance.setCurrentUser(user.name!);
     }
+  }
+
+  Future<void> clearCurrentUser() async {
+    if (_currentUser == null || _currentUser!.name == null) return;
+    await Store.instance.deleteUser(_currentUser!.name!);
+    await Store.instance.deleteCurrentUser();
+    _currentUser = null;
   }
 
   bool shouldActivateFingerPrint() {
@@ -149,7 +131,8 @@ class UserManager {
       if (value == FingerPrintAuthState.success) {
         await fingerPrintAuthStreamSubscription?.cancel();
         isFingerPrintAuthActivated = false;
-        GetIt.I<AuthSessionBloc>().add(UserLoggedIn(lastLoggedInUserId: lastLoginUser));
+        GetIt.I<AuthSessionBloc>()
+            .add(UserLoggedIn(lastLoggedInUserId: lastLoginUser));
       } else if (value == FingerPrintAuthState.platformError) {
         await fingerPrintAuthStreamSubscription?.cancel();
         isFingerPrintAuthActivated = false;

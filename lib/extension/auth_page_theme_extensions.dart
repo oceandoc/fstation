@@ -5,7 +5,6 @@ class AuthPageThemeExtensions extends ThemeExtension<AuthPageThemeExtensions> {
 
   AuthPageThemeExtensions({
     required this.linkColor,
-    required this.backgroundImage,
     required this.errorTextColor,
     required this.prefixIconColor,
     required this.hintTextColor,
@@ -17,7 +16,6 @@ class AuthPageThemeExtensions extends ThemeExtension<AuthPageThemeExtensions> {
     required this.infoTextColor,
   });
 
-  final String backgroundImage; // path for background image
   final Color linkColor; // color for clickable links (in auth page)
   final Color errorTextColor; // color for error messages in auth page
   final Color prefixIconColor;
@@ -31,7 +29,6 @@ class AuthPageThemeExtensions extends ThemeExtension<AuthPageThemeExtensions> {
 
   @override
   ThemeExtension<AuthPageThemeExtensions> copyWith({
-    String? backgroundImage,
     Color? linkColor,
     Color? errorTextColor,
     Color? prefixIconColor,
@@ -44,7 +41,6 @@ class AuthPageThemeExtensions extends ThemeExtension<AuthPageThemeExtensions> {
     Color? infoTextColor,
   }) {
     return AuthPageThemeExtensions(
-        backgroundImage: backgroundImage ?? this.backgroundImage,
         linkColor: linkColor ?? this.linkColor,
         errorTextColor: errorTextColor ?? this.errorTextColor,
         prefixIconColor: prefixIconColor ?? this.prefixIconColor,
@@ -63,7 +59,6 @@ class AuthPageThemeExtensions extends ThemeExtension<AuthPageThemeExtensions> {
   ThemeExtension<AuthPageThemeExtensions> lerp(
       covariant AuthPageThemeExtensions? other, double t) {
     return AuthPageThemeExtensions(
-      backgroundImage: backgroundImage,
       linkColor: Color.lerp(linkColor, other?.linkColor, t)!,
       errorTextColor: Color.lerp(errorTextColor, other?.errorTextColor, t)!,
       prefixIconColor: Color.lerp(prefixIconColor, other?.prefixIconColor, t)!,

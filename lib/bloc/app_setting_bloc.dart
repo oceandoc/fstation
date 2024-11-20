@@ -7,7 +7,6 @@ import '../impl/setting_impl.dart';
 part 'app_setting_event.dart';
 part 'app_setting_state.dart';
 
-
 @injectable
 class AppSettingBloc extends Bloc<AppSettingEvent, AppSettingState> {
   AppSettingBloc()

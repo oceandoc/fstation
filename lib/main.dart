@@ -135,7 +135,7 @@ class _AppState extends State<App> with WidgetsBindingObserver {
     // Load localization using the system locale
     initApp();
     Future.microtask(
-        () => context.read<AppSettingBloc>().add(LoadSettingsEvent()));
+        () => getIt<AppSettingBloc>().add(LoadSettingsEvent()));
 
     // TODO(xieyz): background task
     // WidgetsBinding.instance.addPostFrameCallback((_) {

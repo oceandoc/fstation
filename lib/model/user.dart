@@ -17,7 +17,7 @@ class User {
 
   final String? name;
   late String? token;
-  final DateTime? tokenUpdateTime;
+  late DateTime? tokenUpdateTime;
 
   User copyWith({
     String? name,

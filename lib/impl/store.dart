@@ -104,10 +104,31 @@ class Store {
           enable_pin INTEGER DEFAULT 0
         )
       ''');
+
+    // Insert a default settings record
+    await db.insert('settings', {
+      'notification_background_backup_progress': 0,
+      'notification_background_backup_fail_notify_time': 120,
+      'language': 'en',
+      'theme_mode': 0,
+      'log_level': 0,
+      'log_file_size': 100,
+      'proxy_host': null,
+      'proxy_port': 0,
+      'proxy_username': null,
+      'proxy_password': null,
+      'auto_update_check_time': 0,
+      'first_launch': 1,
+      'windows_position': null,
+      'windows_always_ontop': 0,
+      'enable_fingerprint': 0,
+      'enable_pin': 0
+    });
+
     await db.execute('''
         CREATE TABLE user (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
-          name TEXT,
+          name TEXT UNIQUE,
           token TEXT,
           token_update_time TEXT
         )
@@ -152,32 +173,15 @@ class Store {
   }
 
   Future<void> saveSettings(Settings settings) async {
-    if (_db == null) await init();
-
-    if (settings.id != null) {
-      await _db!.update(
+    final existingSettings = await getSettings();
+    if (existingSettings == null) {
+      await _db.insert('settings', settings.toMap());
+    } else {
+      await _db.update(
         'settings',
         settings.toMap(),
         where: 'id = ?',
-        whereArgs: [settings.id],
-      );
-    } else {
-      await _db!.insert('settings', settings.toMap());
-    }
-  }
-
-  Future<void> updateSettings(Map<String, dynamic> values) async {
-    if (_db == null) await init();
-
-    final settings = await getSettings();
-    if (settings == null) {
-      await saveSettings(Settings.fromMap(values));
-    } else {
-      await _db!.update(
-        'settings',
-        values,
-        where: 'id = ?',
-        whereArgs: [settings.id],
+        whereArgs: [existingSettings.id],
       );
     }
   }
@@ -246,7 +250,14 @@ class Store {
     if (currentUserResult.isEmpty) return null;
 
     final userName = currentUserResult.first['user_name']! as String;
-    return await getUser(userName);
+    return getUser(userName);
+  }
+
+  Future<void> deleteCurrentUser() async {
+    await _db.delete(
+      'current_user',
+      where: 'id = 1',
+    );
   }
 
   Future<String> getUuid() async {
@@ -255,7 +266,7 @@ class Store {
       columns: ['uuid'],
       limit: 1,
     );
-    return result.isNotEmpty ? result.first['uuid'] as String : '';
+    return result.isNotEmpty ? result.first['uuid']! as String : '';
   }
 
   Future<void> setUuid(String uuid) async {
