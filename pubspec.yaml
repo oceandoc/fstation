@@ -68,7 +68,6 @@ dependencies:
   get_it: ^8.0.2
   injectable: ^2.5.0
 
-
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -87,14 +86,6 @@ flutter:
     - assets/
   generate: true
   fonts:
-    - family: Comfortaa
-      fonts:
-        - asset: assets/fonts/Comfortaa-Light.ttf
-          weight: 300
-        - asset: assets/fonts/Comfortaa-Regular.ttf
-        - asset: assets/fonts/Comfortaa-Bold.ttf
-          weight: 700
-
     - family: OpenSans
       fonts:
         - asset: assets/fonts/OpenSans-Light.ttf
@@ -104,19 +95,10 @@ flutter:
           weight: 700
 
     - family: NotoSans
-      # used as a fallback font
-      # covers a lot of scripts and obscure unicode characters
-      # https://fonts.google.com/specimen/Noto+Sans
       fonts:
         - asset: assets/fonts/NotoSans-Regular.ttf
         - asset: assets/fonts/NotoSans-Bold.ttf
           weight: 700
-    - family: Broken
-      fonts:
-        - asset: assets/fonts/broken.ttf
-    - family: BrokenFilled
-      fonts:
-        - asset: assets/fonts/broken_filled.ttf
     - family: Gilroy
       fonts:
         - asset: assets/fonts/Gilroy/Gilroy-Regular.ttf
@@ -138,19 +120,20 @@ analyzer:
 flutter_icons:
   android: true
   ios: true
-  image_path: "assets/bloomee_new_logo_gradient_bg.png"
+  image_path: "assets/logo_color.png"
+  #adaptive_icon_background: "#FFFFFF"  # 设置适应图标的背景颜色
+  adaptive_icon_foreground: "assets/logo_color.png"  # 设置前景图标（主图标）
 
-flutter_launcher_icons:
-  android: "launcher_icon"
-  ios: true
-  adaptive_icon_background: "assets/bloomee_new_logo_gradient_bg.png"
-  adaptive_icon_foreground: "assets/new_bloomee_logo_zoomedout.png"
-  image_path: "assets/bloomee_new_logo_transparent_c.png"
-  min_sdk_android: 28 # android min sdk min:16, default 21
-
-  macos:
-    generate: true
-    image_path: "assets/bloomee_new_logo_c.png"
-  windows:
-    generate: true
-    image_path: "assets/bloomee_new_logo_transparent_c.png"
+#flutter_launcher_icons:
+#  android: true
+#  ios: true
+#  adaptive_icon_background: "assets/logo_color.png"
+#  adaptive_icon_foreground: "assets/logo_color.png"
+#  image_path: "assets/logo_color.png"
+#  min_sdk_android: 28
+#  macos:
+#    generate: true
+#    image_path: "assets/logo_color.png"
+#  windows:
+#    generate: true
+#    image_path: "assets/logo_color.png"
