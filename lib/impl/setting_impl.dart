@@ -138,6 +138,13 @@ class SettingImpl {
     await Store.instance.saveSettings(_settings!);
   }
 
+  Future<void> saveServerAddr(String serverAddr) async {
+    _settings = settings.copyWith(serverAddr: serverAddr);
+    await Store.instance.saveSettings(_settings!);
+  }
+
+  String get serverAddr => settings.serverAddr;
+
   // Getters for commonly used values
   ThemeMode get themeMode => ThemeMode.values[settings.themeMode];
 

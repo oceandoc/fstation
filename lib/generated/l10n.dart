@@ -529,6 +529,56 @@ class Localization {
       args: [],
     );
   }
+
+  /// `Next`
+  String get next {
+    return Intl.message(
+      'Next',
+      name: 'next',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Finding local server`
+  String get finding_server {
+    return Intl.message(
+      'Finding local server',
+      name: 'finding_server',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Setup server`
+  String get setup_server {
+    return Intl.message(
+      'Setup server',
+      name: 'setup_server',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Local Server Found`
+  String get local_server_found {
+    return Intl.message(
+      'Local Server Found',
+      name: 'local_server_found',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Use local server`
+  String get use_local_server {
+    return Intl.message(
+      'Use local server',
+      name: 'use_local_server',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<Localization> {

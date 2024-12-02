@@ -8,6 +8,7 @@ import 'package:path_provider/path_provider.dart';
 class Logger {
   Logger._internal() {
     _logger = log.Logger('AppLogger');
+    print('Logger constructor called');
   }
 
   static final Logger _instance = Logger._internal();
@@ -20,6 +21,7 @@ class Logger {
   final int maxLogFiles = 7;
   int logCount = 0;
   final int checkInterval = 100;
+  bool _initialized = false;
 
   String? get appLogPath => _logFile?.path;
 
@@ -29,16 +31,19 @@ class Logger {
   }
 
   Future<void> init([int maxSizeInBytes = 100 * 1024 * 1024]) async {
+    if (_initialized) return;
+    print('Logger init called');
+
     _instance._maxSizeInBytes = maxSizeInBytes;
     if (kDebugMode) {
       log.Logger.root.level = log.Level.ALL;
       log.Logger.root.onRecord.listen((record) async {
         final logMessage =
             '${record.time}: [${record.level.name}] ${record.loggerName} - ${record.message}';
-        // ignore: avoid_print
         print(logMessage);
       });
     } else {
+      print('release');
       final directory = await getApplicationDocumentsDirectory();
       final logsDir = path.join(directory.path, 'logs');
       // Create logs directory if it doesn't exist
@@ -58,6 +63,7 @@ class Logger {
         }
       });
     }
+    _initialized = true;
   }
 
   Future<void> _manageLogFileSize(String directory) async {
@@ -97,6 +103,10 @@ class Logger {
   }
 
   static void debug(String message, [Object? error, StackTrace? stackTrace]) {
+    if (!_instance._initialized) {
+      print('WARNING: Logger not initialized when logging: $message');
+      return;
+    }
     _instance._logger.fine(message, error, stackTrace);
   }
 

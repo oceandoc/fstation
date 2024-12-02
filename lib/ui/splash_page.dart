@@ -180,9 +180,12 @@ class SplashPageState extends State<SplashPage>
                   backgroundColor: Colors.blue.withOpacity(0.7),
                 ),
                 onPressed: () async {
+                  await Future.delayed(const Duration(milliseconds: 300));
                   await SettingImpl.instance.saveFirstLaunch(firstLaunch: false);
                   if (UserManager.instance.isAuth) {
                     context.go('/home');
+                  } else if (SettingImpl.instance.serverAddr.isEmpty) {
+                    context.go('/server_config');
                   } else {
                     context.go('/login');
                   }

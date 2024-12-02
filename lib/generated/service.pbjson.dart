@@ -44,13 +44,16 @@ const ServerOp$json = {
     {'1': 'ServerRestart', '2': 2},
     {'1': 'ServerShutdown', '2': 3},
     {'1': 'ServerFullScan', '2': 4},
+    {'1': 'ServerHandShake', '2': 5},
+    {'1': 'ServerFindingServer', '2': 6},
   ],
 };
 
 /// Descriptor for `ServerOp`. Decode as a `google.protobuf.EnumDescriptorProto`.
 final $typed_data.Uint8List serverOpDescriptor = $convert.base64Decode(
     'CghTZXJ2ZXJPcBIQCgxTZXJ2ZXJVbnVzZWQQABIQCgxTZXJ2ZXJTdGF0dXMQARIRCg1TZXJ2ZX'
-    'JSZXN0YXJ0EAISEgoOU2VydmVyU2h1dGRvd24QAxISCg5TZXJ2ZXJGdWxsU2NhbhAE');
+    'JSZXN0YXJ0EAISEgoOU2VydmVyU2h1dGRvd24QAxISCg5TZXJ2ZXJGdWxsU2NhbhAEEhMKD1Nl'
+    'cnZlckhhbmRTaGFrZRAFEhcKE1NlcnZlckZpbmRpbmdTZXJ2ZXIQBg==');
 
 @$core.Deprecated('Use repoOpDescriptor instead')
 const RepoOp$json = {

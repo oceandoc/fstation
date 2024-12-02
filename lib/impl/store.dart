@@ -101,7 +101,8 @@ class Store {
           windows_position TEXT,
           windows_always_ontop INTEGER DEFAULT 0,
           enable_fingerprint INTEGER DEFAULT 0,
-          enable_pin INTEGER DEFAULT 0
+          enable_pin INTEGER DEFAULT 0,
+          server_addr TEXT DEFAULT ''
         )
       ''');
 
@@ -122,7 +123,8 @@ class Store {
       'windows_position': null,
       'windows_always_ontop': 0,
       'enable_fingerprint': 0,
-      'enable_pin': 0
+      'enable_pin': 0,
+      'server_addr': ''
     });
 
     await db.execute('''

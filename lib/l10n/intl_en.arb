@@ -47,5 +47,10 @@
   "password_not_match": "Passwords don't match",
   "password_reset_success": "Password reset successful",
   "unexpected_error": "Unexpected error",
-  "close_app": "Close the App?"
+  "close_app": "Close the App?",
+  "next": "Next",
+  "finding_server": "Finding local server",
+  "setup_server":"Setup server",
+  "local_server_found": "Local Server Found",
+  "use_local_server": "Use local server"
 }

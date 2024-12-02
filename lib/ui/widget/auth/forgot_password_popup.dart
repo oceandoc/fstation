@@ -6,7 +6,7 @@ import '../../../extension/popup_theme_extensions.dart';
 import '../../../generated/l10n.dart';
 import '../../../model/failures.dart';
 import '../../../util/util.dart';
-import 'email_input_field.dart';
+import '../email_input_field.dart';
 import '../dialog/glass_dialog.dart';
 
 Future<void> forgotPasswordPopup(

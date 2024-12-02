@@ -6,6 +6,7 @@ import '../generated/l10n.dart';
 import '../ui/error_page.dart';
 import '../ui/home_page.dart';
 import '../ui/login_page.dart';
+import '../ui/server_config_page.dart';
 import '../ui/setting_page.dart';
 import '../ui/splash_page.dart';
 import '../ui/widget/global_footer.dart';
@@ -18,7 +19,7 @@ final GoRouter router = GoRouter(
     } else if (UserManager.instance.isAuth) {
       return '/home';
     } else {
-      return '/home';
+      return '/server_config';
     }
   },
   errorBuilder: (context, state) {
@@ -28,6 +29,14 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: '/splash',
       builder: (context, state) => const SplashPage(),
+      routes: [
+        GoRoute(path: 'home', builder: (context, state) => const HomePage()),
+        GoRoute(path: 'login', builder: (context, state) => const HomePage()),
+      ],
+    ),
+    GoRoute(
+      path: '/server_config',
+      builder: (context, state) => const ServerConfigPage(),
       routes: [
         GoRoute(path: 'home', builder: (context, state) => const HomePage()),
         GoRoute(path: 'login', builder: (context, state) => const HomePage()),

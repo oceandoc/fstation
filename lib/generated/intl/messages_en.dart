@@ -47,6 +47,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "error": MessageLookupByLibrary.simpleMessage("Error"),
         "error_no_internet":
             MessageLookupByLibrary.simpleMessage("No internet"),
+        "finding_server":
+            MessageLookupByLibrary.simpleMessage("Finding local server"),
         "fingerprint_auth_should_be_enabled":
             MessageLookupByLibrary.simpleMessage(
                 "Fingerprint auth should be enabled in settings"),
@@ -61,9 +63,12 @@ class MessageLookup extends MessageLookupByLibrary {
         "language_en": MessageLookupByLibrary.simpleMessage("English"),
         "language_setting_title":
             MessageLookupByLibrary.simpleMessage("Language"),
+        "local_server_found":
+            MessageLookupByLibrary.simpleMessage("Local Server Found"),
         "log_in": MessageLookupByLibrary.simpleMessage("Log In"),
         "log_out": MessageLookupByLibrary.simpleMessage("Log out"),
         "new_password": MessageLookupByLibrary.simpleMessage("New Password"),
+        "next": MessageLookupByLibrary.simpleMessage("Next"),
         "page_home_title": MessageLookupByLibrary.simpleMessage("Home"),
         "page_setting_title": MessageLookupByLibrary.simpleMessage("Setting"),
         "password_not_match":
@@ -78,6 +83,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Reset password"),
         "select_lang": MessageLookupByLibrary.simpleMessage("Select Language"),
         "settings": MessageLookupByLibrary.simpleMessage("Setting"),
+        "setup_server": MessageLookupByLibrary.simpleMessage("Setup server"),
         "sign_up": MessageLookupByLibrary.simpleMessage("Sign Up"),
         "submit": MessageLookupByLibrary.simpleMessage("Submit"),
         "success": MessageLookupByLibrary.simpleMessage("Success"),
@@ -97,6 +103,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "too_many_wrong_attempts": MessageLookupByLibrary.simpleMessage(
             "Too many wrong attempts, please login with password"),
         "unexpected_error":
-            MessageLookupByLibrary.simpleMessage("Unexpected error")
+            MessageLookupByLibrary.simpleMessage("Unexpected error"),
+        "use_local_server":
+            MessageLookupByLibrary.simpleMessage("Use local server")
       };
 }

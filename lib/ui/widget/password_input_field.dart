@@ -1,20 +1,34 @@
 import 'package:flutter/material.dart';
 
-import '../../../extension/auth_page_theme_extensions.dart';
+import '../../extension/auth_page_theme_extensions.dart';
 
-class AuthEmailInput extends StatelessWidget {
-  const AuthEmailInput({
-    required this.getEmailErrors, required this.onEmailChanged, super.key,
+class AuthPasswordInput extends StatefulWidget {
+  const AuthPasswordInput({
+    required this.getPasswordErrors, required this.onPasswordChanged, super.key,
     this.autoFocus = false,
+    this.hintText = 'password',
   });
-  final String? Function() getEmailErrors;
-  final void Function(String email) onEmailChanged;
+  final String? Function() getPasswordErrors;
+  final void Function(String password) onPasswordChanged;
   final bool autoFocus;
+  final String hintText;
+
+  @override
+  State<AuthPasswordInput> createState() => _AuthPasswordInputState();
+}
+
+class _AuthPasswordInputState extends State<AuthPasswordInput> {
+  bool _passwordVisibility = true;
+
+  void _togglePasswordVisibility() => setState(() {
+        _passwordVisibility = !_passwordVisibility;
+      });
 
   @override
   Widget build(BuildContext context) {
     final errorColor =
-        Theme.of(context).extension<AuthPageThemeExtensions>()!.errorTextColor;
+        Theme.of(context).extension<AuthPageThemeExtensions>()!.linkColor;
+
     final prefixIconColor =
         Theme.of(context).extension<AuthPageThemeExtensions>()!.prefixIconColor;
 
@@ -29,39 +43,48 @@ class AuthEmailInput extends StatelessWidget {
 
     final fillColor =
         Theme.of(context).extension<AuthPageThemeExtensions>()!.fillColor;
+
     return Stack(
       children: [
         TextField(
-          autofocus: autoFocus,
+          autofocus: widget.autoFocus,
           style: TextStyle(color: textColor),
           decoration: InputDecoration(
-            hintText: 'email',
+            hintText: widget.hintText,
             hintStyle: TextStyle(color: hintTextColor),
             prefixIcon: Icon(
-              Icons.account_circle,
+              Icons.lock,
               color: prefixIconColor,
+            ),
+            suffixIcon: InkWell(
+              onTap: _togglePasswordVisibility,
+              child: Icon(
+                !_passwordVisibility ? Icons.visibility : Icons.visibility_off,
+                color: prefixIconColor,
+              ),
             ),
             fillColor: fillColor,
             filled: true,
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(30),
+              borderRadius: BorderRadius.circular(30.0),
               borderSide: BorderSide(
                 color: borderColor,
                 width: 0.7,
               ),
             ),
-            errorText: getEmailErrors(),
+            errorText: widget.getPasswordErrors(),
             errorStyle: TextStyle(
               color: errorColor,
               fontWeight: FontWeight.bold,
             ),
             border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30),
-                borderSide: BorderSide.none),
+              borderRadius: BorderRadius.circular(30.0),
+              borderSide: BorderSide.none,
+            ),
           ),
-          textInputAction: TextInputAction.next,
           keyboardType: TextInputType.emailAddress,
-          onChanged: onEmailChanged,
+          obscureText: _passwordVisibility,
+          onChanged: widget.onPasswordChanged,
         ),
       ],
     );

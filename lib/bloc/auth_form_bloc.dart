@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fstation/impl/user_manager.dart';
 import 'package:injectable/injectable.dart';
 
-import '../model/user.dart';
 import '../model/failures.dart';
+import '../model/user.dart';
 import 'auth_form_event.dart';
 import 'auth_form_state.dart';
 import 'auth_session_bloc.dart';
@@ -85,7 +85,7 @@ class AuthFormBloc extends Bloc<AuthFormEvent, AuthFormState> {
 
   Future<Either<ForgotPasswordFailure, bool>> submitForgotPasswordEmail(
       String forgotPasswordEmail) async {
-    return await UserManager.instance
+    return UserManager.instance
         .submitForgotPasswordEmail(forgotPasswordEmail);
   }
 }

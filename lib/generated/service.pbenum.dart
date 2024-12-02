@@ -44,6 +44,8 @@ class ServerOp extends $pb.ProtobufEnum {
   static const ServerOp ServerRestart = ServerOp._(2, _omitEnumNames ? '' : 'ServerRestart');
   static const ServerOp ServerShutdown = ServerOp._(3, _omitEnumNames ? '' : 'ServerShutdown');
   static const ServerOp ServerFullScan = ServerOp._(4, _omitEnumNames ? '' : 'ServerFullScan');
+  static const ServerOp ServerHandShake = ServerOp._(5, _omitEnumNames ? '' : 'ServerHandShake');
+  static const ServerOp ServerFindingServer = ServerOp._(6, _omitEnumNames ? '' : 'ServerFindingServer');
 
   static const $core.List<ServerOp> values = <ServerOp> [
     ServerUnused,
@@ -51,6 +53,8 @@ class ServerOp extends $pb.ProtobufEnum {
     ServerRestart,
     ServerShutdown,
     ServerFullScan,
+    ServerHandShake,
+    ServerFindingServer,
   ];
 
   static final $core.Map<$core.int, ServerOp> _byValue = $pb.ProtobufEnum.initByValue(values);

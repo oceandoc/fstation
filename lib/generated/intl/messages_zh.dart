@@ -40,6 +40,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "enter_registered_email": MessageLookupByLibrary.simpleMessage("输入邮箱"),
         "error": MessageLookupByLibrary.simpleMessage("错误"),
         "error_no_internet": MessageLookupByLibrary.simpleMessage("无网络连接"),
+        "finding_server": MessageLookupByLibrary.simpleMessage("发现本地服务器"),
         "fingerprint_auth_should_be_enabled":
             MessageLookupByLibrary.simpleMessage("请先在系统设置中开启指纹解锁"),
         "fingerprint_login_failed":
@@ -51,9 +52,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "language_en":
             MessageLookupByLibrary.simpleMessage("Simplified Chinese"),
         "language_setting_title": MessageLookupByLibrary.simpleMessage("语言"),
+        "local_server_found": MessageLookupByLibrary.simpleMessage("发现本地服务器"),
         "log_in": MessageLookupByLibrary.simpleMessage("登录"),
         "log_out": MessageLookupByLibrary.simpleMessage("注销"),
         "new_password": MessageLookupByLibrary.simpleMessage("新密码"),
+        "next": MessageLookupByLibrary.simpleMessage("下一步"),
         "page_home_title": MessageLookupByLibrary.simpleMessage("Home"),
         "page_setting_title": MessageLookupByLibrary.simpleMessage("设置"),
         "password_not_match": MessageLookupByLibrary.simpleMessage("密码不一致"),
@@ -65,6 +68,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "reset_password": MessageLookupByLibrary.simpleMessage("重置密码"),
         "select_lang": MessageLookupByLibrary.simpleMessage("选择语言"),
         "settings": MessageLookupByLibrary.simpleMessage("设置"),
+        "setup_server": MessageLookupByLibrary.simpleMessage("配置服务器"),
         "sign_up": MessageLookupByLibrary.simpleMessage("注册"),
         "submit": MessageLookupByLibrary.simpleMessage("确定"),
         "success": MessageLookupByLibrary.simpleMessage("成功"),
@@ -82,6 +86,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "theme_setting_theme_title": MessageLookupByLibrary.simpleMessage("主题"),
         "too_many_wrong_attempts":
             MessageLookupByLibrary.simpleMessage("尝试次数过多，请使用密码登录"),
-        "unexpected_error": MessageLookupByLibrary.simpleMessage("未知错误")
+        "unexpected_error": MessageLookupByLibrary.simpleMessage("未知错误"),
+        "use_local_server": MessageLookupByLibrary.simpleMessage("使用本地服务器")
       };
 }

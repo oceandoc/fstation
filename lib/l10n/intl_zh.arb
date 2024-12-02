@@ -47,5 +47,10 @@
   "password_not_match": "密码不一致",
   "password_reset_success": "密码重置成功",
   "unexpected_error": "未知错误",
-  "close_app": "关闭应用？"
+  "close_app": "关闭应用？",
+  "next": "下一步",
+  "finding_server": "发现本地服务器",
+  "setup_server":"配置服务器",
+  "local_server_found": "发现本地服务器",
+  "use_local_server": "使用本地服务器"
 }

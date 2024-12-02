@@ -11,11 +11,11 @@ import '../../../generated/l10n.dart';
 import '../../../model/failures.dart';
 import '../../../util/util.dart';
 import 'auth_change.dart';
-import 'email_input_field.dart';
+import '../email_input_field.dart';
 import 'forgot_password_popup.dart';
 import '../form_dimensions.dart';
 import '../glassmorphism_cover.dart';
-import 'password_input_field.dart';
+import '../password_input_field.dart';
 
 class SignInForm extends StatefulWidget {
   const SignInForm({

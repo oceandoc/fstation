@@ -1,5 +1,4 @@
 class Settings {
-
   Settings({
     this.id,
     this.notificationBackgroundBackupProgress = 0,
@@ -18,6 +17,7 @@ class Settings {
     this.windowsAlwaysOnTop = false,
     this.enableFingerprint = false,
     this.enablePin = false,
+    this.serverAddr = '',
   });
 
   // Create Settings from JSON/Map
@@ -42,6 +42,7 @@ class Settings {
       windowsAlwaysOnTop: (map['windows_always_ontop'] as int? ?? 0) == 1,
       enableFingerprint: (map['enable_fingerprint'] as int? ?? 0) == 1,
       enablePin: (map['enable_pin'] as int? ?? 0) == 1,
+      serverAddr: map['server_addr'] as String? ?? '',
     );
   }
   int? id;
@@ -61,6 +62,7 @@ class Settings {
   bool windowsAlwaysOnTop;
   bool enableFingerprint;
   bool enablePin;
+  String serverAddr;
 
   // Convert Settings to JSON/Map
   Map<String, dynamic> toMap() {
@@ -84,6 +86,7 @@ class Settings {
       'windows_always_ontop': windowsAlwaysOnTop ? 1 : 0,
       'enable_fingerprint': enableFingerprint ? 1 : 0,
       'enable_pin': enablePin ? 1 : 0,
+      'server_addr': serverAddr,
     };
   }
 
@@ -118,6 +121,7 @@ class Settings {
     bool? windowsAlwaysOnTop,
     bool? enableFingerprint,
     bool? enablePin,
+    String? serverAddr,
   }) {
     return Settings(
       id: id ?? this.id,
@@ -141,6 +145,7 @@ class Settings {
       windowsAlwaysOnTop: windowsAlwaysOnTop ?? this.windowsAlwaysOnTop,
       enableFingerprint: enableFingerprint ?? this.enableFingerprint,
       enablePin: enablePin ?? this.enablePin,
+      serverAddr: serverAddr ?? this.serverAddr,
     );
   }
 

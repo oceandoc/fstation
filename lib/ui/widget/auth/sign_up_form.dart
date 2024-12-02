@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fstation/ui/widget/auth/password_input_field.dart';
+import 'package:fstation/ui/widget/password_input_field.dart';
 import 'package:fstation/ui/widget/buttons.dart';
 import '../../../bloc/auth_form_bloc.dart';
 import '../../../bloc/auth_form_event.dart';
@@ -8,7 +8,7 @@ import '../../../bloc/auth_form_state.dart';
 import '../../../generated/l10n.dart';
 import '../../../util/util.dart';
 import 'auth_change.dart';
-import 'email_input_field.dart';
+import '../email_input_field.dart';
 import '../form_dimensions.dart';
 import '../glassmorphism_cover.dart';
 
