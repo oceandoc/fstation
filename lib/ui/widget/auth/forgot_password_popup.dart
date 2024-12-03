@@ -35,7 +35,7 @@ Future<void> forgotPasswordPopup(
                 color: mainTextColor,
               )),
           const SizedBox(height: 25),
-          AuthEmailInput(
+          EmailInputField(
             autoFocus: true,
             getEmailErrors: () => null,
             onEmailChanged: (String email) {

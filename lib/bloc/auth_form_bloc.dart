@@ -15,12 +15,12 @@ class AuthFormBloc extends Bloc<AuthFormEvent, AuthFormState> {
   AuthFormBloc({
     required AuthSessionBloc authSessionBloc,
   })  : _authSessionBloc = authSessionBloc,
-        super(const AuthFormInitial(email: '', password: '')) {
+        super(const AuthFormInitial(name: '', password: '')) {
     on<AuthFormInputsChangedEvent>(
       (event, emit) {
         emit(
           AuthFormInitial(
-            email: event.email ?? state.email,
+            name: event.name ?? state.name,
             password: event.password ?? state.password,
           ),
         );
@@ -36,10 +36,10 @@ class AuthFormBloc extends Bloc<AuthFormEvent, AuthFormState> {
 
     on<AuthFormSignUpSubmittedEvent>((event, emit) async {
       emit(AuthFormSubmissionLoading(
-          email: state.email, password: state.password));
+          name: state.name, password: state.password));
 
       final result = await UserManager.instance
-          .signUpWithEmailAndPassword(state.email, state.password);
+          .signUpWithNameAndPassword(state.name, state.password);
 
       await result.fold((error) {
         final errorMap = <String, List>{};
@@ -48,10 +48,10 @@ class AuthFormBloc extends Bloc<AuthFormEvent, AuthFormState> {
           errorMap['general'] = [error.message];
         }
         if (error.code == SignUpFailure.kInvalidUserName) {
-          errorMap['email'] = [error.message];
+          errorMap['name'] = [error.message];
         }
         if (error.code == SignUpFailure.kUserAlreadyExists) {
-          errorMap['email'] = [error.message];
+          errorMap['name'] = [error.message];
         }
         if (error.code == SignUpFailure.kInvalidUserPasswordCombination) {
           errorMap['password'] = [error.message];
@@ -61,31 +61,31 @@ class AuthFormBloc extends Bloc<AuthFormEvent, AuthFormState> {
         }
 
         emit(AuthFormSubmissionFailed(
-            email: state.email, password: state.password, errors: errorMap));
+            name: state.name, password: state.password, errors: errorMap));
       }, (user) async {
-        _authSessionBloc.add(UserLoggedIn(lastLoggedInUserId: state.email));
+        _authSessionBloc.add(UserLoggedIn(lastLoggedInUserId: state.name));
 
         emit(AuthFormSubmissionSuccessful(
-            email: state.email, password: state.password));
+            name: state.name, password: state.password));
         UserManager.instance.cancelFingerprintAuth();
       });
     });
 
     on<AuthFormSignInSubmittedEvent>((event, emit) async {
       emit(AuthFormSubmissionLoading(
-          email: state.email, password: state.password));
+          name: state.name, password: state.password));
     });
 
     on<ResetAuthFormEvent>((event, emit) {
-      emit(const AuthFormInitial(email: '', password: ''));
+      emit(const AuthFormInitial(name: '', password: ''));
     });
   }
 
   final AuthSessionBloc _authSessionBloc;
 
-  Future<Either<ForgotPasswordFailure, bool>> submitForgotPasswordEmail(
-      String forgotPasswordEmail) async {
+  Future<Either<ForgotPasswordFailure, bool>> submitForgotPasswordName(
+      String forgotPasswordName) async {
     return UserManager.instance
-        .submitForgotPasswordEmail(forgotPasswordEmail);
+        .submitForgotPasswordName(forgotPasswordName);
   }
 }

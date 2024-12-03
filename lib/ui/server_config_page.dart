@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fstation/impl/logger.dart';
 import 'package:fstation/ui/widget/form_dimensions.dart';
 import 'package:fstation/ui/widget/glassmorphism_cover.dart';
 import 'package:fstation/ui/widget/server_input_field.dart';
@@ -8,6 +9,7 @@ import 'package:go_router/go_router.dart';
 import '../generated/l10n.dart';
 import '../impl/setting_impl.dart';
 import '../impl/user_manager.dart';
+import '../util/util.dart';
 
 class ServerConfigPage extends StatefulWidget {
   const ServerConfigPage({super.key});
@@ -144,14 +146,20 @@ class ServerConfigPageState extends State<ServerConfigPage>
                             backgroundColor: Colors.blue.withOpacity(0.7),
                           ),
                           onPressed: () async {
+                            // TODO(xieyz): validate it
                             if (_urlController.text.isNotEmpty) {
                               await SettingImpl.instance
                                   .saveServerAddr(_urlController.text);
+                              if (SettingImpl.instance.serverAddr.isNotEmpty) {
+                                await grpcClientInit();
+                              }
                               await SettingImpl.instance
                                   .saveFirstLaunch(firstLaunch: false);
                               if (UserManager.instance.isAuth) {
+                                Logger.debug('go to home page');
                                 context.go('/home');
                               } else {
+                                Logger.debug('go to login page');
                                 context.go('/login');
                               }
                             }

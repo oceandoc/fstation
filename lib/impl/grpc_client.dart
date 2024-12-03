@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:fstation/generated/data.pb.dart';
 import 'package:fstation/generated/error.pb.dart';
 import 'package:fstation/generated/service.pb.dart';
+import 'package:fstation/impl/logger.dart';
 import 'package:grpc/grpc.dart';
 import 'package:uuid/uuid.dart';
 
@@ -18,20 +19,34 @@ class GrpcClient {
   String? _token;
 
   Future<void> connect(String host, int port, {bool secure = false}) async {
-    await _channel?.shutdown();
+    try {
+      await _channel?.shutdown();
 
-    _channel = ClientChannel(
-      host,
-      port: port,
-      options: ChannelOptions(
-        credentials: secure
-            ? const ChannelCredentials.secure()
-            : const ChannelCredentials.insecure(),
-        idleTimeout: const Duration(minutes: 1),
-      ),
-    );
+      _channel = ClientChannel(
+        host,
+        port: port,
+        options: ChannelOptions(
+          credentials: secure
+              ? const ChannelCredentials.secure()
+              : const ChannelCredentials.insecure(),
+          idleTimeout: const Duration(minutes: 1),
+        ),
+      );
 
-    _stub = GrpcFileClient(_channel!);
+      // Wait for channel to be ready with timeout
+      await _channel!.getConnection().timeout(
+            const Duration(seconds: 5),
+            onTimeout: () =>
+                throw const GrpcError.deadlineExceeded('Connection timeout'),
+          );
+
+      _stub = GrpcFileClient(_channel!);
+      Logger.info('Connected to gRPC server at $host:$port');
+    } catch (e, stack) {
+      Logger.error('Failed to connect to gRPC server', e, stack);
+      await shutdown();
+      rethrow;
+    }
   }
 
   Future<void> shutdown() async {
@@ -74,6 +89,7 @@ class GrpcClient {
     try {
       return await _stub!.userOp(request);
     } catch (e) {
+      Logger.error('register error');
       rethrow;
     }
   }
@@ -209,25 +225,25 @@ class GrpcFileClient extends Client {
   GrpcFileClient(ClientChannel super.channel);
 
   static final _$userOp = ClientMethod<UserReq, UserRes>(
-    'OceanFile/UserOp',
+    '/oceandoc.proto.OceanFile/UserOp',
     (UserReq value) => value.writeToBuffer(),
     UserRes.fromBuffer,
   );
 
   static final _$serverOp = ClientMethod<ServerReq, ServerRes>(
-    'OceanFile/ServerOp',
+    '/oceandoc.proto.OceanFile/ServerOp',
     (ServerReq value) => value.writeToBuffer(),
     ServerRes.fromBuffer,
   );
 
   static final _$repoOp = ClientMethod<RepoReq, RepoRes>(
-    'OceanFile/RepoOp',
+    '/oceandoc.proto.OceanFile/RepoOp',
     (RepoReq value) => value.writeToBuffer(),
     RepoRes.fromBuffer,
   );
 
   static final _$fileOp = ClientMethod<FileReq, FileRes>(
-    'OceanFile/FileOp',
+    '/oceandoc.proto.OceanFile/FileOp',
     (FileReq value) => value.writeToBuffer(),
     FileRes.fromBuffer,
   );

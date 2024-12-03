@@ -2,6 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import '../generated/l10n.dart';
+import '../impl/grpc_client.dart';
+import '../impl/logger.dart';
+import '../impl/setting_impl.dart';
+
+
+Future<void> grpcClientInit() async {
+  if (SettingImpl.instance.serverAddr.isEmpty) {
+    Logger.error('wrong grpc server url');
+    return;
+  }
+
+  final serverParts = SettingImpl.instance.serverAddr.split(':');
+  if (serverParts.length == 2) {
+    final host = serverParts[0];
+    final port = int.tryParse(serverParts[1]) ?? 0;
+    if (port > 0) {
+      await GrpcClient.instance.connect(host, port);
+    }
+  }
+}
+
 
 String themeModeName(ThemeMode mode) {
   switch (mode) {

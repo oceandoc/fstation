@@ -29,6 +29,7 @@ import 'package:worker_manager/worker_manager.dart';
 
 import 'bloc/auth_form_bloc.dart';
 import 'bloc/auth_session_bloc.dart';
+import 'impl/grpc_client.dart';
 import 'impl/logger.dart';
 import 'impl/setting_impl.dart';
 import 'impl/store.dart';
@@ -66,6 +67,10 @@ void main() async {
     await UserManager.instance.init();
     await SettingImpl.instance.init();
     await WindowUtil.init();
+
+    if (SettingImpl.instance.serverAddr.isNotEmpty) {
+      await grpcClientInit();
+    }
 
     if (!kIsWeb) {
       HttpOverrides.global = CustomHttpOverrides();
@@ -134,8 +139,7 @@ class _AppState extends State<App> with WidgetsBindingObserver {
 
     // Load localization using the system locale
     initApp();
-    Future.microtask(
-        () => getIt<AppSettingBloc>().add(LoadSettingsEvent()));
+    Future.microtask(() => getIt<AppSettingBloc>().add(LoadSettingsEvent()));
 
     // TODO(xieyz): background task
     // WidgetsBinding.instance.addPostFrameCallback((_) {

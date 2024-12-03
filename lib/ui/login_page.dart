@@ -7,7 +7,6 @@ import 'package:fstation/ui/widget/auth/sign_in_form.dart';
 import 'package:fstation/ui/widget/auth/sign_up_form.dart';
 import 'package:fstation/ui/widget/dialog/quit_app_dialog.dart';
 import 'package:fstation/ui/widget/flip_card_animation.dart';
-import 'package:fstation/ui/widget/glassmorphism_cover.dart';
 
 import '../bloc/auth_session_bloc.dart';
 import '../bloc/auth_session_state.dart';
@@ -86,24 +85,6 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
               ),
-            ),
-            Positioned(
-              top: 20,
-              left: 20,
-              child: Navigator.of(context).canPop()
-                  ? GlassMorphismCover(
-                      borderRadius: BorderRadius.circular(50),
-                      child: IconButton(
-                        icon: const Icon(
-                          Icons.arrow_back,
-                          color: Colors.white,
-                        ),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    )
-                  : const SizedBox.shrink(),
             ),
           ],
         ),

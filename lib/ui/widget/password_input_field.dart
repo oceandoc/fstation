@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../extension/auth_page_theme_extensions.dart';
 
-class AuthPasswordInput extends StatefulWidget {
-  const AuthPasswordInput({
+class PasswordInputField extends StatefulWidget {
+  const PasswordInputField({
     required this.getPasswordErrors, required this.onPasswordChanged, super.key,
     this.autoFocus = false,
     this.hintText = 'password',
@@ -14,10 +14,10 @@ class AuthPasswordInput extends StatefulWidget {
   final String hintText;
 
   @override
-  State<AuthPasswordInput> createState() => _AuthPasswordInputState();
+  State<PasswordInputField> createState() => _PasswordInputFieldState();
 }
 
-class _AuthPasswordInputState extends State<AuthPasswordInput> {
+class _PasswordInputFieldState extends State<PasswordInputField> {
   bool _passwordVisibility = true;
 
   void _togglePasswordVisibility() => setState(() {

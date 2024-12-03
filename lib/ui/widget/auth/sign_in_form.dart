@@ -38,7 +38,7 @@ class _SignInFormState extends State<SignInForm> {
 
   Future<dz.Either<ForgotPasswordFailure, bool>> submitForgotPasswordEmail(
       String forgotPasswordEmail) async {
-    return bloc.submitForgotPasswordEmail(forgotPasswordEmail);
+    return bloc.submitForgotPasswordName(forgotPasswordEmail);
   }
 
   @override
@@ -79,8 +79,8 @@ class _SignInFormState extends State<SignInForm> {
           return null;
         }
 
-        void onEmailChanged(String email) =>
-            bloc.add(AuthFormInputsChangedEvent(email: email));
+        void onNameChanged(String name) =>
+            bloc.add(AuthFormInputsChangedEvent(name: name));
 
         void onPasswordChanged(String password) =>
             bloc.add(AuthFormInputsChangedEvent(password: password));
@@ -109,14 +109,14 @@ class _SignInFormState extends State<SignInForm> {
                   Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      AuthEmailInput(
+                      EmailInputField(
                         getEmailErrors: getEmailErrors,
-                        onEmailChanged: onEmailChanged,
+                        onEmailChanged: onNameChanged,
                       ),
                       const SizedBox(
                         height: 20,
                       ),
-                      AuthPasswordInput(
+                      PasswordInputField(
                         getPasswordErrors: getPasswordErrors,
                         onPasswordChanged: onPasswordChanged,
                       ),

@@ -18,9 +18,12 @@ final GoRouter router = GoRouter(
       return '/splash';
     } else if (UserManager.instance.isAuth) {
       return '/home';
-    } else {
+    } else if (SettingImpl.instance.serverAddr.isEmpty) {
       return '/server_config';
+    } else if (!UserManager.instance.isAuth) {
+      return '/login';
     }
+    return null;
   },
   errorBuilder: (context, state) {
     return ErrorPage(error: state.error);

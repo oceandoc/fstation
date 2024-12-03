@@ -8,8 +8,8 @@ abstract class AuthFormEvent extends Equatable {
 }
 
 class AuthFormInputsChangedEvent extends AuthFormEvent {
-  const AuthFormInputsChangedEvent({this.email, this.password});
-  final String? email;
+  const AuthFormInputsChangedEvent({this.name, this.password});
+  final String? name;
   final String? password;
 }
 

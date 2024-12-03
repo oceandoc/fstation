@@ -15,7 +15,7 @@ import '../model/failures.dart';
 import '../model/user.dart';
 import '../util/network_util.dart';
 import '../util/util.dart';
-import '../util/validator/email_validator.dart';
+import '../util/validator/name_validator.dart';
 import '../util/validator/password_validator.dart';
 import 'grpc_client.dart';
 import 'logger.dart';
@@ -171,16 +171,18 @@ class UserManager {
     required String email,
     required String password,
   }) async {
-    Logger.info('signUpWithEmailAndPassword - [$email, $password]');
+    Logger.info('signUp - [$email, $password]');
     if (!ConnectivityUtil.instance.hasInternetConnection()) {
       return Left(SignUpFailure.noInternetConnection());
     }
 
     final userRes = await GrpcClient.instance.register(email, password);
     if (userRes.errCode == ErrCode.Success) {
+      Logger.info('test');
       return Right(User(
           name: email, token: userRes.token, tokenUpdateTime: DateTime.now()));
     }
+    Logger.info('test1');
     return Left(SignUpFailure.unknownError('check user name or password'));
   }
 
@@ -258,10 +260,10 @@ class UserManager {
     }
   }
 
-  Future<Either<SignUpFailure, User>> signUpWithEmailAndPassword(
+  Future<Either<SignUpFailure, User>> signUpWithNameAndPassword(
       String name, String password) {
     try {
-      GetIt.I<EmailValidator>().validate(name);
+      GetIt.I<NameValidator>().validate(name);
       GetIt.I<PasswordValidator>().validate(password);
     } on InvalidPasswordException catch (e) {
       return Future.value(
@@ -270,10 +272,10 @@ class UserManager {
     return signUp(email: name, password: password);
   }
 
-  Future<Either<ForgotPasswordFailure, bool>> submitForgotPasswordEmail(
-      String forgotPasswordEmail) async {
+  Future<Either<ForgotPasswordFailure, bool>> submitForgotPasswordName(
+      String forgotPasswordName) async {
     try {
-      GetIt.I<EmailValidator>().validate(forgotPasswordEmail);
+      GetIt.I<NameValidator>().validate(forgotPasswordName);
 
       if (!ConnectivityUtil.instance.hasInternetConnection()) {
         return Left(ForgotPasswordFailure.noInternetConnection());

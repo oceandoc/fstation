@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fstation/ui/widget/password_input_field.dart';
 import 'package:fstation/ui/widget/buttons.dart';
+import 'package:fstation/ui/widget/password_input_field.dart';
+
 import '../../../bloc/auth_form_bloc.dart';
 import '../../../bloc/auth_form_event.dart';
 import '../../../bloc/auth_form_state.dart';
 import '../../../generated/l10n.dart';
 import '../../../util/util.dart';
-import 'auth_change.dart';
-import '../email_input_field.dart';
 import '../form_dimensions.dart';
 import '../glassmorphism_cover.dart';
+import '../name_input_field.dart';
+import 'auth_change.dart';
 
 class SignUpForm extends StatefulWidget {
   const SignUpForm({
@@ -52,10 +53,10 @@ class _SignUpFormState extends State<SignUpForm> {
         }
       },
       builder: (context, state) {
-        String? getEmailErrors() {
+        String? getNameErrors() {
           if (state is AuthFormSubmissionFailed &&
-              state.errors.containsKey('email')) {
-            return state.errors['email']![0].toString();
+              state.errors.containsKey('name')) {
+            return state.errors['name']![0].toString();
           }
           return null;
         }
@@ -68,8 +69,8 @@ class _SignUpFormState extends State<SignUpForm> {
           return null;
         }
 
-        void onEmailChanged(String email) =>
-            bloc.add(AuthFormInputsChangedEvent(email: email));
+        void onNameChanged(String name) =>
+            bloc.add(AuthFormInputsChangedEvent(name: name));
 
         void onPasswordChanged(String password) =>
             bloc.add(AuthFormInputsChangedEvent(password: password));
@@ -88,20 +89,19 @@ class _SignUpFormState extends State<SignUpForm> {
                     Localization.current.sign_up,
                     style: const TextStyle(
                       fontSize: 25,
-                      // color: Colors.white,
                     ),
                   ),
                   Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      AuthEmailInput(
-                        getEmailErrors: getEmailErrors,
-                        onEmailChanged: onEmailChanged,
+                      NameInputField(
+                        getNameErrors: getNameErrors,
+                        onNameChanged: onNameChanged,
                       ),
                       const SizedBox(
                         height: 20,
                       ),
-                      AuthPasswordInput(
+                      PasswordInputField(
                         getPasswordErrors: getPasswordErrors,
                         onPasswordChanged: onPasswordChanged,
                       ),

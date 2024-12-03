@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 
 import '../../extension/auth_page_theme_extensions.dart';
 
-class EmailInputField extends StatelessWidget {
-  const EmailInputField({
-    required this.getEmailErrors, required this.onEmailChanged, super.key,
+class NameInputField extends StatelessWidget {
+  const NameInputField({
+    required this.getNameErrors, required this.onNameChanged, super.key,
     this.autoFocus = false,
   });
-  final String? Function() getEmailErrors;
-  final void Function(String email) onEmailChanged;
+  final String? Function() getNameErrors;
+  final void Function(String email) onNameChanged;
   final bool autoFocus;
 
   @override
@@ -35,7 +35,7 @@ class EmailInputField extends StatelessWidget {
           autofocus: autoFocus,
           style: TextStyle(color: textColor),
           decoration: InputDecoration(
-            hintText: 'email',
+            hintText: 'name',
             hintStyle: TextStyle(color: hintTextColor),
             prefixIcon: Icon(
               Icons.account_circle,
@@ -50,7 +50,7 @@ class EmailInputField extends StatelessWidget {
                 width: 0.7,
               ),
             ),
-            errorText: getEmailErrors(),
+            errorText: getNameErrors(),
             errorStyle: TextStyle(
               color: errorColor,
               fontWeight: FontWeight.bold,
@@ -61,7 +61,7 @@ class EmailInputField extends StatelessWidget {
           ),
           textInputAction: TextInputAction.next,
           keyboardType: TextInputType.emailAddress,
-          onChanged: onEmailChanged,
+          onChanged: onNameChanged,
         ),
       ],
     );
