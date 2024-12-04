@@ -33,7 +33,6 @@ class GrpcClient {
         ),
       );
 
-      // Wait for channel to be ready with timeout
       await _channel!.getConnection().timeout(
             const Duration(seconds: 5),
             onTimeout: () =>
@@ -42,6 +41,9 @@ class GrpcClient {
 
       _stub = GrpcFileClient(_channel!);
       Logger.info('Connected to gRPC server at $host:$port');
+
+      // Perform handshake after connection
+      await handshake();
     } catch (e, stack) {
       Logger.error('Failed to connect to gRPC server', e, stack);
       await shutdown();
@@ -216,6 +218,25 @@ class GrpcClient {
     try {
       return await _stub!.serverOp(request);
     } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<ServerRes> handshake() async {
+    final request = ServerReq()
+      ..requestId = _uuid.v4()
+      ..op = ServerOp.ServerHandShake;
+
+    try {
+      final response = await _stub!.serverOp(request);
+      if (response.errCode == ErrCode.Success &&
+          response.serverUuid.isNotEmpty) {
+        Logger.info(
+            'Server handshake successful, UUID: ${response.serverUuid}');
+      }
+      return response;
+    } catch (e, stack) {
+      Logger.error('Server handshake failed', e, stack);
       rethrow;
     }
   }

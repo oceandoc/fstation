@@ -58,6 +58,7 @@ message ServerReq {
 message ServerRes {
   ErrCode err_code = 1;
   string status = 2;
+  string server_uuid = 3;
 }
 
 enum RepoOp {

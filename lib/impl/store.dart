@@ -102,7 +102,8 @@ class Store {
           windows_always_ontop INTEGER DEFAULT 0,
           enable_fingerprint INTEGER DEFAULT 0,
           enable_pin INTEGER DEFAULT 0,
-          server_addr TEXT DEFAULT ''
+          server_addr TEXT DEFAULT '',
+          server_uuid TEXT DEFAULT ''
         )
       ''');
 
@@ -124,7 +125,8 @@ class Store {
       'windows_always_ontop': 0,
       'enable_fingerprint': 0,
       'enable_pin': 0,
-      'server_addr': ''
+      'server_addr': '',
+      'server_uuid': ''
     });
 
     await db.execute('''

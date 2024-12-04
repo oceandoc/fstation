@@ -392,6 +392,7 @@ class ServerRes extends $pb.GeneratedMessage {
   factory ServerRes({
     $1.ErrCode? errCode,
     $core.String? status,
+    $core.String? serverUuid,
   }) {
     final $result = create();
     if (errCode != null) {
@@ -399,6 +400,9 @@ class ServerRes extends $pb.GeneratedMessage {
     }
     if (status != null) {
       $result.status = status;
+    }
+    if (serverUuid != null) {
+      $result.serverUuid = serverUuid;
     }
     return $result;
   }
@@ -409,6 +413,7 @@ class ServerRes extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'ServerRes', package: const $pb.PackageName(_omitMessageNames ? '' : 'oceandoc.proto'), createEmptyInstance: create)
     ..e<$1.ErrCode>(1, _omitFieldNames ? '' : 'errCode', $pb.PbFieldType.OE, defaultOrMaker: $1.ErrCode.Success, valueOf: $1.ErrCode.valueOf, enumValues: $1.ErrCode.values)
     ..aOS(2, _omitFieldNames ? '' : 'status')
+    ..aOS(3, _omitFieldNames ? '' : 'serverUuid')
     ..hasRequiredFields = false
   ;
 
@@ -450,6 +455,15 @@ class ServerRes extends $pb.GeneratedMessage {
   $core.bool hasStatus() => $_has(1);
   @$pb.TagNumber(2)
   void clearStatus() => clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.String get serverUuid => $_getSZ(2);
+  @$pb.TagNumber(3)
+  set serverUuid($core.String v) { $_setString(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasServerUuid() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearServerUuid() => clearField(3);
 }
 
 class RepoReq extends $pb.GeneratedMessage {

@@ -2,7 +2,9 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fstation/impl/user_manager.dart';
 import 'package:injectable/injectable.dart';
+import 'package:go_router/go_router.dart';
 
+import '../impl/router.dart';
 import '../model/failures.dart';
 import '../model/user.dart';
 import 'auth_form_event.dart';
@@ -64,16 +66,45 @@ class AuthFormBloc extends Bloc<AuthFormEvent, AuthFormState> {
             name: state.name, password: state.password, errors: errorMap));
       }, (user) async {
         _authSessionBloc.add(UserLoggedIn(lastLoggedInUserId: state.name));
-
         emit(AuthFormSubmissionSuccessful(
             name: state.name, password: state.password));
         UserManager.instance.cancelFingerprintAuth();
+        router.go('/home');
       });
     });
 
     on<AuthFormSignInSubmittedEvent>((event, emit) async {
       emit(AuthFormSubmissionLoading(
           name: state.name, password: state.password));
+
+      final result = await UserManager.instance
+          .signIn(email: state.name, password: state.password);
+
+      await result.fold((error) {
+        final errorMap = <String, List>{};
+
+        if (error.code == SignInFailure.kUnknownError) {
+          errorMap['general'] = [error.message];
+        }
+        if (error.code == SignInFailure.kInvalidUserName) {
+          errorMap['name'] = [error.message];
+        }
+        if (error.code == SignInFailure.kInvalidUserPassword) {
+          errorMap['password'] = [error.message];
+        }
+        if (error.code == SignInFailure.kNoInternetConnection) {
+          errorMap['general'] = [error.message];
+        }
+
+        emit(AuthFormSubmissionFailed(
+            name: state.name, password: state.password, errors: errorMap));
+      }, (user) async {
+        _authSessionBloc.add(UserLoggedIn(lastLoggedInUserId: state.name));
+        emit(AuthFormSubmissionSuccessful(
+            name: state.name, password: state.password));
+        UserManager.instance.cancelFingerprintAuth();
+        router.go('/home');
+      });
     });
 
     on<ResetAuthFormEvent>((event, emit) {
@@ -85,7 +116,6 @@ class AuthFormBloc extends Bloc<AuthFormEvent, AuthFormState> {
 
   Future<Either<ForgotPasswordFailure, bool>> submitForgotPasswordName(
       String forgotPasswordName) async {
-    return UserManager.instance
-        .submitForgotPasswordName(forgotPasswordName);
+    return UserManager.instance.submitForgotPasswordName(forgotPasswordName);
   }
 }

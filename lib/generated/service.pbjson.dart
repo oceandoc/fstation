@@ -174,13 +174,15 @@ const ServerRes$json = {
   '2': [
     {'1': 'err_code', '3': 1, '4': 1, '5': 14, '6': '.oceandoc.proto.ErrCode', '10': 'errCode'},
     {'1': 'status', '3': 2, '4': 1, '5': 9, '10': 'status'},
+    {'1': 'server_uuid', '3': 3, '4': 1, '5': 9, '10': 'serverUuid'},
   ],
 };
 
 /// Descriptor for `ServerRes`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List serverResDescriptor = $convert.base64Decode(
     'CglTZXJ2ZXJSZXMSMgoIZXJyX2NvZGUYASABKA4yFy5vY2VhbmRvYy5wcm90by5FcnJDb2RlUg'
-    'dlcnJDb2RlEhYKBnN0YXR1cxgCIAEoCVIGc3RhdHVz');
+    'dlcnJDb2RlEhYKBnN0YXR1cxgCIAEoCVIGc3RhdHVzEh8KC3NlcnZlcl91dWlkGAMgASgJUgpz'
+    'ZXJ2ZXJVdWlk');
 
 @$core.Deprecated('Use repoReqDescriptor instead')
 const RepoReq$json = {

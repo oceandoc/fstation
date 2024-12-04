@@ -21,6 +21,7 @@ import 'package:fstation/util/constants.dart';
 import 'package:fstation/util/dependency_injection.dart';
 import 'package:fstation/util/device_info.dart';
 import 'package:fstation/util/http_override.dart';
+import 'package:fstation/util/local_host_discover.dart';
 import 'package:fstation/util/network_util.dart';
 import 'package:fstation/util/path_util.dart';
 import 'package:fstation/util/util.dart';
@@ -29,12 +30,53 @@ import 'package:worker_manager/worker_manager.dart';
 
 import 'bloc/auth_form_bloc.dart';
 import 'bloc/auth_session_bloc.dart';
+import 'generated/error.pbenum.dart';
 import 'impl/grpc_client.dart';
 import 'impl/logger.dart';
 import 'impl/setting_impl.dart';
 import 'impl/store.dart';
 import 'impl/user_manager.dart';
 import 'util/themes.dart';
+
+Future<void> checkAndConnectServer() async {
+  if (SettingImpl.instance.serverUuid.isNotEmpty) {
+    final discover = LocalHostDiscover.instance;
+    await discover.discoverServices();
+
+    bool serverFound = false;
+    for (final service in discover.services) {
+      try {
+        // Try to connect and handshake with each discovered server
+        final client = GrpcClient.instance;
+        final parts = service.split(':');
+        if (parts.length == 2) {
+          await client.connect(parts[0], int.parse(parts[1]));
+          final response = await client.handshake();
+
+          if (response.errCode == ErrCode.Success &&
+              response.serverUuid == SettingImpl.instance.serverUuid) {
+            // Found matching server
+            serverFound = true;
+            if (service != SettingImpl.instance.serverAddr) {
+              await SettingImpl.instance.saveServerAddr(service);
+            }
+            await grpcClientInit();
+            break;
+          }
+        }
+      } catch (e) {
+        Logger.error('Failed to connect to discovered server: $service', e);
+        continue;
+      }
+    }
+
+    if (!serverFound) {
+      Logger.warning(
+          'Known server (UUID: ${SettingImpl.instance.serverUuid}) not found');
+      await SettingImpl.instance.saveServerConnectionFailed(true);
+    }
+  }
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -68,9 +110,7 @@ void main() async {
     await SettingImpl.instance.init();
     await WindowUtil.init();
 
-    if (SettingImpl.instance.serverAddr.isNotEmpty) {
-      await grpcClientInit();
-    }
+    await checkAndConnectServer();
 
     if (!kIsWeb) {
       HttpOverrides.global = CustomHttpOverrides();

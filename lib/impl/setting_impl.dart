@@ -155,4 +155,18 @@ class SettingImpl {
   bool get enableFingerprint => settings.enableFingerprint;
 
   bool get enablePin => settings.enablePin;
+
+  String get serverUuid => settings.serverUuid;
+
+  Future<void> saveServerUuid(String uuid) async {
+    _settings = settings.copyWith(serverUuid: uuid);
+    await Store.instance.saveSettings(_settings!);
+  }
+
+  Future<void> saveServerConnectionFailed(bool failed) async {
+    _settings = settings.copyWith(serverConnectionFailed: failed);
+    await Store.instance.saveSettings(_settings!);
+  }
+
+  bool get serverConnectionFailed => settings.serverConnectionFailed;
 }
