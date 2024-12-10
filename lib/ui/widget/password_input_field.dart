@@ -27,7 +27,7 @@ class _PasswordInputFieldState extends State<PasswordInputField> {
   @override
   Widget build(BuildContext context) {
     final errorColor =
-        Theme.of(context).extension<AuthPageThemeExtensions>()!.linkColor;
+        Theme.of(context).extension<AuthPageThemeExtensions>()!.errorTextColor;
 
     final prefixIconColor =
         Theme.of(context).extension<AuthPageThemeExtensions>()!.prefixIconColor;

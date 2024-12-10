@@ -162,11 +162,4 @@ class SettingImpl {
     _settings = settings.copyWith(serverUuid: uuid);
     await Store.instance.saveSettings(_settings!);
   }
-
-  Future<void> saveServerConnectionFailed(bool failed) async {
-    _settings = settings.copyWith(serverConnectionFailed: failed);
-    await Store.instance.saveSettings(_settings!);
-  }
-
-  bool get serverConnectionFailed => settings.serverConnectionFailed;
 }

@@ -33,7 +33,7 @@ class _LoginPageState extends State<LoginPage> {
   void didChangeDependencies() {
     if (!_isInitialized) {
       final currentAuthState = BlocProvider.of<AuthSessionBloc>(context).state;
-      if (currentAuthState is Unauthenticated) {
+      if (currentAuthState is UnauthenticatedState) {
         UserManager.instance.startFingerPrintAuthIfNeeded();
       }
       _isInitialized = true;

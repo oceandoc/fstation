@@ -55,24 +55,12 @@ class ErrCode extends $pb.ProtobufEnum {
   static const ErrCode Repo_data_not_exists = ErrCode._(13005, _omitEnumNames ? '' : 'Repo_data_not_exists');
   static const ErrCode Repo_meta_not_exists = ErrCode._(13006, _omitEnumNames ? '' : 'Repo_meta_not_exists');
   static const ErrCode Sync_interrupted = ErrCode._(15000, _omitEnumNames ? '' : 'Sync_interrupted');
-  static const ErrCode User_invalid_name = ErrCode._(17000, _omitEnumNames ? '' : 'User_invalid_name');
-  static const ErrCode User_invalid_passwd = ErrCode._(17001, _omitEnumNames ? '' : 'User_invalid_passwd');
-  static const ErrCode User_session_error = ErrCode._(17002, _omitEnumNames ? '' : 'User_session_error');
-  static const ErrCode User_register_prepare_error = ErrCode._(17003, _omitEnumNames ? '' : 'User_register_prepare_error');
-  static const ErrCode User_register_execute_error = ErrCode._(17004, _omitEnumNames ? '' : 'User_register_execute_error');
-  static const ErrCode User_register_error = ErrCode._(17005, _omitEnumNames ? '' : 'User_register_error');
-  static const ErrCode User_delete_prepare_error = ErrCode._(17006, _omitEnumNames ? '' : 'User_delete_prepare_error');
-  static const ErrCode User_delete_execute_error = ErrCode._(17007, _omitEnumNames ? '' : 'User_delete_execute_error');
-  static const ErrCode User_delete_error = ErrCode._(17008, _omitEnumNames ? '' : 'User_delete_error');
-  static const ErrCode User_login_prepare_error = ErrCode._(17009, _omitEnumNames ? '' : 'User_login_prepare_error');
-  static const ErrCode User_login_execute_error = ErrCode._(17010, _omitEnumNames ? '' : 'User_login_execute_error');
-  static const ErrCode User_login_error = ErrCode._(17011, _omitEnumNames ? '' : 'User_login_error');
-  static const ErrCode User_exists_prepare_error = ErrCode._(17012, _omitEnumNames ? '' : 'User_exists_prepare_error');
-  static const ErrCode User_exists_execute_error = ErrCode._(17013, _omitEnumNames ? '' : 'User_exists_execute_error');
-  static const ErrCode User_exists_error = ErrCode._(17014, _omitEnumNames ? '' : 'User_exists_error');
-  static const ErrCode User_exists = ErrCode._(17015, _omitEnumNames ? '' : 'User_exists');
-  static const ErrCode User_not_exists = ErrCode._(17016, _omitEnumNames ? '' : 'User_not_exists');
-  static const ErrCode User_change_password_error = ErrCode._(17017, _omitEnumNames ? '' : 'User_change_password_error');
+  static const ErrCode User_session_error = ErrCode._(17001, _omitEnumNames ? '' : 'User_session_error');
+  static const ErrCode User_name_error = ErrCode._(17002, _omitEnumNames ? '' : 'User_name_error');
+  static const ErrCode User_passwd_error = ErrCode._(17003, _omitEnumNames ? '' : 'User_passwd_error');
+  static const ErrCode User_exists = ErrCode._(17004, _omitEnumNames ? '' : 'User_exists');
+  static const ErrCode User_not_exists = ErrCode._(17005, _omitEnumNames ? '' : 'User_not_exists');
+  static const ErrCode User_disabled = ErrCode._(17006, _omitEnumNames ? '' : 'User_disabled');
 
   static const $core.List<ErrCode> values = <ErrCode> [
     Success,
@@ -116,24 +104,12 @@ class ErrCode extends $pb.ProtobufEnum {
     Repo_data_not_exists,
     Repo_meta_not_exists,
     Sync_interrupted,
-    User_invalid_name,
-    User_invalid_passwd,
     User_session_error,
-    User_register_prepare_error,
-    User_register_execute_error,
-    User_register_error,
-    User_delete_prepare_error,
-    User_delete_execute_error,
-    User_delete_error,
-    User_login_prepare_error,
-    User_login_execute_error,
-    User_login_error,
-    User_exists_prepare_error,
-    User_exists_execute_error,
-    User_exists_error,
+    User_name_error,
+    User_passwd_error,
     User_exists,
     User_not_exists,
-    User_change_password_error,
+    User_disabled,
   ];
 
   static final $core.Map<$core.int, ErrCode> _byValue = $pb.ProtobufEnum.initByValue(values);

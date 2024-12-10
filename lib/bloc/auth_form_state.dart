@@ -10,29 +10,29 @@ abstract class AuthFormState extends Equatable {
   List<Object> get props => [name, password];
 }
 
-class AuthFormInitial extends AuthFormState {
-  const AuthFormInitial({required super.name, required super.password});
+class AuthFormInitialState extends AuthFormState {
+  const AuthFormInitialState({required super.name, required super.password});
 }
 
-class AuthFormSubmissionLoading extends AuthFormState {
-  const AuthFormSubmissionLoading(
+class AuthFormSubmissionLoadingState extends AuthFormState {
+  const AuthFormSubmissionLoadingState(
       {required super.name, required super.password});
 }
 
-class AuthFormSubmissionSuccessful extends AuthFormState {
-  const AuthFormSubmissionSuccessful(
+class AuthFormSubmitSuccessState extends AuthFormState {
+  const AuthFormSubmitSuccessState(
       {required super.name, required super.password});
 }
 
-class AuthFormSubmissionFailed extends AuthFormState {
-  const AuthFormSubmissionFailed(
+class AuthFormSubmitFailedState extends AuthFormState {
+  const AuthFormSubmitFailedState(
       {required super.name, required super.password, required this.errors});
 
   final Map<String, List> errors;
 
   @override
   String toString() {
-    return 'AuthFormSubmissionFailed(email: $name, password: $password, errors: $errors)';
+    return 'AuthFormSubmitFailed(name: $name, password: $password, errors: $errors)';
   }
 
   @override

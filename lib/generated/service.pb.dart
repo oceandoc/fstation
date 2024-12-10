@@ -393,6 +393,7 @@ class ServerRes extends $pb.GeneratedMessage {
     $1.ErrCode? errCode,
     $core.String? status,
     $core.String? serverUuid,
+    $core.String? handshakeMsg,
   }) {
     final $result = create();
     if (errCode != null) {
@@ -404,6 +405,9 @@ class ServerRes extends $pb.GeneratedMessage {
     if (serverUuid != null) {
       $result.serverUuid = serverUuid;
     }
+    if (handshakeMsg != null) {
+      $result.handshakeMsg = handshakeMsg;
+    }
     return $result;
   }
   ServerRes._() : super();
@@ -414,6 +418,7 @@ class ServerRes extends $pb.GeneratedMessage {
     ..e<$1.ErrCode>(1, _omitFieldNames ? '' : 'errCode', $pb.PbFieldType.OE, defaultOrMaker: $1.ErrCode.Success, valueOf: $1.ErrCode.valueOf, enumValues: $1.ErrCode.values)
     ..aOS(2, _omitFieldNames ? '' : 'status')
     ..aOS(3, _omitFieldNames ? '' : 'serverUuid')
+    ..aOS(4, _omitFieldNames ? '' : 'handshakeMsg')
     ..hasRequiredFields = false
   ;
 
@@ -464,6 +469,15 @@ class ServerRes extends $pb.GeneratedMessage {
   $core.bool hasServerUuid() => $_has(2);
   @$pb.TagNumber(3)
   void clearServerUuid() => clearField(3);
+
+  @$pb.TagNumber(4)
+  $core.String get handshakeMsg => $_getSZ(3);
+  @$pb.TagNumber(4)
+  set handshakeMsg($core.String v) { $_setString(3, v); }
+  @$pb.TagNumber(4)
+  $core.bool hasHandshakeMsg() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearHandshakeMsg() => clearField(4);
 }
 
 class RepoReq extends $pb.GeneratedMessage {

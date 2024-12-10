@@ -47,14 +47,14 @@ class _SignUpFormState extends State<SignUpForm> {
     return BlocConsumer<AuthFormBloc, AuthFormState>(
       bloc: bloc,
       listener: (context, state) {
-        if (state is AuthFormSubmissionFailed &&
+        if (state is AuthFormSubmitFailedState &&
             state.errors.containsKey('general')) {
           showToast(state.errors['general']![0].toString());
         }
       },
       builder: (context, state) {
         String? getNameErrors() {
-          if (state is AuthFormSubmissionFailed &&
+          if (state is AuthFormSubmitFailedState &&
               state.errors.containsKey('name')) {
             return state.errors['name']![0].toString();
           }
@@ -62,7 +62,7 @@ class _SignUpFormState extends State<SignUpForm> {
         }
 
         String? getPasswordErrors() {
-          if (state is AuthFormSubmissionFailed &&
+          if (state is AuthFormSubmitFailedState &&
               state.errors.containsKey('password')) {
             return state.errors['password']?[0].toString();
           }
@@ -75,7 +75,7 @@ class _SignUpFormState extends State<SignUpForm> {
         void onPasswordChanged(String password) =>
             bloc.add(AuthFormInputsChangedEvent(password: password));
 
-        void onSubmitted() => bloc.add(AuthFormSignUpSubmittedEvent());
+        void onSubmitted() => bloc.add(AuthFormSignUpSubmittedEvent(context: context));
 
         return GlassMorphismCover(
           borderRadius: BorderRadius.circular(16),
@@ -109,7 +109,7 @@ class _SignUpFormState extends State<SignUpForm> {
                         height: 30,
                       ),
                       SubmitButton(
-                        isLoading: state is AuthFormSubmissionLoading,
+                        isLoading: state is AuthFormSubmissionLoadingState,
                         onSubmitted: onSubmitted,
                         buttonText: Localization.current.submit,
                       )

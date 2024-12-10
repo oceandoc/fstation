@@ -57,22 +57,22 @@ class _SignInFormState extends State<SignInForm> {
     return BlocConsumer<AuthFormBloc, AuthFormState>(
       bloc: bloc,
       listener: (context, state) {
-        if (state is AuthFormSubmissionFailed &&
+        if (state is AuthFormSubmitFailedState &&
             state.errors.containsKey('general')) {
           showToast(state.errors['general']![0].toString());
         }
       },
       builder: (context, state) {
-        String? getEmailErrors() {
-          if (state is AuthFormSubmissionFailed &&
-              state.errors.containsKey('email')) {
-            return state.errors['email']![0].toString();
+        String? getNameErrors() {
+          if (state is AuthFormSubmitFailedState &&
+              state.errors.containsKey('name')) {
+            return state.errors['name']![0].toString();
           }
           return null;
         }
 
         String? getPasswordErrors() {
-          if (state is AuthFormSubmissionFailed &&
+          if (state is AuthFormSubmitFailedState &&
               state.errors.containsKey('password')) {
             return state.errors['password']?[0].toString();
           }
@@ -85,8 +85,12 @@ class _SignInFormState extends State<SignInForm> {
         void onPasswordChanged(String password) =>
             bloc.add(AuthFormInputsChangedEvent(password: password));
 
-        void onSubmitted() => bloc.add(AuthFormSignInSubmittedEvent(
-            lastLoggedInUserId: widget.lastLoggedInUserId));
+        void onSubmitted() {
+          bloc.add(AuthFormSignInSubmittedEvent(
+            lastLoggedInUserId: widget.lastLoggedInUserId,
+            context: context,
+          ));
+        }
 
         final linkColor =
             Theme.of(context).extension<AuthPageThemeExtensions>()!.linkColor;
@@ -110,7 +114,7 @@ class _SignInFormState extends State<SignInForm> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       EmailInputField(
-                        getEmailErrors: getEmailErrors,
+                        getEmailErrors: getNameErrors,
                         onEmailChanged: onNameChanged,
                       ),
                       const SizedBox(
@@ -124,7 +128,7 @@ class _SignInFormState extends State<SignInForm> {
                         height: 30,
                       ),
                       SubmitButton(
-                        isLoading: state is AuthFormSubmissionLoading,
+                        isLoading: state is AuthFormSubmissionLoadingState,
                         onSubmitted: onSubmitted,
                         buttonText: Localization.current.submit,
                       )

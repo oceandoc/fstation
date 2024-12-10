@@ -58,24 +58,12 @@ const ErrCode$json = {
     {'1': 'Repo_data_not_exists', '2': 13005},
     {'1': 'Repo_meta_not_exists', '2': 13006},
     {'1': 'Sync_interrupted', '2': 15000},
-    {'1': 'User_invalid_name', '2': 17000},
-    {'1': 'User_invalid_passwd', '2': 17001},
-    {'1': 'User_session_error', '2': 17002},
-    {'1': 'User_register_prepare_error', '2': 17003},
-    {'1': 'User_register_execute_error', '2': 17004},
-    {'1': 'User_register_error', '2': 17005},
-    {'1': 'User_delete_prepare_error', '2': 17006},
-    {'1': 'User_delete_execute_error', '2': 17007},
-    {'1': 'User_delete_error', '2': 17008},
-    {'1': 'User_login_prepare_error', '2': 17009},
-    {'1': 'User_login_execute_error', '2': 17010},
-    {'1': 'User_login_error', '2': 17011},
-    {'1': 'User_exists_prepare_error', '2': 17012},
-    {'1': 'User_exists_execute_error', '2': 17013},
-    {'1': 'User_exists_error', '2': 17014},
-    {'1': 'User_exists', '2': 17015},
-    {'1': 'User_not_exists', '2': 17016},
-    {'1': 'User_change_password_error', '2': 17017},
+    {'1': 'User_session_error', '2': 17001},
+    {'1': 'User_name_error', '2': 17002},
+    {'1': 'User_passwd_error', '2': 17003},
+    {'1': 'User_exists', '2': 17004},
+    {'1': 'User_not_exists', '2': 17005},
+    {'1': 'User_disabled', '2': 17006},
   ],
 };
 
@@ -98,15 +86,8 @@ final $typed_data.Uint8List errCodeDescriptor = $convert.base64Decode(
     'chDlXRIUCg9SZXBvX25vdF9leGlzdHMQyGUSFAoPUmVwb191dWlkX2Vycm9yEMllEiEKHFJlcG'
     '9fZmx1c2hfcmVwb19jb25maWdfZXJyb3IQymUSGwoWUmVwb19jcmVhdGVfcmVwb19lcnJvchDL'
     'ZRIcChdSZXBvX3Jlc3RvcmVfcmVwb19lcnJvchDMZRIZChRSZXBvX2RhdGFfbm90X2V4aXN0cx'
-    'DNZRIZChRSZXBvX21ldGFfbm90X2V4aXN0cxDOZRIVChBTeW5jX2ludGVycnVwdGVkEJh1EhcK'
-    'EVVzZXJfaW52YWxpZF9uYW1lEOiEARIZChNVc2VyX2ludmFsaWRfcGFzc3dkEOmEARIYChJVc2'
-    'VyX3Nlc3Npb25fZXJyb3IQ6oQBEiEKG1VzZXJfcmVnaXN0ZXJfcHJlcGFyZV9lcnJvchDrhAES'
-    'IQobVXNlcl9yZWdpc3Rlcl9leGVjdXRlX2Vycm9yEOyEARIZChNVc2VyX3JlZ2lzdGVyX2Vycm'
-    '9yEO2EARIfChlVc2VyX2RlbGV0ZV9wcmVwYXJlX2Vycm9yEO6EARIfChlVc2VyX2RlbGV0ZV9l'
-    'eGVjdXRlX2Vycm9yEO+EARIXChFVc2VyX2RlbGV0ZV9lcnJvchDwhAESHgoYVXNlcl9sb2dpbl'
-    '9wcmVwYXJlX2Vycm9yEPGEARIeChhVc2VyX2xvZ2luX2V4ZWN1dGVfZXJyb3IQ8oQBEhYKEFVz'
-    'ZXJfbG9naW5fZXJyb3IQ84QBEh8KGVVzZXJfZXhpc3RzX3ByZXBhcmVfZXJyb3IQ9IQBEh8KGV'
-    'VzZXJfZXhpc3RzX2V4ZWN1dGVfZXJyb3IQ9YQBEhcKEVVzZXJfZXhpc3RzX2Vycm9yEPaEARIR'
-    'CgtVc2VyX2V4aXN0cxD3hAESFQoPVXNlcl9ub3RfZXhpc3RzEPiEARIgChpVc2VyX2NoYW5nZV'
-    '9wYXNzd29yZF9lcnJvchD5hAE=');
+    'DNZRIZChRSZXBvX21ldGFfbm90X2V4aXN0cxDOZRIVChBTeW5jX2ludGVycnVwdGVkEJh1EhgK'
+    'ElVzZXJfc2Vzc2lvbl9lcnJvchDphAESFQoPVXNlcl9uYW1lX2Vycm9yEOqEARIXChFVc2VyX3'
+    'Bhc3N3ZF9lcnJvchDrhAESEQoLVXNlcl9leGlzdHMQ7IQBEhUKD1VzZXJfbm90X2V4aXN0cxDt'
+    'hAESEwoNVXNlcl9kaXNhYmxlZBDuhAE=');
 

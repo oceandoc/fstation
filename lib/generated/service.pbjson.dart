@@ -175,6 +175,7 @@ const ServerRes$json = {
     {'1': 'err_code', '3': 1, '4': 1, '5': 14, '6': '.oceandoc.proto.ErrCode', '10': 'errCode'},
     {'1': 'status', '3': 2, '4': 1, '5': 9, '10': 'status'},
     {'1': 'server_uuid', '3': 3, '4': 1, '5': 9, '10': 'serverUuid'},
+    {'1': 'handshake_msg', '3': 4, '4': 1, '5': 9, '10': 'handshakeMsg'},
   ],
 };
 
@@ -182,7 +183,7 @@ const ServerRes$json = {
 final $typed_data.Uint8List serverResDescriptor = $convert.base64Decode(
     'CglTZXJ2ZXJSZXMSMgoIZXJyX2NvZGUYASABKA4yFy5vY2VhbmRvYy5wcm90by5FcnJDb2RlUg'
     'dlcnJDb2RlEhYKBnN0YXR1cxgCIAEoCVIGc3RhdHVzEh8KC3NlcnZlcl91dWlkGAMgASgJUgpz'
-    'ZXJ2ZXJVdWlk');
+    'ZXJ2ZXJVdWlkEiMKDWhhbmRzaGFrZV9tc2cYBCABKAlSDGhhbmRzaGFrZU1zZw==');
 
 @$core.Deprecated('Use repoReqDescriptor instead')
 const RepoReq$json = {

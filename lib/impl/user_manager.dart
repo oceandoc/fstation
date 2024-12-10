@@ -39,7 +39,9 @@ class UserManager {
 
   User? get currentUser => _currentUser;
 
-  bool get isAuth => _currentUser?.name != null && _currentUser?.token != null;
+  bool _isAuth = false;
+  bool get isAuth => _isAuth;
+  set isAuth(bool value) => _isAuth = value;
 
   String? get lastLoginUser => _currentUser?.name;
 
@@ -132,7 +134,7 @@ class UserManager {
         await fingerPrintAuthStreamSubscription?.cancel();
         isFingerPrintAuthActivated = false;
         GetIt.I<AuthSessionBloc>()
-            .add(UserLoggedIn(lastLoggedInUserId: lastLoginUser));
+            .add(UserLoggedInEvent(lastLoggedInUserId: lastLoginUser));
       } else if (value == FingerPrintAuthState.platformError) {
         await fingerPrintAuthStreamSubscription?.cancel();
         isFingerPrintAuthActivated = false;
@@ -165,55 +167,6 @@ class UserManager {
 
     // Update local state
     _currentUser = user;
-  }
-
-  Future<Either<SignUpFailure, User>> signUp({
-    required String email,
-    required String password,
-  }) async {
-    Logger.info('signUp - [$email, $password]');
-    if (!ConnectivityUtil.instance.hasInternetConnection()) {
-      return Left(SignUpFailure.noInternetConnection());
-    }
-
-    final userRes = await GrpcClient.instance.register(email, password);
-    if (userRes.errCode == ErrCode.Success) {
-      Logger.info('test');
-      return Right(User(
-          name: email, token: userRes.token, tokenUpdateTime: DateTime.now()));
-    }
-    Logger.info('test1');
-    return Left(SignUpFailure.unknownError('check user name or password'));
-  }
-
-  Future<Either<SignInFailure, User>> signIn({
-    required String email,
-    required String password,
-  }) async {
-    Logger.info('signInWithEmailAndPassword - [$email]');
-    if (!ConnectivityUtil.instance.hasInternetConnection()) {
-      return Left(SignInFailure.noInternetConnection());
-    }
-
-    try {
-      final userRes = await GrpcClient.instance.login(email, password);
-      if (userRes.errCode == ErrCode.Success) {
-        final user = User(
-          name: email,
-          token: userRes.token,
-          tokenUpdateTime: DateTime.now(),
-        );
-
-        // Store user data in database
-        await UserManager.instance.updateUser(user);
-
-        return Right(user);
-      }
-      return Left(SignInFailure.invalidUserPasswordCombination());
-    } catch (e) {
-      Logger.error('Sign in failed: $e');
-      return Left(SignInFailure.unknownError());
-    }
   }
 
   Future<void> isFingerprintAuthPossible() async {
@@ -260,16 +213,92 @@ class UserManager {
     }
   }
 
+  Future<Either<SignInFailure, User>> signIn({
+    required String name,
+    required String password,
+  }) async {
+    Logger.info('signIn - [$name]');
+    if (!ConnectivityUtil.instance.hasInternetConnection()) {
+      return Left(SignInFailure.noInternetConnection());
+    }
+
+    //try {
+    final userRes = await GrpcClient.instance.login(name, password);
+    if (userRes.errCode == ErrCode.Success) {
+      final user = User(
+        name: name,
+        token: userRes.token,
+        tokenUpdateTime: DateTime.now(),
+      );
+      await UserManager.instance.updateUser(user);
+      return Right(user);
+    } else if (userRes.errCode == ErrCode.User_name_error) {
+      return Left(SignInFailure.invalidUserName());
+    } else if (userRes.errCode == ErrCode.User_passwd_error) {
+      return Left(SignInFailure.invalidUserPassword());
+    } else if (userRes.errCode == ErrCode.User_not_exists) {
+      return Left(SignInFailure.invalidUserName());
+    } else if (userRes.errCode == ErrCode.User_disabled) {
+      return Left(SignInFailure.userDisabled());
+    }
+    // } catch (e) {
+    //   Logger.error('Sign in failed: $e');
+    // }
+    return Left(SignInFailure.unknownError());
+  }
+
+  Future<Either<SignInFailure, User>> signInWithNameAndPassword(
+      String name, String password) {
+    try {
+      GetIt.I<NameValidator>().validate(name);
+      GetIt.I<PasswordValidator>().validate(password);
+    } on InvalidNameException catch (e) {
+      return Future.value(Left(SignInFailure.invalidUserName(e.message)));
+    } on InvalidPasswordException catch (e) {
+      return Future.value(Left(SignInFailure.invalidUserPassword(e.message)));
+    }
+    return signIn(name: name, password: password);
+  }
+
+  Future<Either<SignUpFailure, User>> signUp({
+    required String name,
+    required String password,
+  }) async {
+    Logger.info('signUp - [$name, $password]');
+    if (!ConnectivityUtil.instance.hasInternetConnection()) {
+      return Left(SignUpFailure.noInternetConnection());
+    }
+
+    try {
+      final userRes = await GrpcClient.instance.register(name, password);
+      if (userRes.errCode == ErrCode.Success) {
+        return Right(User(
+            name: name, token: userRes.token, tokenUpdateTime: DateTime.now()));
+      } else if (userRes.errCode == ErrCode.User_name_error) {
+        return Left(SignUpFailure.invalidUserName());
+      } else if (userRes.errCode == ErrCode.User_passwd_error) {
+        return Left(SignUpFailure.invalidUserPassword());
+      } else if (userRes.errCode == ErrCode.User_exists) {
+        return Left(SignUpFailure.userAlreadyExists());
+      }
+      return Left(SignUpFailure.unknownError());
+    } catch (e) {
+      Logger.error('Sign up failed: $e');
+    }
+    return Left(SignUpFailure.unknownError());
+  }
+
   Future<Either<SignUpFailure, User>> signUpWithNameAndPassword(
       String name, String password) {
     try {
       GetIt.I<NameValidator>().validate(name);
       GetIt.I<PasswordValidator>().validate(password);
+    } on InvalidNameException catch (e) {
+      return Future.value(Left(SignUpFailure.invalidUserName(e.message)));
     } on InvalidPasswordException catch (e) {
-      return Future.value(
-          Left(SignUpFailure.invalidUserPasswordCombination(e.message)));
+      return Future.value(Left(SignUpFailure.invalidUserPassword(e.message)));
     }
-    return signUp(email: name, password: password);
+    return signUp(name: name, password: password);
   }
 
   Future<Either<ForgotPasswordFailure, bool>> submitForgotPasswordName(

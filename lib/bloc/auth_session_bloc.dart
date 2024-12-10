@@ -7,33 +7,33 @@ import 'auth_session_state.dart';
 
 @injectable
 class AuthSessionBloc extends Bloc<AuthSessionEvent, AuthSessionState> {
-  AuthSessionBloc() : super(const Unauthenticated()) {
-    on<InitializeLastLoggedInUser>((event, emit) {
+  AuthSessionBloc() : super(const UnauthenticatedState()) {
+    on<InitializeLastLogInUserEvent>((event, emit) {
       if (UserManager.instance.isAuth) {
-        emit(Authenticated(
-            lastLoggedInUserId: UserManager.instance.lastLoginUser));
+        emit(AuthenticatedState(
+            lastLogInUserId: UserManager.instance.lastLoginUser));
       } else {
-        emit(Unauthenticated(
-            lastLoggedInUserId: UserManager.instance.lastLoginUser));
+        emit(UnauthenticatedState(
+            lastLogInUserId: UserManager.instance.lastLoginUser));
       }
     });
 
-    on<UserLoggedIn>((event, emit) => emit(Authenticated(
-        lastLoggedInUserId: event.lastLoggedInUserId,
+    on<UserLoggedInEvent>((event, emit) => emit(AuthenticatedState(
+        lastLogInUserId: event.lastLoggedInUserId,
         freshLogin: event.freshLogin)));
 
-    on<UserLoggedOut>((event, emit) =>
-        emit(Unauthenticated(lastLoggedInUserId: state.lastLoggedInUserId)));
+    on<UserLogOutEvent>((event, emit) =>
+        emit(UnauthenticatedState(lastLogInUserId: state.lastLogInUserId)));
 
-    on<AppLostFocus>((event, emit) {
-      if (state is Authenticated) {
-        emit(const Unauthenticated(sessionTimeoutLogout: true));
+    on<AppLostFocusEvent>((event, emit) {
+      if (state is AuthenticatedState) {
+        emit(const UnauthenticatedState(sessionTimeoutLogout: true));
       }
     });
 
-    on<AppSessionTimeout>((event, emit) {
-      if (state is Authenticated) {
-        emit(const Unauthenticated(sessionTimeoutLogout: true));
+    on<AppSessionTimeoutEvent>((event, emit) {
+      if (state is AuthenticatedState) {
+        emit(const UnauthenticatedState(sessionTimeoutLogout: true));
       }
     });
   }

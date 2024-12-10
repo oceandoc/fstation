@@ -7,26 +7,24 @@ abstract class AuthSessionEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class AppLostFocus extends AuthSessionEvent {
-  const AppLostFocus({required super.lastLoggedInUserId});
+class AppLostFocusEvent extends AuthSessionEvent {
+  const AppLostFocusEvent({required super.lastLoggedInUserId});
 }
 
-class UserLoggedIn extends AuthSessionEvent {
-  const UserLoggedIn(
+class UserLoggedInEvent extends AuthSessionEvent {
+  const UserLoggedInEvent(
       {required super.lastLoggedInUserId, this.freshLogin = true});
-
-
   final bool freshLogin;
 }
 
-class UserLoggedOut extends AuthSessionEvent {
-  const UserLoggedOut({required super.lastLoggedInUserId});
+class UserLogOutEvent extends AuthSessionEvent {
+  const UserLogOutEvent({required super.lastLoggedInUserId});
 }
 
-class AppSessionTimeout extends AuthSessionEvent {
-  const AppSessionTimeout({required super.lastLoggedInUserId});
+class AppSessionTimeoutEvent extends AuthSessionEvent {
+  const AppSessionTimeoutEvent({required super.lastLoggedInUserId});
 }
 
-class InitializeLastLoggedInUser extends AuthSessionEvent {
-  const InitializeLastLoggedInUser({required super.lastLoggedInUserId});
+class InitializeLastLogInUserEvent extends AuthSessionEvent {
+  const InitializeLastLogInUserEvent({required super.lastLoggedInUserId});
 }

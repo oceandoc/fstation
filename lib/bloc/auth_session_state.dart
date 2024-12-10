@@ -1,25 +1,25 @@
 import 'package:equatable/equatable.dart';
 
 abstract class AuthSessionState extends Equatable {
-  const AuthSessionState({required this.lastLoggedInUserId});
-  final String? lastLoggedInUserId;
+  const AuthSessionState({required this.lastLogInUserId});
+  final String? lastLogInUserId;
   @override
   List<Object> get props {
     final propsList = <Object>[];
-    if (lastLoggedInUserId != null) {
-      propsList.add(lastLoggedInUserId! as Object);
+    if (lastLogInUserId != null) {
+      propsList.add(lastLogInUserId! as Object);
     }
     return propsList;
   }
 }
 
-class Unauthenticated extends AuthSessionState {
-  const Unauthenticated(
-      {this.sessionTimeoutLogout = false, super.lastLoggedInUserId});
+class UnauthenticatedState extends AuthSessionState {
+  const UnauthenticatedState(
+      {this.sessionTimeoutLogout = false, super.lastLogInUserId});
   final bool sessionTimeoutLogout;
 }
 
-class Authenticated extends AuthSessionState {
-  const Authenticated({this.freshLogin = true, super.lastLoggedInUserId});
+class AuthenticatedState extends AuthSessionState {
+  const AuthenticatedState({this.freshLogin = true, super.lastLogInUserId});
   final bool freshLogin;
 }

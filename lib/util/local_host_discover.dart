@@ -1,6 +1,6 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:async';
 
 import 'package:fstation/impl/logger.dart';
 import 'package:uuid/uuid.dart';
@@ -21,6 +21,7 @@ class LocalHostDiscover {
   static const _uuid = Uuid();
 
   final _serviceController = StreamController<String>.broadcast();
+
   Stream<String> get onServiceFound => _serviceController.stream;
 
   Future<void> discoverServices() async {
@@ -32,7 +33,6 @@ class LocalHostDiscover {
     );
     socket.broadcastEnabled = true;
 
-    // Create request
     final request = ServerReq()
       ..requestId = _uuid.v4()
       ..op = ServerOp.ServerFindingServer;
@@ -45,14 +45,14 @@ class LocalHostDiscover {
 
     socket
       ..send(utf8.encode(jsonString), InternetAddress('255.255.255.255'), 10001)
-      ..listen((RawSocketEvent event) {
+      ..listen((RawSocketEvent event) async {
         if (event == RawSocketEvent.read) {
           final datagram = socket.receive();
           if (datagram != null) {
             try {
               final responseStr = utf8.decode(datagram.data);
-              Logger.debug(
-                  'Response from ${datagram.address.address}:${datagram.port}');
+              final serverAddr = '${datagram.address.address}:${datagram.port}';
+              Logger.debug('Response from $serverAddr');
 
               final responseJson =
                   jsonDecode(responseStr) as Map<String, dynamic>;
@@ -61,8 +61,6 @@ class LocalHostDiscover {
                 ..status = responseJson['status'] as String;
 
               if (response.errCode == ErrCode.Success) {
-                final serverAddr =
-                    '${datagram.address.address}:${datagram.port}';
                 if (!_services.contains(serverAddr)) {
                   _services.add(serverAddr);
                   Logger.debug('Added server: $serverAddr');
@@ -75,5 +73,8 @@ class LocalHostDiscover {
           }
         }
       });
+
+    // Wait for responses
+    await Future.delayed(const Duration(seconds: 2));
   }
 }

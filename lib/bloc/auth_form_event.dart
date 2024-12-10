@@ -1,10 +1,11 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 
 abstract class AuthFormEvent extends Equatable {
   const AuthFormEvent();
 
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [];
 }
 
 class AuthFormInputsChangedEvent extends AuthFormEvent {
@@ -13,12 +14,21 @@ class AuthFormInputsChangedEvent extends AuthFormEvent {
   final String? password;
 }
 
-class AuthFormSignUpSubmittedEvent extends AuthFormEvent {}
+class AuthFormSignUpSubmittedEvent extends AuthFormEvent {
+  const AuthFormSignUpSubmittedEvent({required this.context});
+  final BuildContext context;
+}
 
 class AuthFormSignInSubmittedEvent extends AuthFormEvent {
 
-  const AuthFormSignInSubmittedEvent({this.lastLoggedInUserId});
+  const AuthFormSignInSubmittedEvent({
+    required this.context, this.lastLoggedInUserId,
+  });
   final String? lastLoggedInUserId;
+  final BuildContext context;
+
+  @override
+  List<Object?> get props => [lastLoggedInUserId, context];
 }
 
 class ResetAuthFormEvent extends AuthFormEvent {}

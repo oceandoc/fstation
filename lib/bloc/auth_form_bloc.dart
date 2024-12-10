@@ -1,10 +1,10 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fstation/impl/logger.dart';
 import 'package:fstation/impl/user_manager.dart';
-import 'package:injectable/injectable.dart';
 import 'package:go_router/go_router.dart';
+import 'package:injectable/injectable.dart';
 
-import '../impl/router.dart';
 import '../model/failures.dart';
 import '../model/user.dart';
 import 'auth_form_event.dart';
@@ -17,11 +17,11 @@ class AuthFormBloc extends Bloc<AuthFormEvent, AuthFormState> {
   AuthFormBloc({
     required AuthSessionBloc authSessionBloc,
   })  : _authSessionBloc = authSessionBloc,
-        super(const AuthFormInitial(name: '', password: '')) {
+        super(const AuthFormInitialState(name: '', password: '')) {
     on<AuthFormInputsChangedEvent>(
       (event, emit) {
         emit(
-          AuthFormInitial(
+          AuthFormInitialState(
             name: event.name ?? state.name,
             password: event.password ?? state.password,
           ),
@@ -32,12 +32,13 @@ class AuthFormBloc extends Bloc<AuthFormEvent, AuthFormState> {
     on<AuthFormGuestSignInEvent>(
       (event, emit) async {
         await UserManager.instance.updateCurrentUser(User(name: 'guest'));
-        _authSessionBloc.add(const UserLoggedIn(lastLoggedInUserId: 'guest'));
+        _authSessionBloc
+            .add(const UserLoggedInEvent(lastLoggedInUserId: 'guest'));
       },
     );
 
     on<AuthFormSignUpSubmittedEvent>((event, emit) async {
-      emit(AuthFormSubmissionLoading(
+      emit(AuthFormSubmissionLoadingState(
           name: state.name, password: state.password));
 
       final result = await UserManager.instance
@@ -49,36 +50,37 @@ class AuthFormBloc extends Bloc<AuthFormEvent, AuthFormState> {
         if (error.code == SignUpFailure.kUnknownError) {
           errorMap['general'] = [error.message];
         }
-        if (error.code == SignUpFailure.kInvalidUserName) {
-          errorMap['name'] = [error.message];
+        if (error.code == SignUpFailure.kNoInternetConnection) {
+          errorMap['general'] = [error.message];
         }
         if (error.code == SignUpFailure.kUserAlreadyExists) {
           errorMap['name'] = [error.message];
         }
-        if (error.code == SignUpFailure.kInvalidUserPasswordCombination) {
+        if (error.code == SignUpFailure.kUserName) {
+          errorMap['name'] = [error.message];
+        }
+        if (error.code == SignUpFailure.kUserPassword) {
           errorMap['password'] = [error.message];
         }
-        if (error.code == SignUpFailure.kNoInternetConnection) {
-          errorMap['general'] = [error.message];
-        }
 
-        emit(AuthFormSubmissionFailed(
+        emit(AuthFormSubmitFailedState(
             name: state.name, password: state.password, errors: errorMap));
       }, (user) async {
-        _authSessionBloc.add(UserLoggedIn(lastLoggedInUserId: state.name));
-        emit(AuthFormSubmissionSuccessful(
+        _authSessionBloc.add(UserLoggedInEvent(lastLoggedInUserId: state.name));
+        emit(AuthFormSubmitSuccessState(
             name: state.name, password: state.password));
         UserManager.instance.cancelFingerprintAuth();
-        router.go('/home');
+        UserManager.instance.isAuth = true;
+        event.context.go('/home');
       });
     });
 
     on<AuthFormSignInSubmittedEvent>((event, emit) async {
-      emit(AuthFormSubmissionLoading(
+      emit(AuthFormSubmissionLoadingState(
           name: state.name, password: state.password));
 
       final result = await UserManager.instance
-          .signIn(email: state.name, password: state.password);
+          .signInWithNameAndPassword(state.name, state.password);
 
       await result.fold((error) {
         final errorMap = <String, List>{};
@@ -86,29 +88,34 @@ class AuthFormBloc extends Bloc<AuthFormEvent, AuthFormState> {
         if (error.code == SignInFailure.kUnknownError) {
           errorMap['general'] = [error.message];
         }
-        if (error.code == SignInFailure.kInvalidUserName) {
-          errorMap['name'] = [error.message];
-        }
-        if (error.code == SignInFailure.kInvalidUserPassword) {
-          errorMap['password'] = [error.message];
-        }
         if (error.code == SignInFailure.kNoInternetConnection) {
           errorMap['general'] = [error.message];
         }
+        if (error.code == SignInFailure.kUserDisabled) {
+          errorMap['general'] = [error.message];
+        }
+        if (error.code == SignUpFailure.kUserName) {
+          errorMap['name'] = [error.message];
+        }
+        if (error.code == SignUpFailure.kUserPassword) {
+          errorMap['password'] = [error.message];
+        }
 
-        emit(AuthFormSubmissionFailed(
+        emit(AuthFormSubmitFailedState(
             name: state.name, password: state.password, errors: errorMap));
       }, (user) async {
-        _authSessionBloc.add(UserLoggedIn(lastLoggedInUserId: state.name));
-        emit(AuthFormSubmissionSuccessful(
+        _authSessionBloc.add(UserLoggedInEvent(lastLoggedInUserId: state.name));
+        emit(AuthFormSubmitSuccessState(
             name: state.name, password: state.password));
         UserManager.instance.cancelFingerprintAuth();
-        router.go('/home');
+        UserManager.instance.isAuth = true;
+        Logger.debug('log in success');
+        event.context.go('/home');
       });
     });
 
     on<ResetAuthFormEvent>((event, emit) {
-      emit(const AuthFormInitial(name: '', password: ''));
+      emit(const AuthFormInitialState(name: '', password: ''));
     });
   }
 

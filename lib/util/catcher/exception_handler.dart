@@ -159,7 +159,7 @@ Future<bool> _isBlockedError(Report report) async {
   final shouldIgnore = RemoteConfig.instance.blockedErrors
       .any((e) => error.contains(e) || stackTrace.contains(e));
   if (shouldIgnore) {
-    Logger.info("don't send blocked error", report.error, report.stackTrace);
+    Logger.info("don't send blocked error", report.error, report.stackTrace as StackTrace);
     return true;
   }
   return false;

@@ -39,7 +39,7 @@ class Logger {
       log.Logger.root.level = log.Level.ALL;
       log.Logger.root.onRecord.listen((record) async {
         final logMessage =
-            '${record.time}: [${record.level.name}] ${record.loggerName} - ${record.message}';
+            '${record.time}: [${record.level.name}] ${record.loggerName} ${record.sequenceNumber} ${record.object ?? ''} - ${record.message}';
         print(logMessage);
       });
     } else {
@@ -94,12 +94,12 @@ class Logger {
   }
 
   // Static methods for logging with consistent format
-  static void info(String message, [Object? error, Object? stackTrace]) {
-    if (stackTrace is StackTrace) {
-      _instance._logger.info(message, error, stackTrace);
-    } else {
-      _instance._logger.info(message, error);
+  static void info(String message, [Object? error, StackTrace? stackTrace]) {
+    if (!_instance._initialized) {
+      print('WARNING: Logger not initialized when logging: $message');
+      return;
     }
+    _instance._logger.info(message, error, stackTrace);
   }
 
   static void debug(String message, [Object? error, StackTrace? stackTrace]) {
@@ -121,4 +121,11 @@ class Logger {
   static void verbose(String message, [Object? error, StackTrace? stackTrace]) {
     _instance._logger.finer(message, error, stackTrace);
   }
+}
+
+// Add helper class for file position
+class _FilePosition {
+  final String file;
+  final int line;
+  _FilePosition(this.file, this.line);
 }

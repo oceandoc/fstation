@@ -41,9 +41,6 @@ class GrpcClient {
 
       _stub = GrpcFileClient(_channel!);
       Logger.info('Connected to gRPC server at $host:$port');
-
-      // Perform handshake after connection
-      await handshake();
     } catch (e, stack) {
       Logger.error('Failed to connect to gRPC server', e, stack);
       await shutdown();
@@ -233,6 +230,9 @@ class GrpcClient {
           response.serverUuid.isNotEmpty) {
         Logger.info(
             'Server handshake successful, UUID: ${response.serverUuid}');
+      } else {
+        Logger.error(
+            'Server handshake failed, UUID: ${response.serverUuid}');
       }
       return response;
     } catch (e, stack) {

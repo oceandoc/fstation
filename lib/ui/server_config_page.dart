@@ -24,6 +24,7 @@ class ServerConfigPageState extends State<ServerConfigPage>
   late Animation<int> _dotCount;
   final _localHostDiscover = LocalHostDiscover.instance;
   final _urlController = TextEditingController();
+  bool _serverSelected = false;
 
   @override
   void initState() {
@@ -66,6 +67,8 @@ class ServerConfigPageState extends State<ServerConfigPage>
           TextButton(
             onPressed: () {
               _urlController.text = serverAddress;
+              _serverSelected = true;
+              setState(() {});
               Navigator.pop(context);
             },
             child: Text(Localization.current.confirm),
@@ -126,16 +129,17 @@ class ServerConfigPageState extends State<ServerConfigPage>
                         const SizedBox(
                           height: 5,
                         ),
-                        AnimatedBuilder(
-                          animation: _dotCount,
-                          builder: (context, child) {
-                            final dots = '.' * _dotCount.value;
-                            return Text(
-                              '${Localization.current.finding_server}$dots',
-                              style: const TextStyle(fontSize: 14),
-                            );
-                          },
-                        ),
+                        if (!_serverSelected)
+                          AnimatedBuilder(
+                            animation: _dotCount,
+                            builder: (context, child) {
+                              final dots = '.' * _dotCount.value;
+                              return Text(
+                                '${Localization.current.finding_server}$dots',
+                                style: const TextStyle(fontSize: 14),
+                              );
+                            },
+                          ),
                         const SizedBox(
                           height: 20,
                         ),
@@ -148,10 +152,12 @@ class ServerConfigPageState extends State<ServerConfigPage>
                           onPressed: () async {
                             // TODO(xieyz): validate it
                             if (_urlController.text.isNotEmpty) {
-                              await SettingImpl.instance
-                                  .saveServerAddr(_urlController.text);
-                              if (SettingImpl.instance.serverAddr.isNotEmpty) {
-                                await grpcClientInit();
+                              if (SettingImpl.instance.serverAddr.isEmpty ||
+                                  SettingImpl.instance.serverAddr !=
+                                      _urlController.text) {
+                                await SettingImpl.instance
+                                    .saveServerAddr(_urlController.text);
+                                await handshake();
                               }
                               await SettingImpl.instance
                                   .saveFirstLaunch(firstLaunch: false);

@@ -1,27 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
+import '../generated/error.pbenum.dart';
 import '../generated/l10n.dart';
 import '../impl/grpc_client.dart';
 import '../impl/logger.dart';
 import '../impl/setting_impl.dart';
 
-
-Future<void> grpcClientInit() async {
+Future<bool> handshake() async {
   if (SettingImpl.instance.serverAddr.isEmpty) {
     Logger.error('wrong grpc server url');
-    return;
+    return false;
   }
 
-  final serverParts = SettingImpl.instance.serverAddr.split(':');
-  if (serverParts.length == 2) {
-    final host = serverParts[0];
-    final port = int.tryParse(serverParts[1]) ?? 0;
-    if (port > 0) {
-      await GrpcClient.instance.connect(host, port);
+  try {
+    // Try to connect and handshake with each discovered server
+    final client = GrpcClient.instance;
+    final serverParts = SettingImpl.instance.serverAddr.split(':');
+    if (serverParts.length == 2) {
+      final host = serverParts[0];
+      final port = int.tryParse(serverParts[1]) ?? 0;
+      if (port > 0) {
+        await GrpcClient.instance.connect(host, port);
+      }
     }
+
+    final response = await client.handshake();
+    if (response.errCode == ErrCode.Success &&
+        response.handshakeMsg ==
+            '7a3be8186493f1bc834e3a6b84fcb2f9dc6d042e93d285ec23fa56836889dfa9' &&
+        response.serverUuid.isNotEmpty) {
+      if (response.serverUuid != SettingImpl.instance.serverUuid) {
+        await SettingImpl.instance.saveServerUuid(response.serverUuid);
+      }
+      return true;
+    }
+  } catch (e) {
+    Logger.error(
+        'Failed to connect to  server: $SettingImpl.instance.serverAddr', e);
   }
+  return false;
 }
+
 
 
 String themeModeName(ThemeMode mode) {
