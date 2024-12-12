@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:dartz/dartz.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:fstation/impl/setting_impl.dart';
 import 'package:get_it/get_it.dart';
@@ -40,7 +41,9 @@ class UserManager {
   User? get currentUser => _currentUser;
 
   bool _isAuth = false;
+
   bool get isAuth => _isAuth;
+
   set isAuth(bool value) => _isAuth = value;
 
   String? get lastLoginUser => _currentUser?.name;
@@ -50,7 +53,6 @@ class UserManager {
   final LocalAuthentication auth = LocalAuthentication();
 
   Future<void> init() async {
-    // First try to get current user from database
     final currentUser = await Store.instance.getCurrentUser();
     if (currentUser == null) {
       return;
@@ -60,19 +62,21 @@ class UserManager {
   }
 
   Future<void> updateToken() async {
-    if (_currentUser == null) {
+    if (_currentUser == null || _currentUser!.token!.isEmpty) {
       return;
     }
-    if (!isAuth) {
-      return;
-    }
-
     try {
       final response = await GrpcClient.instance.updateToken(_currentUser!);
       if (response.errCode == ErrCode.Success) {
         _currentUser!.token = response.token;
         _currentUser!.tokenUpdateTime = DateTime.now();
         await updateUser(_currentUser);
+        _isAuth = true;
+        Logger.error('updateToken success');
+      } else {
+        _currentUser?.token = '';
+        await updateUser(_currentUser);
+        Logger.error('updateToken error: token wrong or expired: ${response.errCode}');
       }
     } catch (e, s) {
       Logger.error('Failed to update token:', e, s);
@@ -97,6 +101,12 @@ class UserManager {
     await Store.instance.deleteUser(_currentUser!.name!);
     await Store.instance.deleteCurrentUser();
     _currentUser = null;
+  }
+
+  Future<void> updateCurrentUser(User user) async {
+    await updateUser(user);
+    await Store.instance.setCurrentUser(user.name!);
+    _currentUser = user;
   }
 
   bool shouldActivateFingerPrint() {
@@ -155,18 +165,6 @@ class UserManager {
   void cancelFingerprintAuth() {
     Logger.info('Cancelling fingerprint auth stream');
     fingerPrintAuthStreamSubscription?.cancel();
-  }
-
-  /// Updates or inserts the current user in the database
-  Future<void> updateCurrentUser(User user) async {
-    // Update user data first
-    await updateUser(user);
-
-    // Set as current user
-    await Store.instance.setCurrentUser(user.name!);
-
-    // Update local state
-    _currentUser = user;
   }
 
   Future<void> isFingerprintAuthPossible() async {
@@ -230,7 +228,7 @@ class UserManager {
         token: userRes.token,
         tokenUpdateTime: DateTime.now(),
       );
-      await UserManager.instance.updateUser(user);
+      await UserManager.instance.updateUser(user, updateCurrentUser: true);
       return Right(user);
     } else if (userRes.errCode == ErrCode.User_name_error) {
       return Left(SignInFailure.invalidUserName());

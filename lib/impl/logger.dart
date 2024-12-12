@@ -8,7 +8,6 @@ import 'package:path_provider/path_provider.dart';
 class Logger {
   Logger._internal() {
     _logger = log.Logger('AppLogger');
-    print('Logger constructor called');
   }
 
   static final Logger _instance = Logger._internal();

@@ -9,6 +9,7 @@ import '../ui/login_page.dart';
 import '../ui/server_config_page.dart';
 import '../ui/setting_page.dart';
 import '../ui/splash_page.dart';
+import '../ui/store_repo_config_page.dart';
 import '../ui/widget/global_footer.dart';
 
 final GoRouter router = GoRouter(
@@ -17,9 +18,12 @@ final GoRouter router = GoRouter(
     if (SettingImpl.instance.firstLaunch) {
       return '/splash';
     } else if (UserManager.instance.isAuth) {
+      if (SettingImpl.instance.serverRepoUuids.isEmpty) {
+        return '/store_repo_config';
+      }
       return '/home';
     } else if (SettingImpl.instance.serverAddr.isEmpty) {
-      return '/server_config';
+      return '/server_addr_config';
     } else if (!UserManager.instance.isAuth) {
       return '/login';
     }
@@ -38,7 +42,14 @@ final GoRouter router = GoRouter(
       ],
     ),
     GoRoute(
-      path: '/server_config',
+      path: '/store_repo_config',
+      builder: (context, state) => const StoreRepoConfigPage(),
+      routes: [
+        GoRoute(path: 'home', builder: (context, state) => const HomePage()),
+      ],
+    ),
+    GoRoute(
+      path: '/server_addr_config',
       builder: (context, state) => const ServerConfigPage(),
       routes: [
         GoRoute(path: 'home', builder: (context, state) => const HomePage()),

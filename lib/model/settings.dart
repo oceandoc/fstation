@@ -19,6 +19,8 @@ class Settings {
     this.enablePin = false,
     this.serverAddr = '',
     this.serverUuid = '',
+    this.serverRepoUuids = const [],
+    this.serverToken = '',
   });
 
   // Create Settings from JSON/Map
@@ -45,6 +47,8 @@ class Settings {
       enablePin: (map['enable_pin'] as int? ?? 0) == 1,
       serverAddr: map['server_addr'] as String? ?? '',
       serverUuid: map['server_uuid'] as String? ?? '',
+      serverRepoUuids: _parseRepoUuids(map['server_repo_uuids'] as String?),
+      serverToken: map['server_token'] as String? ?? '',
     );
   }
   int? id;
@@ -66,6 +70,8 @@ class Settings {
   bool enablePin;
   String serverAddr;
   String serverUuid;
+  List<String> serverRepoUuids;
+  String serverToken;
 
   // Convert Settings to JSON/Map
   Map<String, dynamic> toMap() {
@@ -91,6 +97,8 @@ class Settings {
       'enable_pin': enablePin ? 1 : 0,
       'server_addr': serverAddr,
       'server_uuid': serverUuid,
+      'server_repo_uuids': serverRepoUuids.join('|'),
+      'server_token': serverToken,
     };
   }
 
@@ -104,6 +112,12 @@ class Settings {
   static String? _positionToString(List<int>? position) {
     if (position == null || position.isEmpty) return null;
     return position.join(',');
+  }
+
+  // Helper method to parse server repo UUIDs string
+  static List<String> _parseRepoUuids(String? uuidsString) {
+    if (uuidsString == null || uuidsString.isEmpty) return [];
+    return uuidsString.split('|');
   }
 
   // Create a copy of Settings with some fields updated
@@ -127,7 +141,8 @@ class Settings {
     bool? enablePin,
     String? serverAddr,
     String? serverUuid,
-    bool? serverConnectionFailed,
+    List<String>? serverRepoUuids,
+    String? serverToken,
   }) {
     return Settings(
       id: id ?? this.id,
@@ -153,6 +168,8 @@ class Settings {
       enablePin: enablePin ?? this.enablePin,
       serverAddr: serverAddr ?? this.serverAddr,
       serverUuid: serverUuid ?? this.serverUuid,
+      serverRepoUuids: serverRepoUuids ?? this.serverRepoUuids,
+      serverToken: serverToken ?? this.serverToken,
     );
   }
 

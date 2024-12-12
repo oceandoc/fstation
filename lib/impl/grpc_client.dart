@@ -1,9 +1,12 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:fstation/generated/data.pb.dart';
 import 'package:fstation/generated/error.pb.dart';
 import 'package:fstation/generated/service.pb.dart';
 import 'package:fstation/impl/logger.dart';
+import 'package:fstation/impl/user_manager.dart';
+import 'package:fstation/impl/setting_impl.dart';
 import 'package:grpc/grpc.dart';
 import 'package:uuid/uuid.dart';
 
@@ -16,7 +19,8 @@ class GrpcClient {
   static const _uuid = Uuid();
   ClientChannel? _channel;
   GrpcFileClient? _stub;
-  String? _token;
+
+  String get _token => SettingImpl.instance.serverToken ?? '';
 
   Future<void> connect(String host, int port, {bool secure = false}) async {
     try {
@@ -52,11 +56,6 @@ class GrpcClient {
     await _channel?.shutdown();
     _channel = null;
     _stub = null;
-    _token = null;
-  }
-
-  set token(String value) {
-    _token = value;
   }
 
   // User Operations
@@ -70,7 +69,7 @@ class GrpcClient {
     try {
       final response = await _stub!.userOp(request);
       if (response.errCode == ErrCode.Success) {
-        _token = response.token;
+        await SettingImpl.instance.saveServerToken(response.token);
       }
       return response;
     } catch (e) {
@@ -99,7 +98,7 @@ class GrpcClient {
       ..op = UserOp.UserChangePassword
       ..oldPassword = oldPassword
       ..password = newPassword
-      ..token = _token ?? '';
+      ..token = _token;
 
     try {
       return await _stub!.userOp(request);
@@ -112,7 +111,6 @@ class GrpcClient {
     if (user.name == null || user.token == null) {
       throw Exception('User token is null');
     }
-
     final request = UserReq()
       ..requestId = _uuid.v4()
       ..op = UserOp.UserUpdateToken
@@ -122,7 +120,7 @@ class GrpcClient {
     try {
       final response = await _stub!.userOp(request);
       if (response.errCode == ErrCode.Success) {
-        _token = response.token;
+        await SettingImpl.instance.saveServerToken(response.token);
       }
       return response;
     } catch (e) {
@@ -135,7 +133,7 @@ class GrpcClient {
     final request = RepoReq()
       ..requestId = _uuid.v4()
       ..op = RepoOp.RepoListUserRepo
-      ..token = _token ?? '';
+      ..token = _token;
 
     try {
       return await _stub!.repoOp(request);
@@ -144,17 +142,34 @@ class GrpcClient {
     }
   }
 
-  Future<RepoRes> createRepo(String repoName, String path) async {
+  Future<RepoRes> createRepo(String path) async {
     final request = RepoReq()
       ..requestId = _uuid.v4()
       ..op = RepoOp.RepoCreateRepo
-      ..repoName = repoName
       ..path = path
-      ..token = _token ?? '';
+      ..token = _token
+      ..user = UserManager.instance.currentUser?.name ?? '';
 
     try {
       return await _stub!.repoOp(request);
     } catch (e) {
+      Logger.error('Failed to create repository', e);
+      rethrow;
+    }
+  }
+
+  Future<RepoRes> listServerDir(String path) async {
+    final request = RepoReq()
+      ..requestId = _uuid.v4()
+      ..op = RepoOp.RepoListServerDir
+      ..path = path
+      ..token = _token
+      ..user = UserManager.instance.currentUser?.name ?? '';
+
+    try {
+      return await _stub!.repoOp(request);
+    } catch (e) {
+      Logger.error('Failed to list server directory', e);
       rethrow;
     }
   }
@@ -175,7 +190,7 @@ class GrpcClient {
       ..repoUuid = repoUuid
       ..content = content
       ..fileType = fileType
-      ..token = _token ?? '';
+      ..token = _token;
 
     try {
       await for (final response in _stub!.fileOp(request)) {
@@ -195,7 +210,7 @@ class GrpcClient {
       ..op = FileOp.FileExists
       ..src = src
       ..repoUuid = repoUuid
-      ..token = _token ?? '';
+      ..token = _token;
 
     try {
       await for (final response in _stub!.fileOp(request)) {
@@ -231,8 +246,7 @@ class GrpcClient {
         Logger.info(
             'Server handshake successful, UUID: ${response.serverUuid}');
       } else {
-        Logger.error(
-            'Server handshake failed, UUID: ${response.serverUuid}');
+        Logger.error('Server handshake failed, UUID: ${response.serverUuid}');
       }
       return response;
     } catch (e, stack) {

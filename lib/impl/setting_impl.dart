@@ -145,6 +145,19 @@ class SettingImpl {
 
   String get serverAddr => settings.serverAddr;
 
+  // Server token management
+  String? get serverToken => settings.serverToken;
+
+  Future<void> saveServerToken(String token) async {
+    _settings = settings.copyWith(serverToken: token);
+    await Store.instance.saveSettings(_settings!);
+  }
+
+  Future<void> clearServerToken() async {
+    _settings = settings.copyWith(serverToken: '');
+    await Store.instance.saveSettings(_settings!);
+  }
+
   // Getters for commonly used values
   ThemeMode get themeMode => ThemeMode.values[settings.themeMode];
 
@@ -161,5 +174,32 @@ class SettingImpl {
   Future<void> saveServerUuid(String uuid) async {
     _settings = settings.copyWith(serverUuid: uuid);
     await Store.instance.saveSettings(_settings!);
+  }
+
+  // Get server repository UUIDs
+  List<String> get serverRepoUuids => settings.serverRepoUuids;
+
+  // Save server repository UUIDs
+  Future<void> saveServerRepoUuids(List<String> uuids) async {
+    _settings = settings.copyWith(serverRepoUuids: uuids);
+    await Store.instance.saveSettings(_settings!);
+  }
+
+  // Add a single UUID to the list
+  Future<void> addServerRepoUuid(String uuid) async {
+    if (!settings.serverRepoUuids.contains(uuid)) {
+      final updatedUuids = List<String>.from(settings.serverRepoUuids)
+        ..add(uuid);
+      await saveServerRepoUuids(updatedUuids);
+    }
+  }
+
+  // Remove a single UUID from the list
+  Future<void> removeServerRepoUuid(String uuid) async {
+    if (settings.serverRepoUuids.contains(uuid)) {
+      final updatedUuids = List<String>.from(settings.serverRepoUuids)
+        ..remove(uuid);
+      await saveServerRepoUuids(updatedUuids);
+    }
   }
 }

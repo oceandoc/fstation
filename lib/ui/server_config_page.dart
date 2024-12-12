@@ -157,7 +157,8 @@ class ServerConfigPageState extends State<ServerConfigPage>
                                       _urlController.text) {
                                 await SettingImpl.instance
                                     .saveServerAddr(_urlController.text);
-                                await handshake();
+                                Logger.info("server_config");
+                                await connectAndHandshake();
                               }
                               await SettingImpl.instance
                                   .saveFirstLaunch(firstLaunch: false);

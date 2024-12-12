@@ -7,7 +7,7 @@ import '../impl/grpc_client.dart';
 import '../impl/logger.dart';
 import '../impl/setting_impl.dart';
 
-Future<bool> handshake() async {
+Future<bool> connectAndHandshake() async {
   if (SettingImpl.instance.serverAddr.isEmpty) {
     Logger.error('wrong grpc server url');
     return false;

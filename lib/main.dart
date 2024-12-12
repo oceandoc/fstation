@@ -21,7 +21,6 @@ import 'package:fstation/util/constants.dart';
 import 'package:fstation/util/dependency_injection.dart';
 import 'package:fstation/util/device_info.dart';
 import 'package:fstation/util/http_override.dart';
-import 'package:fstation/util/local_host_discover.dart';
 import 'package:fstation/util/network_util.dart';
 import 'package:fstation/util/path_util.dart';
 import 'package:fstation/util/util.dart';
@@ -30,9 +29,6 @@ import 'package:worker_manager/worker_manager.dart';
 
 import 'bloc/auth_form_bloc.dart';
 import 'bloc/auth_session_bloc.dart';
-import 'generated/error.pbenum.dart';
-import 'impl/context.dart';
-import 'impl/grpc_client.dart';
 import 'impl/logger.dart';
 import 'impl/setting_impl.dart';
 import 'impl/store.dart';
@@ -41,7 +37,7 @@ import 'util/themes.dart';
 
 Future<void> checkAndConnectServer() async {
   if (SettingImpl.instance.serverAddr.isNotEmpty) {
-    await handshake();
+    await connectAndHandshake();
   }
 }
 
@@ -73,11 +69,10 @@ void main() async {
 
     await ConnectivityUtil.instance.init();
     await Store.instance.init();
-    await UserManager.instance.init();
     await SettingImpl.instance.init();
-    await WindowUtil.init();
-
     await checkAndConnectServer();
+    await UserManager.instance.init();
+    await WindowUtil.init();
 
     if (!kIsWeb) {
       HttpOverrides.global = CustomHttpOverrides();
@@ -159,7 +154,7 @@ class _AppState extends State<App> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
     if (state == AppLifecycleState.resumed) {
-      UserManager.instance.updateToken();
+      // UserManager.instance.updateToken();
     }
   }
 

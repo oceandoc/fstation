@@ -16,7 +16,7 @@ class Store {
 
   static Store get instance => _instance;
 
-  static const kCurrentDBVersion = 1;
+  static const _version = 2;
   late final Database _db;
 
   Future<bool> init() async {
@@ -27,7 +27,7 @@ class Store {
       _db = await databaseFactory.openDatabase(
         'fstation.db',
         options: OpenDatabaseOptions(
-          version: kCurrentDBVersion,
+          version: _version,
           onCreate: initDatabase,
           onUpgrade: _onUpgrade,
           onOpen: _onOpen,
@@ -54,7 +54,7 @@ class Store {
       _db = await databaseFactory.openDatabase(
         dbPath,
         options: OpenDatabaseOptions(
-          version: kCurrentDBVersion,
+          version: _version,
           onCreate: initDatabase,
           onUpgrade: _onUpgrade,
           onOpen: _onOpen,
@@ -66,8 +66,13 @@ class Store {
   }
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
-    if (oldVersion < 2) {}
-    // Add future version upgrades here
+    if (oldVersion < 2) {
+      // Add new columns if upgrading from version 1
+      await db.execute(
+          'ALTER TABLE settings ADD COLUMN server_repo_uuids TEXT DEFAULT ""');
+      await db.execute(
+          'ALTER TABLE settings ADD COLUMN server_token TEXT DEFAULT ""');
+    }
   }
 
   void _onOpen(Database db) {
@@ -103,7 +108,9 @@ class Store {
           enable_fingerprint INTEGER DEFAULT 0,
           enable_pin INTEGER DEFAULT 0,
           server_addr TEXT DEFAULT '',
-          server_uuid TEXT DEFAULT ''
+          server_uuid TEXT DEFAULT '',
+          server_repo_uuids TEXT DEFAULT '',
+          server_token TEXT DEFAULT ''
         )
       ''');
 
@@ -126,7 +133,9 @@ class Store {
       'enable_fingerprint': 0,
       'enable_pin': 0,
       'server_addr': '',
-      'server_uuid': ''
+      'server_uuid': '',
+      'server_repo_uuids': '',
+      'server_token': ''
     });
 
     await db.execute('''
@@ -208,22 +217,22 @@ class Store {
     String? tokenUpdateTime,
   }) async {
     final values = <String, dynamic>{'name': name};
-    if (token != null) values['token'] = token;
-    if (tokenUpdateTime != null) values['token_update_time'] = tokenUpdateTime;
+    if (token != null) {
+      values['token'] = token;
+    } else {
+      values['token'] = '';
+    }
+    if (tokenUpdateTime != null) {
+      values['token_update_time'] = tokenUpdateTime;
+    } else {
+      values['token_update_time'] = '';
+    }
 
-    await _db.update(
+    Logger.debug('store.dart: updateUser, user: $name, token: $token');
+    await _db.insert(
       'user',
       values,
-      where: 'name = ?',
-      whereArgs: [name],
-    );
-  }
-
-  Future<void> deleteUser(String name) async {
-    await _db.delete(
-      'user',
-      where: 'name = ?',
-      whereArgs: [name],
+      conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
 
@@ -235,6 +244,14 @@ class Store {
       limit: 1,
     );
     return result.isNotEmpty ? result.first : null;
+  }
+
+  Future<void> deleteUser(String name) async {
+    await _db.delete(
+      'user',
+      where: 'name = ?',
+      whereArgs: [name],
+    );
   }
 
   Future<void> setCurrentUser(String name) async {
@@ -252,7 +269,6 @@ class Store {
       limit: 1,
     );
     if (currentUserResult.isEmpty) return null;
-
     final userName = currentUserResult.first['user_name']! as String;
     return getUser(userName);
   }
