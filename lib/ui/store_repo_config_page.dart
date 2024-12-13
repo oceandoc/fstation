@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../generated/data.pb.dart';
-import '../generated/data.pbenum.dart';
 import '../generated/error.pbenum.dart';
 import '../impl/grpc_client.dart';
 import '../impl/logger.dart';
+import '../impl/setting_impl.dart';
 
 class StoreRepoConfigPage extends StatefulWidget {
   const StoreRepoConfigPage({super.key});
@@ -131,25 +132,64 @@ class _StoreRepoConfigPageState extends State<StoreRepoConfigPage> {
                     await GrpcClient.instance.createRepo(_pathController.text);
                 if (response.errCode == ErrCode.Success) {
                   if (mounted) {
-                    Navigator.of(context).pop(_pathController.text);
+                    if (response.repo.hasRepoUuid()) {
+                      await SettingImpl.instance
+                          .addServerRepoUuid(response.repo.repoUuid);
+                      if (mounted) {
+                        if (!mounted) return;
+                        context.go('/home');
+                      }
+                    }
                   }
                 } else {
                   if (mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                            'Failed to create repository: ${response.errCode}'),
-                        backgroundColor: Colors.red,
+                    await showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: const Text('Repository Creation Failed'),
+                        content: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                                'Failed to create repository: ${response.errCode}'),
+                            const SizedBox(height: 8),
+                            const Text(
+                                'Please check your network connection and try again.'),
+                          ],
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            child: const Text('OK'),
+                          ),
+                        ],
                       ),
                     );
                   }
                 }
               } catch (e) {
                 if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Error creating repository: $e'),
-                      backgroundColor: Colors.red,
+                  await showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text('Network Error'),
+                      content: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Failed to connect to server: $e'),
+                          const SizedBox(height: 8),
+                          const Text(
+                              'Please check your network connection and try again.'),
+                        ],
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          child: const Text('OK'),
+                        ),
+                      ],
                     ),
                   );
                 }
