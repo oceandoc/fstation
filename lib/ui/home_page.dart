@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:icons_plus/icons_plus.dart';
 
 import '../util/app_update.dart';
 
@@ -24,27 +26,18 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: RefreshIndicator(
-          onRefresh: () async {},
-          child: CustomScrollView(
-            shrinkWrap: true,
-            physics: const ClampingScrollPhysics(),
-            slivers: [
-              // customDiscoverBar(context), //AppBar
-              SliverList(
-                delegate: SliverChildListDelegate(
-                  [
-                    // CaraouselWidget(),
-                  ],
-                ),
-              )
-            ],
+    return Scaffold(
+      body: Center(
+        // child: const Text('Backup'),
+        child: OutlinedButton.icon(
+          onPressed: () => context.go('/backup'),
+          icon: const Icon(MingCute.cloud_fill),
+          label: const Text('Backup'),
+          style: OutlinedButton.styleFrom(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           ),
         ),
       ),
     );
   }
-
 }

@@ -52,5 +52,17 @@
   "finding_server": "发现本地服务器",
   "setup_server":"配置服务器",
   "local_server_found": "发现本地服务器",
-  "use_local_server": "使用本地服务器"
+  "use_local_server": "使用本地服务器",
+  "backup_title": "备份",
+  "backup_settings": "备份设置",
+  "auto_backup": "自动备份",
+  "auto_backup_desc": "自动备份新的照片和视频",
+  "background_backup": "后台备份",
+  "background_backup_desc": "在应用后台继续备份",
+  "permission_required": "需要存储权限",
+  "grant_permission": "授予权限",
+  "permission_onboarding_permission_limited": "权限受限：要让 Immich 备份和管理您的整个图库收藏，请在“设置”中授予照片和视频权限。",
+  "permission_onboarding_go_to_settings": "转到设置",
+  "permission_onboarding_continue_anyway": "仍然继续",
+  "permission_onboarding_permission_denied": "权限被拒：要使用 Immich，请在“设置”中授予照片和视频权限。"
 }

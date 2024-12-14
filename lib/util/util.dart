@@ -15,7 +15,7 @@ Future<bool> connectAndHandshake() async {
 
   try {
     // Try to connect and handshake with each discovered server
-    final client = GrpcClient.instance;
+
     final serverParts = SettingImpl.instance.serverAddr.split(':');
     if (serverParts.length == 2) {
       final host = serverParts[0];
@@ -25,7 +25,8 @@ Future<bool> connectAndHandshake() async {
       }
     }
 
-    final response = await client.handshake();
+    // TODO(xieyz): add a timeout, avoid stop main thread too long
+    final response = await GrpcClient.instance.handshake();
     if (response.errCode == ErrCode.Success &&
         response.handshakeMsg ==
             '7a3be8186493f1bc834e3a6b84fcb2f9dc6d042e93d285ec23fa56836889dfa9' &&

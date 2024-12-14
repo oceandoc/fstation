@@ -52,5 +52,17 @@
   "finding_server": "Finding local server",
   "setup_server":"Setup server",
   "local_server_found": "Local Server Found",
-  "use_local_server": "Use local server"
+  "use_local_server": "Use local server",
+  "backup_title": "Backup",
+  "backup_settings": "Backup Settings",
+  "auto_backup": "Automatic Backup",
+  "auto_backup_desc": "Automatically backup new photos and videos",
+  "background_backup": "Background Backup",
+  "background_backup_desc": "Continue backup when app is in background",
+  "permission_required": "Storage Permission Required",
+  "grant_permission": "Grant Permission",
+  "permission_onboarding_permission_limited": "Permission limited. To let Immich backup and manage your entire gallery collection, grant photo and video permissions in Settings.",
+  "permission_onboarding_go_to_settings": "Go to settings",
+  "permission_onboarding_continue_anyway": "Continue anyway",
+  "permission_onboarding_permission_denied": "Permission denied. To use Immich, grant photo and video permissions in Settings."
 }

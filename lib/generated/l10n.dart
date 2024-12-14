@@ -579,6 +579,126 @@ class Localization {
       args: [],
     );
   }
+
+  /// `Backup`
+  String get backup_title {
+    return Intl.message(
+      'Backup',
+      name: 'backup_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Backup Settings`
+  String get backup_settings {
+    return Intl.message(
+      'Backup Settings',
+      name: 'backup_settings',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Automatic Backup`
+  String get auto_backup {
+    return Intl.message(
+      'Automatic Backup',
+      name: 'auto_backup',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Automatically backup new photos and videos`
+  String get auto_backup_desc {
+    return Intl.message(
+      'Automatically backup new photos and videos',
+      name: 'auto_backup_desc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Background Backup`
+  String get background_backup {
+    return Intl.message(
+      'Background Backup',
+      name: 'background_backup',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Continue backup when app is in background`
+  String get background_backup_desc {
+    return Intl.message(
+      'Continue backup when app is in background',
+      name: 'background_backup_desc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Storage Permission Required`
+  String get permission_required {
+    return Intl.message(
+      'Storage Permission Required',
+      name: 'permission_required',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Grant Permission`
+  String get grant_permission {
+    return Intl.message(
+      'Grant Permission',
+      name: 'grant_permission',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Permission limited. To let Immich backup and manage your entire gallery collection, grant photo and video permissions in Settings.`
+  String get permission_onboarding_permission_limited {
+    return Intl.message(
+      'Permission limited. To let Immich backup and manage your entire gallery collection, grant photo and video permissions in Settings.',
+      name: 'permission_onboarding_permission_limited',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Go to settings`
+  String get permission_onboarding_go_to_settings {
+    return Intl.message(
+      'Go to settings',
+      name: 'permission_onboarding_go_to_settings',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Continue anyway`
+  String get permission_onboarding_continue_anyway {
+    return Intl.message(
+      'Continue anyway',
+      name: 'permission_onboarding_continue_anyway',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Permission denied. To use Immich, grant photo and video permissions in Settings.`
+  String get permission_onboarding_permission_denied {
+    return Intl.message(
+      'Permission denied. To use Immich, grant photo and video permissions in Settings.',
+      name: 'permission_onboarding_permission_denied',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<Localization> {

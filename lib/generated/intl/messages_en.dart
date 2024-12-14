@@ -25,6 +25,16 @@ class MessageLookup extends MessageLookupByLibrary {
         "about_app": MessageLookupByLibrary.simpleMessage("About"),
         "already_have_account":
             MessageLookupByLibrary.simpleMessage("Already have an account?"),
+        "auto_backup": MessageLookupByLibrary.simpleMessage("Automatic Backup"),
+        "auto_backup_desc": MessageLookupByLibrary.simpleMessage(
+            "Automatically backup new photos and videos"),
+        "background_backup":
+            MessageLookupByLibrary.simpleMessage("Background Backup"),
+        "background_backup_desc": MessageLookupByLibrary.simpleMessage(
+            "Continue backup when app is in background"),
+        "backup_settings":
+            MessageLookupByLibrary.simpleMessage("Backup Settings"),
+        "backup_title": MessageLookupByLibrary.simpleMessage("Backup"),
         "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
         "close_app": MessageLookupByLibrary.simpleMessage("Close the App?"),
         "confirm": MessageLookupByLibrary.simpleMessage("Confirm"),
@@ -57,6 +67,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "forgot_password":
             MessageLookupByLibrary.simpleMessage("Forgot password"),
         "general_close": MessageLookupByLibrary.simpleMessage("Close"),
+        "grant_permission":
+            MessageLookupByLibrary.simpleMessage("Grant Permission"),
         "incorrect_password":
             MessageLookupByLibrary.simpleMessage("Incorrect password"),
         "language": MessageLookupByLibrary.simpleMessage("English"),
@@ -79,6 +91,18 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Password reset successful"),
         "password_verified":
             MessageLookupByLibrary.simpleMessage("Password verified"),
+        "permission_onboarding_continue_anyway":
+            MessageLookupByLibrary.simpleMessage("Continue anyway"),
+        "permission_onboarding_go_to_settings":
+            MessageLookupByLibrary.simpleMessage("Go to settings"),
+        "permission_onboarding_permission_denied":
+            MessageLookupByLibrary.simpleMessage(
+                "Permission denied. To use Immich, grant photo and video permissions in Settings."),
+        "permission_onboarding_permission_limited":
+            MessageLookupByLibrary.simpleMessage(
+                "Permission limited. To let Immich backup and manage your entire gallery collection, grant photo and video permissions in Settings."),
+        "permission_required":
+            MessageLookupByLibrary.simpleMessage("Storage Permission Required"),
         "reset_password":
             MessageLookupByLibrary.simpleMessage("Reset password"),
         "select_lang": MessageLookupByLibrary.simpleMessage("Select Language"),

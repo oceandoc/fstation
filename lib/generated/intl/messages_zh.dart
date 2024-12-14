@@ -24,6 +24,13 @@ class MessageLookup extends MessageLookupByLibrary {
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "about_app": MessageLookupByLibrary.simpleMessage("关于"),
         "already_have_account": MessageLookupByLibrary.simpleMessage("已有帐户？"),
+        "auto_backup": MessageLookupByLibrary.simpleMessage("自动备份"),
+        "auto_backup_desc": MessageLookupByLibrary.simpleMessage("自动备份新的照片和视频"),
+        "background_backup": MessageLookupByLibrary.simpleMessage("后台备份"),
+        "background_backup_desc":
+            MessageLookupByLibrary.simpleMessage("在应用后台继续备份"),
+        "backup_settings": MessageLookupByLibrary.simpleMessage("备份设置"),
+        "backup_title": MessageLookupByLibrary.simpleMessage("备份"),
         "cancel": MessageLookupByLibrary.simpleMessage("取消"),
         "close_app": MessageLookupByLibrary.simpleMessage("关闭应用？"),
         "confirm": MessageLookupByLibrary.simpleMessage("确定"),
@@ -47,6 +54,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("指纹登陆失败"),
         "forgot_password": MessageLookupByLibrary.simpleMessage("忘记密码？"),
         "general_close": MessageLookupByLibrary.simpleMessage("关闭"),
+        "grant_permission": MessageLookupByLibrary.simpleMessage("授予权限"),
         "incorrect_password": MessageLookupByLibrary.simpleMessage("密码错误"),
         "language": MessageLookupByLibrary.simpleMessage("简体中文"),
         "language_en":
@@ -65,6 +73,17 @@ class MessageLookup extends MessageLookupByLibrary {
         "password_reset_success":
             MessageLookupByLibrary.simpleMessage("密码重置成功"),
         "password_verified": MessageLookupByLibrary.simpleMessage("密码正确"),
+        "permission_onboarding_continue_anyway":
+            MessageLookupByLibrary.simpleMessage("仍然继续"),
+        "permission_onboarding_go_to_settings":
+            MessageLookupByLibrary.simpleMessage("转到设置"),
+        "permission_onboarding_permission_denied":
+            MessageLookupByLibrary.simpleMessage(
+                "权限被拒：要使用 Immich，请在“设置”中授予照片和视频权限。"),
+        "permission_onboarding_permission_limited":
+            MessageLookupByLibrary.simpleMessage(
+                "权限受限：要让 Immich 备份和管理您的整个图库收藏，请在“设置”中授予照片和视频权限。"),
+        "permission_required": MessageLookupByLibrary.simpleMessage("需要存储权限"),
         "reset_password": MessageLookupByLibrary.simpleMessage("重置密码"),
         "select_lang": MessageLookupByLibrary.simpleMessage("选择语言"),
         "settings": MessageLookupByLibrary.simpleMessage("设置"),
