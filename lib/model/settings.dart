@@ -21,6 +21,7 @@ class Settings {
     this.serverUuid = '',
     this.serverRepoUuids = const [],
     this.serverToken = '',
+    this.selectedAlbums = const [],
   });
 
   // Create Settings from JSON/Map
@@ -49,6 +50,7 @@ class Settings {
       serverUuid: map['server_uuid'] as String? ?? '',
       serverRepoUuids: _parseRepoUuids(map['server_repo_uuids'] as String?),
       serverToken: map['server_token'] as String? ?? '',
+      selectedAlbums: _parseAlbums(map['selected_albums'] as String?),
     );
   }
   int? id;
@@ -72,6 +74,7 @@ class Settings {
   String serverUuid;
   List<String> serverRepoUuids;
   String serverToken;
+  List<String> selectedAlbums;
 
   // Convert Settings to JSON/Map
   Map<String, dynamic> toMap() {
@@ -99,6 +102,7 @@ class Settings {
       'server_uuid': serverUuid,
       'server_repo_uuids': serverRepoUuids.join('|'),
       'server_token': serverToken,
+      'selected_albums': selectedAlbums.join('|'),
     };
   }
 
@@ -118,6 +122,12 @@ class Settings {
   static List<String> _parseRepoUuids(String? uuidsString) {
     if (uuidsString == null || uuidsString.isEmpty) return [];
     return uuidsString.split('|');
+  }
+
+  // Helper method to parse selected albums string
+  static List<String> _parseAlbums(String? albumsString) {
+    if (albumsString == null || albumsString.isEmpty) return [];
+    return albumsString.split('|');
   }
 
   // Create a copy of Settings with some fields updated
@@ -143,6 +153,7 @@ class Settings {
     String? serverUuid,
     List<String>? serverRepoUuids,
     String? serverToken,
+    List<String>? selectedAlbums,
   }) {
     return Settings(
       id: id ?? this.id,
@@ -170,6 +181,7 @@ class Settings {
       serverUuid: serverUuid ?? this.serverUuid,
       serverRepoUuids: serverRepoUuids ?? this.serverRepoUuids,
       serverToken: serverToken ?? this.serverToken,
+      selectedAlbums: selectedAlbums ?? this.selectedAlbums,
     );
   }
 

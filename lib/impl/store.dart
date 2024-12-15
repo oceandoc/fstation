@@ -110,7 +110,8 @@ class Store {
           server_addr TEXT DEFAULT '',
           server_uuid TEXT DEFAULT '',
           server_repo_uuids TEXT DEFAULT '',
-          server_token TEXT DEFAULT ''
+          server_token TEXT DEFAULT '',
+          selected_albums TEXT DEFAULT ''
         )
       ''');
 
@@ -135,7 +136,8 @@ class Store {
       'server_addr': '',
       'server_uuid': '',
       'server_repo_uuids': '',
-      'server_token': ''
+      'server_token': '',
+      'selected_albums': ''
     });
 
     await db.execute('''

@@ -699,6 +699,66 @@ class Localization {
       args: [],
     );
   }
+
+  /// `Choose backup albums`
+  String get choose_backup_albums {
+    return Intl.message(
+      'Choose backup albums',
+      name: 'choose_backup_albums',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No albums selected`
+  String get no_albums_selected {
+    return Intl.message(
+      'No albums selected',
+      name: 'no_albums_selected',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `albums selected`
+  String get albums_selected {
+    return Intl.message(
+      'albums selected',
+      name: 'albums_selected',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No albums found`
+  String get no_albums_found {
+    return Intl.message(
+      'No albums found',
+      name: 'no_albums_found',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select All`
+  String get select_all {
+    return Intl.message(
+      'Select All',
+      name: 'select_all',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Deselect All`
+  String get deselect_all {
+    return Intl.message(
+      'Deselect All',
+      name: 'deselect_all',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<Localization> {

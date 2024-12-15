@@ -202,4 +202,11 @@ class SettingImpl {
       await saveServerRepoUuids(updatedUuids);
     }
   }
+
+  List<String> get selectedAlbums => settings.selectedAlbums;
+
+  Future<void> saveSelectedAlbums(List<String> albums) async {
+    _settings = settings.copyWith(selectedAlbums: albums);
+    await Store.instance.saveSettings(_settings!);
+  }
 }

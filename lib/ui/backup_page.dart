@@ -2,11 +2,13 @@ import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:permission_handler/permission_handler.dart';
 // import 'package:app_settings/app_settings.dart';
 
 import '../generated/l10n.dart';
 import '../impl/logger.dart';
+import '../impl/setting_impl.dart';
 
 // TODO(xieyz): ios need add permison info to plist.info file
 class BackupPage extends StatefulWidget {
@@ -215,8 +217,6 @@ class _BackupPageState extends State<BackupPage> {
     );
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
@@ -267,7 +267,6 @@ class _BackupPageState extends State<BackupPage> {
                 setState(() {
                   _autoBackup = value;
                 });
-                // TODO: Save setting
               },
             ),
             SwitchListTile(
@@ -279,9 +278,22 @@ class _BackupPageState extends State<BackupPage> {
                       setState(() {
                         _backgroundBackup = value;
                       });
-                      // TODO: Save setting
                     }
                   : null,
+            ),
+            const Divider(),
+            ListTile(
+              title: Text(Localization.current.choose_backup_albums),
+              subtitle: Text(
+                SettingImpl.instance.selectedAlbums.isEmpty
+                    ? Localization.current.no_albums_selected
+                    : '${SettingImpl.instance.selectedAlbums.length} ${Localization.current.albums_selected}',
+                style: TextStyle(color: Colors.grey),
+              ),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () {
+                context.go('/select_albums');
+              },
             ),
           ],
         ),

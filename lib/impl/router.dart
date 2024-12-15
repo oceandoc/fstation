@@ -3,6 +3,7 @@ import 'package:fstation/impl/setting_impl.dart';
 import 'package:fstation/impl/user_manager.dart';
 import 'package:go_router/go_router.dart';
 
+import '../ui/albums_select_page.dart';
 import '../ui/backup_page.dart';
 import '../ui/error_page.dart';
 import '../ui/home_page.dart';
@@ -68,6 +69,10 @@ final GoRouter router = GoRouter(
       path: '/backup',
       builder: (context, state) => const BackupPage(),
     ),
+    GoRoute(
+      path: '/select_albums',
+      builder: (context, state) => const AlbumsSelectPage(),
+    ),
     StatefulShellRoute(
       navigatorContainerBuilder: (context, navigationShell, children) {
         return children[navigationShell.currentIndex];
@@ -88,6 +93,12 @@ final GoRouter router = GoRouter(
                 GoRoute(
                   path: '/backup',
                   builder: (context, state) => const BackupPage(),
+                  routes: [
+                    GoRoute(
+                      path: '/select_albums',
+                      builder: (context, state) => const AlbumsSelectPage(),
+                    ),
+                  ],
                 ),
               ],
             ),

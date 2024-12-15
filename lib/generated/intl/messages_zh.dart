@@ -23,6 +23,7 @@ class MessageLookup extends MessageLookupByLibrary {
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "about_app": MessageLookupByLibrary.simpleMessage("关于"),
+        "albums_selected": MessageLookupByLibrary.simpleMessage("个相册已选择"),
         "already_have_account": MessageLookupByLibrary.simpleMessage("已有帐户？"),
         "auto_backup": MessageLookupByLibrary.simpleMessage("自动备份"),
         "auto_backup_desc": MessageLookupByLibrary.simpleMessage("自动备份新的照片和视频"),
@@ -32,10 +33,12 @@ class MessageLookup extends MessageLookupByLibrary {
         "backup_settings": MessageLookupByLibrary.simpleMessage("备份设置"),
         "backup_title": MessageLookupByLibrary.simpleMessage("备份"),
         "cancel": MessageLookupByLibrary.simpleMessage("取消"),
+        "choose_backup_albums": MessageLookupByLibrary.simpleMessage("选择备份相册"),
         "close_app": MessageLookupByLibrary.simpleMessage("关闭应用？"),
         "confirm": MessageLookupByLibrary.simpleMessage("确定"),
         "confirm_new_password": MessageLookupByLibrary.simpleMessage("确认新密码"),
         "delete": MessageLookupByLibrary.simpleMessage("删除"),
+        "deselect_all": MessageLookupByLibrary.simpleMessage("取消全选"),
         "done": MessageLookupByLibrary.simpleMessage("完成"),
         "dont_have_account": MessageLookupByLibrary.simpleMessage("没有帐户？"),
         "email_updated_success":
@@ -65,6 +68,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "log_out": MessageLookupByLibrary.simpleMessage("注销"),
         "new_password": MessageLookupByLibrary.simpleMessage("新密码"),
         "next": MessageLookupByLibrary.simpleMessage("下一步"),
+        "no_albums_found": MessageLookupByLibrary.simpleMessage("未找到相册"),
+        "no_albums_selected": MessageLookupByLibrary.simpleMessage("未选择相册"),
         "page_home_title": MessageLookupByLibrary.simpleMessage("Home"),
         "page_setting_title": MessageLookupByLibrary.simpleMessage("设置"),
         "password_not_match": MessageLookupByLibrary.simpleMessage("密码不一致"),
@@ -79,12 +84,13 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("转到设置"),
         "permission_onboarding_permission_denied":
             MessageLookupByLibrary.simpleMessage(
-                "权限被拒：要使用 Immich，请在“设置”中授予照片和视频权限。"),
+                "权限被拒：要使用 Immich，请在\"设置\"中授予照片和视频权限。"),
         "permission_onboarding_permission_limited":
             MessageLookupByLibrary.simpleMessage(
-                "权限受限：要让 Immich 备份和管理您的整个图库收藏，请在“设置”中授予照片和视频权限。"),
+                "权限受限：要让 Immich 备份和管理您的整个图库收藏，请在\"设置\"中授予照片和视频权限。"),
         "permission_required": MessageLookupByLibrary.simpleMessage("需要存储权限"),
         "reset_password": MessageLookupByLibrary.simpleMessage("重置密码"),
+        "select_all": MessageLookupByLibrary.simpleMessage("全选"),
         "select_lang": MessageLookupByLibrary.simpleMessage("选择语言"),
         "settings": MessageLookupByLibrary.simpleMessage("设置"),
         "setup_server": MessageLookupByLibrary.simpleMessage("配置服务器"),

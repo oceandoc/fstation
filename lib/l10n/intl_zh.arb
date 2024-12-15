@@ -61,8 +61,14 @@
   "background_backup_desc": "在应用后台继续备份",
   "permission_required": "需要存储权限",
   "grant_permission": "授予权限",
-  "permission_onboarding_permission_limited": "权限受限：要让 Immich 备份和管理您的整个图库收藏，请在“设置”中授予照片和视频权限。",
+  "permission_onboarding_permission_limited": "权限受限：要让 Immich 备份和管理您的整个图库收藏，请在\"设置\"中授予照片和视频权限。",
   "permission_onboarding_go_to_settings": "转到设置",
   "permission_onboarding_continue_anyway": "仍然继续",
-  "permission_onboarding_permission_denied": "权限被拒：要使用 Immich，请在“设置”中授予照片和视频权限。"
+  "permission_onboarding_permission_denied": "权限被拒：要使用 Immich，请在\"设置\"中授予照片和视频权限。",
+  "choose_backup_albums": "选择备份相册",
+  "no_albums_selected": "未选择相册",
+  "albums_selected": "个相册已选择",
+  "no_albums_found": "未找到相册",
+  "select_all": "全选",
+  "deselect_all": "取消全选"
 }

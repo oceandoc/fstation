@@ -23,6 +23,8 @@ class MessageLookup extends MessageLookupByLibrary {
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "about_app": MessageLookupByLibrary.simpleMessage("About"),
+        "albums_selected":
+            MessageLookupByLibrary.simpleMessage("albums selected"),
         "already_have_account":
             MessageLookupByLibrary.simpleMessage("Already have an account?"),
         "auto_backup": MessageLookupByLibrary.simpleMessage("Automatic Backup"),
@@ -36,11 +38,14 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Backup Settings"),
         "backup_title": MessageLookupByLibrary.simpleMessage("Backup"),
         "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
+        "choose_backup_albums":
+            MessageLookupByLibrary.simpleMessage("Choose backup albums"),
         "close_app": MessageLookupByLibrary.simpleMessage("Close the App?"),
         "confirm": MessageLookupByLibrary.simpleMessage("Confirm"),
         "confirm_new_password":
             MessageLookupByLibrary.simpleMessage("Confirm new password"),
         "delete": MessageLookupByLibrary.simpleMessage("Delete"),
+        "deselect_all": MessageLookupByLibrary.simpleMessage("Deselect All"),
         "done": MessageLookupByLibrary.simpleMessage("Done"),
         "dont_have_account":
             MessageLookupByLibrary.simpleMessage("Don\'t have an account?"),
@@ -81,6 +86,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "log_out": MessageLookupByLibrary.simpleMessage("Log out"),
         "new_password": MessageLookupByLibrary.simpleMessage("New Password"),
         "next": MessageLookupByLibrary.simpleMessage("Next"),
+        "no_albums_found":
+            MessageLookupByLibrary.simpleMessage("No albums found"),
+        "no_albums_selected":
+            MessageLookupByLibrary.simpleMessage("No albums selected"),
         "page_home_title": MessageLookupByLibrary.simpleMessage("Home"),
         "page_setting_title": MessageLookupByLibrary.simpleMessage("Setting"),
         "password_not_match":
@@ -105,6 +114,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Storage Permission Required"),
         "reset_password":
             MessageLookupByLibrary.simpleMessage("Reset password"),
+        "select_all": MessageLookupByLibrary.simpleMessage("Select All"),
         "select_lang": MessageLookupByLibrary.simpleMessage("Select Language"),
         "settings": MessageLookupByLibrary.simpleMessage("Setting"),
         "setup_server": MessageLookupByLibrary.simpleMessage("Setup server"),

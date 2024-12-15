@@ -64,5 +64,11 @@
   "permission_onboarding_permission_limited": "Permission limited. To let Immich backup and manage your entire gallery collection, grant photo and video permissions in Settings.",
   "permission_onboarding_go_to_settings": "Go to settings",
   "permission_onboarding_continue_anyway": "Continue anyway",
-  "permission_onboarding_permission_denied": "Permission denied. To use Immich, grant photo and video permissions in Settings."
+  "permission_onboarding_permission_denied": "Permission denied. To use Immich, grant photo and video permissions in Settings.",
+  "choose_backup_albums": "Choose backup albums",
+  "no_albums_selected": "No albums selected",
+  "albums_selected": "albums selected",
+  "no_albums_found": "No albums found",
+  "select_all": "Select All",
+  "deselect_all": "Deselect All"
 }
