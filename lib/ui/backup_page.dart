@@ -1,14 +1,20 @@
 import 'dart:io';
+import 'dart:async';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:permission_handler/permission_handler.dart';
 // import 'package:app_settings/app_settings.dart';
+import 'package:synchronized/synchronized.dart';
 
+import '../generated/data.pbenum.dart';
 import '../generated/l10n.dart';
 import '../impl/logger.dart';
 import '../impl/setting_impl.dart';
+import '../impl/media_manager.dart';
+import '../model/asset.dart';
+import '../impl/grpc_client.dart';
 
 // TODO(xieyz): ios need add permison info to plist.info file
 class BackupPage extends StatefulWidget {
@@ -23,6 +29,11 @@ class _BackupPageState extends State<BackupPage> {
   bool _autoBackup = false;
   bool _backgroundBackup = false;
   PermissionStatus? _permissionStatus;
+  final Map<String, double> _uploadProgress = {};
+  final Set<String> _uploadingAssets = {};
+  final List<Asset> _pendingAssets = [];
+  static const int maxConcurrentUploads = 5;
+  final _lock = Lock();
 
   @override
   void initState() {
@@ -60,7 +71,106 @@ class _BackupPageState extends State<BackupPage> {
   }
 
   Future<void> _loadBackupData() async {
-    // TODO: Load backup data once we have permission
+    try {
+      _pendingAssets.clear();
+      _pendingAssets.addAll(await getAllUniqueAssets());
+      setState(() {}); // Refresh UI with pending assets
+      _startUploads();
+    } catch (e) {
+      Logger.error('Error loading backup data', e);
+    }
+  }
+
+  Future<void> _startUploads() async {
+    if (_uploadingAssets.length >= maxConcurrentUploads) return;
+
+    while (_pendingAssets.isNotEmpty &&
+        _uploadingAssets.length < maxConcurrentUploads) {
+      final asset = _pendingAssets.removeAt(0);
+      unawaited(_uploadAsset(asset)); // Allow concurrent execution
+    }
+  }
+
+  Future<void> _uploadAsset(Asset asset) async {
+    // Synchronized block to protect shared state
+    final shouldUpload = await _lock.synchronized(() {
+      if (_uploadingAssets.contains(asset.localId)) return false;
+      _uploadingAssets.add(asset.localId!);
+      _uploadProgress[asset.localId!] = 0;
+      return true;
+    });
+
+    if (!shouldUpload) return;
+    setState(() {}); // Update UI after lock released
+
+    try {
+      final file = await asset.local?.file;
+      if (file == null) return;
+
+      final content = await file.readAsBytes();
+      final repoUuid = SettingImpl.instance.serverRepoUuids.first;
+      final fileName = asset.fileName;
+
+      await for (final response in GrpcClient.instance.uploadFile(
+        fileName,
+        '/photos/$fileName',
+        repoUuid,
+        content,
+        FileType.Regular,
+      )) {
+        if (mounted) {
+          setState(() {
+            _uploadProgress[asset.localId!] =
+                response.partitionNum / response.totalPartitions;
+          });
+        }
+      }
+
+      // Upload completed
+      if (mounted) {
+        setState(() {
+          _uploadingAssets.remove(asset.localId);
+          _uploadProgress.remove(asset.localId);
+        });
+      }
+    } catch (e) {
+      Logger.error('Error uploading asset: ${asset.fileName}', e);
+      if (mounted) {
+        setState(() {
+          _uploadingAssets.remove(asset.localId);
+          _uploadProgress.remove(asset.localId);
+          _pendingAssets.add(asset); // Retry later
+        });
+      }
+    } finally {
+      // Start next upload when this one finishes
+      if (mounted) {
+        Future.microtask(() => _startUploads());
+      }
+    }
+  }
+
+  Future<List<Asset>> getAllUniqueAssets() async {
+    final selectedAlbumIds = SettingImpl.instance.selectedAlbums;
+    if (selectedAlbumIds.isEmpty) {
+      return [];
+    }
+
+    final Set<String> processedAssetIds = {};
+    final List<Asset> uniqueAssets = [];
+
+    for (final albumId in selectedAlbumIds) {
+      final assets = await MediaManager.instance.getAlbumAssets(albumId);
+
+      for (final asset in assets) {
+        if (!processedAssetIds.contains(asset.localId)) {
+          processedAssetIds.add(asset.localId!);
+          uniqueAssets.add(asset);
+        }
+      }
+    }
+
+    return uniqueAssets;
   }
 
   /// Requests the gallery permission
@@ -302,26 +412,45 @@ class _BackupPageState extends State<BackupPage> {
   }
 
   Widget _buildBackupList() {
-    // TODO: Implement actual backup list
-    return const Padding(
-      padding: EdgeInsets.all(16),
+    return Padding(
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ListTile(
-            leading: Icon(Icons.photo),
-            title: Text('photo1.jpg'),
-            subtitle: LinearProgressIndicator(value: 0.7),
-            trailing: Text('70%'),
-          ),
-          ListTile(
-            leading: Icon(Icons.video_collection),
-            title: Text('video1.mp4'),
-            subtitle: LinearProgressIndicator(value: 0.3),
-            trailing: Text('30%'),
-          ),
+          ..._pendingAssets.map((asset) => ListTile(
+                leading: Icon(
+                  asset.type == AssetType.video
+                      ? Icons.video_collection
+                      : Icons.photo,
+                ),
+                title: Text(asset.fileName),
+                subtitle: const LinearProgressIndicator(value: 0),
+                trailing: const Text('Pending'),
+              )),
+          ..._uploadingAssets.map((id) {
+            final asset = _findAssetById(id);
+            if (asset == null) return const SizedBox.shrink();
+            final progress = _uploadProgress[id] ?? 0;
+            return ListTile(
+              leading: Icon(
+                asset.type == AssetType.video
+                    ? Icons.video_collection
+                    : Icons.photo,
+              ),
+              title: Text(asset.fileName),
+              subtitle: LinearProgressIndicator(value: progress),
+              trailing: Text('${(progress * 100).toInt()}%'),
+            );
+          }),
         ],
       ),
+    );
+  }
+
+  Asset? _findAssetById(String id) {
+    return _pendingAssets.firstWhere(
+      (asset) => asset.localId == id,
+      orElse: () => null,
     );
   }
 }
