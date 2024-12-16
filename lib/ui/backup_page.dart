@@ -1,6 +1,8 @@
-import 'dart:io';
 import 'dart:async';
+import 'dart:io';
 
+import 'package:convert/convert.dart';
+import 'package:crypto/crypto.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -9,12 +11,13 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:synchronized/synchronized.dart';
 
 import '../generated/data.pbenum.dart';
+import '../generated/error.pbenum.dart';
 import '../generated/l10n.dart';
-import '../impl/logger.dart';
-import '../impl/setting_impl.dart';
-import '../impl/media_manager.dart';
-import '../model/asset.dart';
 import '../impl/grpc_client.dart';
+import '../impl/logger.dart';
+import '../impl/media_manager.dart';
+import '../impl/setting_impl.dart';
+import '../model/asset.dart';
 
 // TODO(xieyz): ios need add permison info to plist.info file
 class BackupPage extends StatefulWidget {
@@ -28,10 +31,12 @@ class _BackupPageState extends State<BackupPage> {
   bool _isLoading = true;
   bool _autoBackup = false;
   bool _backgroundBackup = false;
+  int _selectedTabIndex = 0;
   PermissionStatus? _permissionStatus;
   final Map<String, double> _uploadProgress = {};
   final Set<String> _uploadingAssets = {};
   final List<Asset> _pendingAssets = [];
+  final List<Asset> _failedAssets = [];
   static const int maxConcurrentUploads = 5;
   final _lock = Lock();
 
@@ -107,25 +112,63 @@ class _BackupPageState extends State<BackupPage> {
       final file = await asset.local?.file;
       if (file == null) return;
 
-      final content = await file.readAsBytes();
-      final repoUuid = SettingImpl.instance.serverRepoUuids.first;
-      final fileName = asset.fileName;
+      const chunkSize = 4 * 1024 * 1024; // 4MB chunks
+      final fileSize = await file.length();
+      final totalChunks = (fileSize / chunkSize).ceil();
+      final raf = await file.open();
 
-      await for (final response in GrpcClient.instance.uploadFile(
-        fileName,
-        '/photos/$fileName',
-        repoUuid,
-        content,
-        FileType.Regular,
-      )) {
-        if (mounted) {
-          setState(() {
-            _uploadProgress[asset.localId!] =
-                response.partitionNum / response.totalPartitions;
-          });
-        }
+      // Calculate SHA256 hash
+      final digest = AccumulatorSink<Digest>();
+      final hasher = sha256.startChunkedConversion(digest);
+      var bytesRead = 0;
+
+      while (bytesRead < fileSize) {
+        final chunk = await raf.read(
+          bytesRead + chunkSize > fileSize ? fileSize - bytesRead : chunkSize,
+        );
+        hasher.add(chunk);
+        bytesRead += chunk.length;
       }
 
+      hasher.close();
+      final fileHash = digest.events.single.toString();
+      await raf.setPosition(0); // Reset file position
+
+      for (var i = 0; i < totalChunks; i++) {
+        final start = i * chunkSize;
+        final end = (i + 1) * chunkSize;
+        raf.setPositionSync(start);
+        final chunk = await raf.read(
+          end > fileSize ? fileSize - start : chunkSize,
+        );
+
+        await for (final response in GrpcClient.instance.uploadFile(
+          src: asset.fileName,
+          dst: '',
+          repoUuid: SettingImpl.instance.serverRepoUuids.first,
+          content: chunk,
+          fileType: FileType.Regular,
+          partitionNum: i,
+          partitionSize: chunkSize,
+          fileSize: chunk.length,
+          repoType: RepoType.RT_Ocean,
+          fileHash: fileHash,
+        )) {
+          if (response.errCode == ErrCode.Success) {
+            debugPrint(
+                'uploaded chunk ${i + 1}/$totalChunks for ${asset.fileName}');
+          } else {
+            Logger.error(
+                'chunk ${i + 1}/$totalChunks for ${asset.fileName} failed');
+          }
+          if (mounted) {
+            setState(() {
+              _uploadProgress[asset.localId!] = (i + 1) / totalChunks;
+            });
+          }
+        }
+      }
+      await raf.close();
       // Upload completed
       if (mounted) {
         setState(() {
@@ -133,17 +176,18 @@ class _BackupPageState extends State<BackupPage> {
           _uploadProgress.remove(asset.localId);
         });
       }
-    } catch (e) {
-      Logger.error('Error uploading asset: ${asset.fileName}', e);
+    } catch (e, s) {
+      Logger.error('Error uploading asset: ${asset.fileName}\n'
+          'Error: $e\n'
+          'Stack trace:\n$s');
       if (mounted) {
         setState(() {
           _uploadingAssets.remove(asset.localId);
           _uploadProgress.remove(asset.localId);
-          _pendingAssets.add(asset); // Retry later
+          _failedAssets.add(asset); // Add to failed list
         });
       }
     } finally {
-      // Start next upload when this one finishes
       if (mounted) {
         Future.microtask(() => _startUploads());
       }
@@ -262,16 +306,20 @@ class _BackupPageState extends State<BackupPage> {
     return result;
   }
 
+  Widget _buildPermissionRequest() {
+    if (_permissionStatus?.isLimited ?? false) {
+      return _buildPermissionLimited();
+    }
+    return _buildPermissionDenied();
+  }
+
   Widget _buildPermissionLimited() {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(32),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.photo_library_outlined,
-                size: 64, color: Colors.grey),
-            const SizedBox(height: 16),
             Text(
               Localization.current.permission_onboarding_permission_limited,
               textAlign: TextAlign.center,
@@ -279,17 +327,15 @@ class _BackupPageState extends State<BackupPage> {
             ),
             const SizedBox(height: 24),
             Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 ElevatedButton(
                   onPressed: () => openAppSettings(),
                   child: Text(Localization
                       .current.permission_onboarding_go_to_settings),
                 ),
-                const SizedBox(width: 16),
                 TextButton(
-                  onPressed: () => setState(
-                      () => _permissionStatus = PermissionStatus.granted),
+                  onPressed: _loadBackupData,
                   child: Text(Localization
                       .current.permission_onboarding_continue_anyway),
                 ),
@@ -304,12 +350,10 @@ class _BackupPageState extends State<BackupPage> {
   Widget _buildPermissionDenied() {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(32),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.no_photography, size: 64, color: Colors.grey),
-            const SizedBox(height: 16),
             Text(
               Localization.current.permission_onboarding_permission_denied,
               textAlign: TextAlign.center,
@@ -327,32 +371,40 @@ class _BackupPageState extends State<BackupPage> {
     );
   }
 
+  void _showConfigDialog() {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => SingleChildScrollView(
+        child: _buildConfigSection(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
-    }
-
-    if (_permissionStatus?.isLimited ?? false) {
-      return Scaffold(body: _buildPermissionLimited());
-    }
-
-    if (_permissionStatus!.isDenied) {
-      return Scaffold(body: _buildPermissionDenied());
-    }
-
-    // Rest of your backup page UI when permissions are granted
     return Scaffold(
-      appBar: AppBar(title: Text(Localization.current.backup_title)),
-      body: ListView(
-        children: [
-          _buildConfigSection(),
-          const Divider(),
-          _buildBackupList(),
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => context.go('/home'),
+        ),
+        centerTitle: true,
+        title: Text(
+          Localization.current.backup_title,
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () => context.push('/backup/settings'),
+          ),
         ],
       ),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : _permissionStatus?.isGranted != true
+              ? _buildPermissionRequest()
+              : _buildBackupList(),
     );
   }
 
@@ -415,42 +467,148 @@ class _BackupPageState extends State<BackupPage> {
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ..._pendingAssets.map((asset) => ListTile(
-                leading: Icon(
-                  asset.type == AssetType.video
-                      ? Icons.video_collection
-                      : Icons.photo,
+          Row(
+            children: [
+              Expanded(
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(4),
+                  onTap: () => setState(() => _selectedTabIndex = 0),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: Column(
+                      children: [
+                        Text(
+                          '正在备份',
+                          style: TextStyle(
+                            color: _selectedTabIndex == 0
+                                ? Theme.of(context).primaryColor
+                                : Colors.grey,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Container(
+                          height: 2,
+                          margin: const EdgeInsets.symmetric(horizontal: 10),
+                          color: _selectedTabIndex == 0
+                              ? Theme.of(context).primaryColor
+                              : Colors.transparent,
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-                title: Text(asset.fileName),
-                subtitle: const LinearProgressIndicator(value: 0),
-                trailing: const Text('Pending'),
-              )),
-          ..._uploadingAssets.map((id) {
-            final asset = _findAssetById(id);
-            if (asset == null) return const SizedBox.shrink();
-            final progress = _uploadProgress[id] ?? 0;
-            return ListTile(
+              ),
+              Expanded(
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(4),
+                  onTap: () => setState(() => _selectedTabIndex = 1),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: Column(
+                      children: [
+                        Text(
+                          '备份失败',
+                          style: TextStyle(
+                            color: _selectedTabIndex == 1
+                                ? Theme.of(context).primaryColor
+                                : Colors.grey,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Container(
+                          height: 2,
+                          margin: const EdgeInsets.symmetric(horizontal: 10),
+                          color: _selectedTabIndex == 1
+                              ? Theme.of(context).primaryColor
+                              : Colors.transparent,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Expanded(
+            child: SingleChildScrollView(
+              child: _selectedTabIndex == 0
+                  ? _buildBackupListContent()
+                  : _buildFailedListContent(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBackupListContent() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ..._pendingAssets.map((asset) => ListTile(
               leading: Icon(
                 asset.type == AssetType.video
                     ? Icons.video_collection
                     : Icons.photo,
               ),
               title: Text(asset.fileName),
-              subtitle: LinearProgressIndicator(value: progress),
-              trailing: Text('${(progress * 100).toInt()}%'),
-            );
-          }),
-        ],
-      ),
+              subtitle: const LinearProgressIndicator(value: 0),
+              trailing: const Text('Pending'),
+            )),
+        ..._uploadingAssets.map((id) {
+          final asset = _findAssetById(id);
+          if (asset == null) return const SizedBox.shrink();
+          final progress = _uploadProgress[id] ?? 0;
+          return ListTile(
+            leading: Icon(
+              asset.type == AssetType.video
+                  ? Icons.video_collection
+                  : Icons.photo,
+            ),
+            title: Text(asset.fileName),
+            subtitle: LinearProgressIndicator(value: progress),
+            trailing: Text('${(progress * 100).toInt()}%'),
+          );
+        }),
+      ],
+    );
+  }
+
+  Widget _buildFailedListContent() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: _failedAssets
+          .map((asset) => ListTile(
+                leading: Icon(
+                  asset.type == AssetType.video
+                      ? Icons.video_collection
+                      : Icons.photo,
+                  color: Colors.red,
+                ),
+                title: Text(asset.fileName),
+                subtitle: const Text('Upload failed'),
+                trailing: IconButton(
+                  icon: const Icon(Icons.refresh),
+                  onPressed: () {
+                    setState(() {
+                      _failedAssets.remove(asset);
+                      _pendingAssets.add(asset);
+                    });
+                    _startUploads();
+                  },
+                ),
+              ))
+          .toList(),
     );
   }
 
   Asset? _findAssetById(String id) {
-    return _pendingAssets.firstWhere(
-      (asset) => asset.localId == id,
-      orElse: () => null,
-    );
+    try {
+      return _pendingAssets.firstWhere((asset) => asset.localId == id);
+    } catch (e) {
+      return null;
+    }
   }
 }

@@ -824,7 +824,7 @@ class FileReq extends $pb.GeneratedMessage {
     ..aInt64(13, _omitFieldNames ? '' : 'partitionSize')
     ..aOS(14, _omitFieldNames ? '' : 'user')
     ..aOS(15, _omitFieldNames ? '' : 'group')
-    ..aOS(17, _omitFieldNames ? '' : 'token')
+    ..aOS(16, _omitFieldNames ? '' : 'token')
     ..hasRequiredFields = false
   ;
 
@@ -984,14 +984,14 @@ class FileReq extends $pb.GeneratedMessage {
   @$pb.TagNumber(15)
   void clearGroup() => clearField(15);
 
-  @$pb.TagNumber(17)
+  @$pb.TagNumber(16)
   $core.String get token => $_getSZ(15);
-  @$pb.TagNumber(17)
+  @$pb.TagNumber(16)
   set token($core.String v) { $_setString(15, v); }
-  @$pb.TagNumber(17)
+  @$pb.TagNumber(16)
   $core.bool hasToken() => $_has(15);
-  @$pb.TagNumber(17)
-  void clearToken() => clearField(17);
+  @$pb.TagNumber(16)
+  void clearToken() => clearField(16);
 }
 
 class FileRes extends $pb.GeneratedMessage {

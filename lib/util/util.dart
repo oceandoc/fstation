@@ -15,7 +15,6 @@ Future<bool> connectAndHandshake() async {
 
   try {
     // Try to connect and handshake with each discovered server
-
     final serverParts = SettingImpl.instance.serverAddr.split(':');
     if (serverParts.length == 2) {
       final host = serverParts[0];
@@ -24,7 +23,6 @@ Future<bool> connectAndHandshake() async {
         await GrpcClient.instance.connect(host, port);
       }
     }
-
     // TODO(xieyz): add a timeout, avoid stop main thread too long
     final response = await GrpcClient.instance.handshake();
     if (response.errCode == ErrCode.Success &&
@@ -38,8 +36,9 @@ Future<bool> connectAndHandshake() async {
     }
   } catch (e) {
     Logger.error(
-        'Failed to connect to  server: $SettingImpl.instance.serverAddr', e);
+        'Failed to connect to  server: ${SettingImpl.instance.serverAddr}', e);
   }
+  debugPrint('connectAndHandshake7');
   return false;
 }
 

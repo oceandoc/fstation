@@ -118,7 +118,7 @@ message FileReq {
   int64 partition_size = 13;
   string user = 14;
   string group = 15;
-  string token = 17;
+  string token = 16;
 }
 
 message FileRes {

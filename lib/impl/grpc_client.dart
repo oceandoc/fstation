@@ -1,12 +1,13 @@
 import 'dart:async';
 
+import 'package:fixnum/fixnum.dart' as $fixnum;
 import 'package:flutter/cupertino.dart';
 import 'package:fstation/generated/data.pb.dart';
 import 'package:fstation/generated/error.pb.dart';
 import 'package:fstation/generated/service.pb.dart';
 import 'package:fstation/impl/logger.dart';
-import 'package:fstation/impl/user_manager.dart';
 import 'package:fstation/impl/setting_impl.dart';
+import 'package:fstation/impl/user_manager.dart';
 import 'package:grpc/grpc.dart';
 import 'package:uuid/uuid.dart';
 
@@ -14,13 +15,16 @@ import '../model/user.dart';
 
 class GrpcClient {
   GrpcClient._();
+
   static final instance = GrpcClient._();
 
   static const _uuid = Uuid();
   ClientChannel? _channel;
   GrpcFileClient? _stub;
 
-  String get _token => SettingImpl.instance.serverToken ?? '';
+  String get _token => UserManager.instance.currentUser?.token ?? '';
+
+  String get _user_name => UserManager.instance.currentUser?.name ?? '';
 
   Future<void> connect(String host, int port, {bool secure = false}) async {
     try {
@@ -33,7 +37,7 @@ class GrpcClient {
           credentials: secure
               ? const ChannelCredentials.secure()
               : const ChannelCredentials.insecure(),
-          idleTimeout: const Duration(minutes: 1),
+          idleTimeout: const Duration(seconds: 5),
         ),
       );
 
@@ -68,9 +72,6 @@ class GrpcClient {
 
     try {
       final response = await _stub!.userOp(request);
-      if (response.errCode == ErrCode.Success) {
-        await SettingImpl.instance.saveServerToken(response.token);
-      }
       return response;
     } catch (e) {
       rethrow;
@@ -119,9 +120,6 @@ class GrpcClient {
 
     try {
       final response = await _stub!.userOp(request);
-      if (response.errCode == ErrCode.Success) {
-        await SettingImpl.instance.saveServerToken(response.token);
-      }
       return response;
     } catch (e) {
       rethrow;
@@ -175,23 +173,33 @@ class GrpcClient {
   }
 
   // File Operations
-  Stream<FileRes> uploadFile(
-    String src,
-    String dst,
-    String repoUuid,
-    List<int> content,
-    FileType fileType,
-  ) async* {
+  Stream<FileRes> uploadFile({
+    String? src,
+    String? dst,
+    String? repoUuid,
+    List<int>? content,
+    FileType? fileType,
+    int? partitionNum,
+    int? partitionSize,
+    int? fileSize,
+    RepoType? repoType,
+    String? fileHash,
+  }) async* {
     final request = FileReq()
       ..requestId = _uuid.v4()
       ..op = FileOp.FilePut
-      ..src = src
-      ..dst = dst
-      ..repoUuid = repoUuid
-      ..content = content
-      ..fileType = fileType
-      ..token = _token;
-
+      ..src = src!
+      ..dst = dst!
+      ..repoUuid = repoUuid!
+      ..content = content!
+      ..fileType = fileType!
+      ..repoType = repoType!
+      ..partitionNum = partitionNum!
+      ..partitionSize = $fixnum.Int64(partitionSize!)
+      ..fileSize = $fixnum.Int64(fileSize!)
+      ..fileHash = fileHash!
+      ..token = UserManager.instance.token!
+      ..user = UserManager.instance.lastLoginUser!;
     try {
       await for (final response in _stub!.fileOp(request)) {
         yield response;

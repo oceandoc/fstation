@@ -47,6 +47,7 @@ class UserManager {
   set isAuth(bool value) => _isAuth = value;
 
   String? get lastLoginUser => _currentUser?.name;
+  String? get token => _currentUser?.token;
 
   bool isFingerPrintAuthActivated = false;
   StreamSubscription<FingerPrintAuthState?>? fingerPrintAuthStreamSubscription;
@@ -57,7 +58,9 @@ class UserManager {
     if (currentUser == null) {
       return;
     }
+
     _currentUser = User.fromJson(currentUser);
+    debugPrint('init token: ${_currentUser?.token}');
     await updateToken();
   }
 
@@ -85,6 +88,7 @@ class UserManager {
 
   Future<void> updateUser(User? user, {bool updateCurrentUser = false}) async {
     if (user == null || user.name == null) return;
+    debugPrint('update user token: ${user.token}');
     await Store.instance.updateUser(
       name: user.name!,
       token: user.token,

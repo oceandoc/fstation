@@ -260,7 +260,7 @@ const FileReq$json = {
     {'1': 'partition_size', '3': 13, '4': 1, '5': 3, '10': 'partitionSize'},
     {'1': 'user', '3': 14, '4': 1, '5': 9, '10': 'user'},
     {'1': 'group', '3': 15, '4': 1, '5': 9, '10': 'group'},
-    {'1': 'token', '3': 17, '4': 1, '5': 9, '10': 'token'},
+    {'1': 'token', '3': 16, '4': 1, '5': 9, '10': 'token'},
   ],
 };
 
@@ -275,7 +275,7 @@ final $typed_data.Uint8List fileReqDescriptor = $convert.base64Decode(
     'dXBkYXRlVGltZRIjCg1wYXJ0aXRpb25fbnVtGAsgASgFUgxwYXJ0aXRpb25OdW0SGwoJcmVwb1'
     '91dWlkGAwgASgJUghyZXBvVXVpZBIlCg5wYXJ0aXRpb25fc2l6ZRgNIAEoA1INcGFydGl0aW9u'
     'U2l6ZRISCgR1c2VyGA4gASgJUgR1c2VyEhQKBWdyb3VwGA8gASgJUgVncm91cBIUCgV0b2tlbh'
-    'gRIAEoCVIFdG9rZW4=');
+    'gQIAEoCVIFdG9rZW4=');
 
 @$core.Deprecated('Use fileResDescriptor instead')
 const FileRes$json = {

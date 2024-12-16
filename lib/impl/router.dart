@@ -13,6 +13,7 @@ import '../ui/server_config_page.dart';
 import '../ui/splash_page.dart';
 import '../ui/store_repo_config_page.dart';
 import '../ui/widget/bottom_nav_bar.dart';
+import '../ui/backup_config_page.dart';
 
 final GoRouter router = GoRouter(
   initialLocation: '/home',
@@ -68,6 +69,12 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: '/backup',
       builder: (context, state) => const BackupPage(),
+      routes: [
+        GoRoute(
+          path: 'settings',
+          builder: (context, state) => const BackupConfigPage(),
+        ),
+      ],
     ),
     GoRoute(
       path: '/select_albums',

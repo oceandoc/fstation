@@ -145,19 +145,6 @@ class SettingImpl {
 
   String get serverAddr => settings.serverAddr;
 
-  // Server token management
-  String? get serverToken => settings.serverToken;
-
-  Future<void> saveServerToken(String token) async {
-    _settings = settings.copyWith(serverToken: token);
-    await Store.instance.saveSettings(_settings!);
-  }
-
-  Future<void> clearServerToken() async {
-    _settings = settings.copyWith(serverToken: '');
-    await Store.instance.saveSettings(_settings!);
-  }
-
   // Getters for commonly used values
   ThemeMode get themeMode => ThemeMode.values[settings.themeMode];
 

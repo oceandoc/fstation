@@ -71,6 +71,10 @@ dependencies:
   permission_handler: ^11.2.0
   photo_manager: ^3.6.1
   photo_manager_image_provider: ^2.2.0
+  rust_crypto: ^0.0.1
+  crypto: ^3.0.6
+  convert: ^3.1.2
+  fixnum: ^1.1.1
 
 dev_dependencies:
   flutter_test:
@@ -126,7 +130,7 @@ flutter_icons:
   android: true
   ios: true
   image_path: "assets/logo_color.png"
-  #adaptive_icon_background: "#FFFFFF"  # 设置适应图标��背景颜色
+  #adaptive_icon_background: "#FFFFFF"  # ��置适应图标背景颜色
   adaptive_icon_foreground: "assets/logo_color.png"  # 设置前景图标（主图标）
 
 #flutter_launcher_icons:
