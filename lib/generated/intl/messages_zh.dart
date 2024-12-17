@@ -89,6 +89,10 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage(
                 "权限受限：要让 Immich 备份和管理您的整个图库收藏，请在\"设置\"中授予照片和视频权限。"),
         "permission_required": MessageLookupByLibrary.simpleMessage("需要存储权限"),
+        "photo_page_building_timeline":
+            MessageLookupByLibrary.simpleMessage("正在生成时间线..."),
+        "photo_page_timeline_time_cost_tips":
+            MessageLookupByLibrary.simpleMessage("第一次可能耗时较长"),
         "reset_password": MessageLookupByLibrary.simpleMessage("重置密码"),
         "select_all": MessageLookupByLibrary.simpleMessage("全选"),
         "select_lang": MessageLookupByLibrary.simpleMessage("选择语言"),

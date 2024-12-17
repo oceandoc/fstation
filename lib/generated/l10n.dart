@@ -759,6 +759,26 @@ class Localization {
       args: [],
     );
   }
+
+  /// `Building timeline...`
+  String get photo_page_building_timeline {
+    return Intl.message(
+      'Building timeline...',
+      name: 'photo_page_building_timeline',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This may cost a lot of time for the first time`
+  String get photo_page_timeline_time_cost_tips {
+    return Intl.message(
+      'This may cost a lot of time for the first time',
+      name: 'photo_page_timeline_time_cost_tips',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<Localization> {

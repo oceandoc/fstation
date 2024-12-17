@@ -112,6 +112,11 @@ class MessageLookup extends MessageLookupByLibrary {
                 "Permission limited. To let Immich backup and manage your entire gallery collection, grant photo and video permissions in Settings."),
         "permission_required":
             MessageLookupByLibrary.simpleMessage("Storage Permission Required"),
+        "photo_page_building_timeline":
+            MessageLookupByLibrary.simpleMessage("Building timeline..."),
+        "photo_page_timeline_time_cost_tips":
+            MessageLookupByLibrary.simpleMessage(
+                "This may cost a lot of time for the first time"),
         "reset_password":
             MessageLookupByLibrary.simpleMessage("Reset password"),
         "select_all": MessageLookupByLibrary.simpleMessage("Select All"),

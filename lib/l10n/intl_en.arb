@@ -70,5 +70,7 @@
   "albums_selected": "albums selected",
   "no_albums_found": "No albums found",
   "select_all": "Select All",
-  "deselect_all": "Deselect All"
+  "deselect_all": "Deselect All",
+  "photo_page_building_timeline": "Building timeline...",
+  "photo_page_timeline_time_cost_tips": "This may cost a lot of time for the first time"
 }

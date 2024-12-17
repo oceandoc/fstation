@@ -8,6 +8,7 @@ import '../ui/backup_page.dart';
 import '../ui/error_page.dart';
 import '../ui/home_page.dart';
 import '../ui/login_page.dart';
+import '../ui/photos_page.dart';
 import '../ui/profile_page.dart';
 import '../ui/server_config_page.dart';
 import '../ui/splash_page.dart';
@@ -79,6 +80,10 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: '/select_albums',
       builder: (context, state) => const AlbumsSelectPage(),
+    ),
+    GoRoute(
+      path: '/photos',
+      builder: (context, state) => const PhotosPage(),
     ),
     StatefulShellRoute(
       navigatorContainerBuilder: (context, navigationShell, children) {

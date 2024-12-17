@@ -70,5 +70,7 @@
   "albums_selected": "个相册已选择",
   "no_albums_found": "未找到相册",
   "select_all": "全选",
-  "deselect_all": "取消全选"
+  "deselect_all": "取消全选",
+  "photo_page_building_timeline": "正在生成时间线...",
+  "photo_page_timeline_time_cost_tips": "第一次可能耗时较长"
 }
