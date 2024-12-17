@@ -175,6 +175,27 @@ class Store {
       'token': '',
       'token_update_time': DateTime.now().toIso8601String(),
     });
+
+    await db.execute('''
+        CREATE TABLE files (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          local_id TEXT UNIQUE,
+          hash TEXT,
+          device_id TEXT,
+          create_time INTEGER,
+          update_time INTEGER,
+          duration INTEGER,
+          type INTEGER,
+          width INTEGER,
+          height INTEGER,
+          file_name TEXT,
+          favorite INTEGER DEFAULT 0,
+          owner TEXT,
+          live_photo_video_hash TEXT,
+          deleted INTEGER DEFAULT 0,
+          thumb_hash TEXT
+        )
+      ''');
   }
 
   Future<Settings?> getSettings() async {
@@ -295,5 +316,63 @@ class Store {
       {'uuid': uuid},
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
+  }
+
+  Future<List<Map<String, dynamic>>> queryFiles({
+    String? where,
+    List<Object?>? whereArgs,
+    String? orderBy,
+    int? limit,
+    int? offset,
+  }) async {
+    return await _db.query(
+      'files',
+      where: where,
+      whereArgs: whereArgs,
+      orderBy: orderBy,
+      limit: limit,
+      offset: offset,
+    );
+  }
+
+  Future<void> insertFile(Map<String, dynamic> file) async {
+    await _db.insert(
+      'files',
+      file,
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  Future<void> insertFiles(List<Map<String, dynamic>> files) async {
+    final batch = _db.batch();
+    for (final file in files) {
+      batch.insert(
+        'files',
+        file,
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    }
+    await batch.commit(noResult: true);
+  }
+
+  Future<void> deleteFile(String localId) async {
+    await _db.delete(
+      'files',
+      where: 'local_id = ?',
+      whereArgs: [localId],
+    );
+  }
+
+  Future<void> markFileAsDeleted(String localId) async {
+    await _db.update(
+      'files',
+      {'deleted': 1},
+      where: 'local_id = ?',
+      whereArgs: [localId],
+    );
+  }
+
+  Future<Database> getDatabase() async {
+    return _db;
   }
 }

@@ -127,4 +127,37 @@ class MediaManager {
     asset.local = local;
     return asset;
   }
+
+  Future<List<Asset>> getCachedAssets() async {
+    try {
+      final maps = await Store.instance.queryFiles(
+        where: 'deleted = ?',
+        whereArgs: [0],
+        orderBy: 'update_time DESC',
+      );
+
+      return maps
+          .map((map) => Asset(
+                localId: map['local_id'] as String,
+                checksum: map['hash'] as String,
+                fileCreatedAt: DateTime.fromMillisecondsSinceEpoch(
+                    map['create_time'] as int),
+                fileModifiedAt: DateTime.fromMillisecondsSinceEpoch(
+                    map['update_time'] as int),
+                updatedAt: DateTime.fromMillisecondsSinceEpoch(
+                    map['update_time'] as int),
+                durationInSeconds: map['duration'] as int? ?? 0,
+                type: AssetType.values[map['type'] as int],
+                fileName: map['file_name'] as String,
+                width: map['width'] as int,
+                height: map['height'] as int,
+                isFavorite: (map['favorite'] as int) == 1,
+                owner: map['owner'] as String,
+              ))
+          .toList();
+    } catch (e, s) {
+      Logger.error('Error getting cached assets', e, s);
+      return [];
+    }
+  }
 }

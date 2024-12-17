@@ -547,31 +547,44 @@ class _BackupPageState extends State<BackupPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ..._pendingAssets.map((asset) => ListTile(
+        if (_uploadingAssets.isEmpty)
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.all(32),
+              child: Text(
+                '没有正在备份的文件',
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      color: Colors.grey,
+                    ),
+              ),
+            ),
+          )
+        else
+          ..._uploadingAssets.map((id) {
+            final asset = _findAssetById(id);
+            if (asset == null) return const SizedBox.shrink();
+            final progress = _uploadProgress[id] ?? 0;
+            return ListTile(
               leading: Icon(
                 asset.type == AssetType.video
                     ? Icons.video_collection
                     : Icons.photo,
               ),
               title: Text(asset.fileName),
-              subtitle: const LinearProgressIndicator(value: 0),
-              trailing: const Text('Pending'),
-            )),
-        ..._uploadingAssets.map((id) {
-          final asset = _findAssetById(id);
-          if (asset == null) return const SizedBox.shrink();
-          final progress = _uploadProgress[id] ?? 0;
-          return ListTile(
-            leading: Icon(
-              asset.type == AssetType.video
-                  ? Icons.video_collection
-                  : Icons.photo,
+              subtitle: LinearProgressIndicator(value: progress),
+              trailing: Text('${(progress * 100).toInt()}%'),
+            );
+          }),
+        if (_pendingAssets.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Text(
+              '等待备份: ${_pendingAssets.length}个文件',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Colors.grey,
+                  ),
             ),
-            title: Text(asset.fileName),
-            subtitle: LinearProgressIndicator(value: progress),
-            trailing: Text('${(progress * 100).toInt()}%'),
-          );
-        }),
+          ),
       ],
     );
   }
