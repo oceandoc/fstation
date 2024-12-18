@@ -237,12 +237,6 @@ class Asset {
   }
 }
 
-enum AssetType {
-  other,
-  image,
-  video,
-  audio,
-}
 
 enum AssetState {
   local,

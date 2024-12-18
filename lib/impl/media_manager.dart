@@ -8,6 +8,7 @@ import 'package:fstation/impl/user_manager.dart';
 import 'package:get_it/get_it.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:photo_manager/photo_manager.dart' as pm;
+import 'package:photo_manager/photo_manager.dart';
 
 import '../bloc/auth_session_bloc.dart';
 import '../bloc/auth_session_event.dart';

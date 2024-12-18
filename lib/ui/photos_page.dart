@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:fstation/model/asset.dart';
+import 'package:fstation/ui/widget/photo_grid.dart';
 import 'package:go_router/go_router.dart';
 
 import '../generated/l10n.dart';
-import 'widget/loading_indicator.dart';
+import '../util/ring_buffer.dart';
 import 'widget/control_bottom_app_bar.dart';
+import 'widget/loading_indicator.dart';
 
 class PhotosPage extends StatefulWidget {
   const PhotosPage({super.key});
@@ -14,6 +17,7 @@ class PhotosPage extends StatefulWidget {
 
 class PhotosPageState extends State<PhotosPage> {
   bool selectMode = false;
+  RingBuffer<Asset> assetBuffer = RingBuffer<Asset>(1000);
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +50,7 @@ class PhotosPageState extends State<PhotosPage> {
       body: Column(
         children: [
           Expanded(
-            child: buildLoadingIndicator(),
+            child: PhotoGrid(assetBuffer: assetBuffer),
           ),
           if (selectMode) const ControlBottomAppBar(),
         ],
